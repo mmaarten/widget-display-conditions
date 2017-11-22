@@ -2,7 +2,7 @@
 /*
 Plugin Name:  Widget Display Conditions
 Plugin URI:   https://github.com/mmaarten/widget-display-conditions
-Description: 
+Description:  Manages widget display by conditions.
 Version:      0.1.0
 Author:       Maarten Menten
 Author URI:   https://profiles.wordpress.org/maartenm/
