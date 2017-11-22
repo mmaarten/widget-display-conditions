@@ -12,7 +12,7 @@
 		{
 			event.preventDefault();
 
-			_this.addRuleGroup();
+			_this.addConditionGroup();
 		});
 
 		// Add condition button click
@@ -23,7 +23,7 @@
 			var $condition = jQuery( this ).closest( '.condition' );
 			var $group = $condition.closest( '.condition-group' );
 
-			_this.addRule( $group.data( 'id' ) );
+			_this.addCondition( $group.data( 'id' ) );
 		});
 
 		// Remove condition button click
@@ -33,10 +33,10 @@
 
 			var $condition = jQuery( this ).closest( '.condition' );
 
-			_this.removeRule( $condition.data( 'id' ) );
+			_this.removeCondition( $condition.data( 'id' ) );
 		});
 
-		// Rule param change
+		// Condition param change
 		this.$elem.on( 'change', '.condition .param select', function( event )
 		{
 			event.preventDefault();
@@ -45,7 +45,7 @@
 			var $param = $condition.find( '.param select' );
 			var $value = $condition.find( '.value select' );
 
-			_this.loadRuleValues( $value, $param.val() );
+			_this.loadConditionValues( $value, $param.val() );
 		});
 
 		// Form submit
@@ -64,17 +64,17 @@
 
 			// Notifies clients
 
-			_this.$elem.trigger( 'widgetDisplayRules/submit', [ conditions ] );
+			_this.$elem.trigger( 'widgetDisplayConditions/submit', [ conditions ] );
 		});
 
-		// Rule Removed
-		this.$elem.on( 'widgetDisplayRules/conditionRemoved', function( event, $condition, $group )
+		// Condition Removed
+		this.$elem.on( 'widgetDisplayConditions/conditionRemoved', function( event, $condition, $group )
 		{
 			// Removes group when no conditions
 
 			if ( ! $group.find( '.condition' ).length ) 
 			{
-				_this.removeRuleGroup( $group.data( 'id' ) );
+				_this.removeConditionGroup( $group.data( 'id' ) );
 			};
 
 			if ( ! _this.$elem.find( '.condition' ).length ) 
@@ -83,8 +83,8 @@
 			}
 		});
 
-		// Rule Added
-		this.$elem.on( 'widgetDisplayRules/conditionAdded', function( event, $condition )
+		// Condition Added
+		this.$elem.on( 'widgetDisplayConditions/conditionAdded', function( event, $condition )
 		{
 			_this.$elem.addClass( 'has-conditions' );
 		});
@@ -92,12 +92,12 @@
 		// creates conditions
 		jQuery.each( this.options.conditions, function( groupId, conditions )
 		{
-			_this.addRuleGroup( groupId, conditions );
+			_this.addConditionGroup( groupId, conditions );
 		});
 
 		//
 
-		jQuery( document ).trigger( 'widgetDisplayRules/init', [ this ] );
+		jQuery( document ).trigger( 'widgetDisplayConditions/init', [ this ] );
 	}
 
 	Plugin.defaultOptions = 
@@ -179,7 +179,7 @@
 		});
 	};
 
-	Plugin.prototype.loadRuleValues = function( $value, param, selected )
+	Plugin.prototype.loadConditionValues = function( $value, param, selected )
 	{
 		if ( typeof selected === 'undefined' ) 
 		{
@@ -206,7 +206,7 @@
 		});
 	}
 
-	Plugin.prototype.addRuleGroup = function( id, conditions ) 
+	Plugin.prototype.addConditionGroup = function( id, conditions ) 
 	{
 		if ( typeof id === 'undefined' ) 
 		{
@@ -231,7 +231,7 @@
 			.append( $group );
 
 
-		this.$elem.trigger( 'widgetDisplayRules/conditionGroupAdded', [ $group ] );
+		this.$elem.trigger( 'widgetDisplayConditions/conditionGroupAdded', [ $group ] );
 
 		if ( Object.keys( conditions ).length ) 
 		{
@@ -239,17 +239,17 @@
 
 			jQuery.each( conditions, function()
 			{
-				_this.addRule( id, this );
+				_this.addCondition( id, this );
 			});
 		}
 
 		else
 		{
-			this.addRule( id );
+			this.addCondition( id );
 		};
 	};
 
-	Plugin.prototype.removeRuleGroup = function( groupId ) 
+	Plugin.prototype.removeConditionGroup = function( groupId ) 
 	{
 		// Removes condition
 
@@ -265,10 +265,10 @@
 
 		$group.remove();
 
-		this.$elem.trigger( 'widgetDisplayRules/conditionGroupRemoved', [ $group ] );
+		this.$elem.trigger( 'widgetDisplayConditions/conditionGroupRemoved', [ $group ] );
 	};
 
-	Plugin.prototype.addRule = function( groupId, data ) 
+	Plugin.prototype.addCondition = function( groupId, data ) 
 	{
 		/**
 		 * Model
@@ -350,12 +350,12 @@
 
 		//
 
-		this.loadRuleValues( $value, $param.val(), condition.value );
+		this.loadConditionValues( $value, $param.val(), condition.value );
 
-		this.$elem.trigger( 'widgetDisplayRules/conditionAdded', [ $condition ] );
+		this.$elem.trigger( 'widgetDisplayConditions/conditionAdded', [ $condition ] );
 	};
 
-	Plugin.prototype.removeRule = function( conditionId ) 
+	Plugin.prototype.removeCondition = function( conditionId ) 
 	{
 		// Removes condition
 
@@ -373,25 +373,25 @@
 
 		$condition.remove();
 
-		this.$elem.trigger( 'widgetDisplayRules/conditionRemoved', [ $condition, $group ] );
+		this.$elem.trigger( 'widgetDisplayConditions/conditionRemoved', [ $condition, $group ] );
 	};
 
-	jQuery.fn.widgetDisplayRules = function( options )
+	jQuery.fn.widgetDisplayConditions = function( options )
 	{
 		return this.each( function()
 		{
-			if ( jQuery( this ).data( 'widgetDisplayRules' ) ) 
+			if ( jQuery( this ).data( 'widgetDisplayConditions' ) ) 
 			{
 				return true;
 			};
 
 			var instance = new Plugin( this, options );
 
-			jQuery( this ).data( 'widgetDisplayRules', instance );
+			jQuery( this ).data( 'widgetDisplayConditions', instance );
 		});
 	};
 
-	window.widgetDisplayRules = Plugin;
+	window.widgetDisplayConditions = Plugin;
 
 })();
 (function()
@@ -422,11 +422,11 @@
 					var modal = this;
 
 					this.$content
-						.widgetDisplayRules(
+						.widgetDisplayConditions(
 						{
 							conditions : JSON.parse( $conditions.val() )
 						})
-						.on( 'widgetDisplayRules/submit', function( event, conditions )
+						.on( 'widgetDisplayConditions/submit', function( event, conditions )
 						{
 							$conditions
 								.val( JSON.stringify( conditions ) )
