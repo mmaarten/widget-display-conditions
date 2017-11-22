@@ -1,0 +1,201 @@
+.wdc-settings .wdc-show-if-conditions {
+  display: none;
+}
+.wdc-settings.has-conditions .wdc-hide-if-conditions {
+  display: none;
+}
+.wdc-settings.has-conditions .wdc-show-if-conditions {
+  display: block;
+}
+.wdc-settings .notice {
+  margin: 20px 0;
+}
+.wdc-settings .condition-groups {
+  margin: 20px 0;
+}
+.wdc-settings .condition-group h4 {
+  margin: 5px 0;
+}
+.wdc-settings .condition-group:first-child h4 {
+  display: none;
+}
+.wdc-settings table.conditions {
+  margin: 0 -5px;
+}
+.wdc-settings .condition .remove .button {
+  visibility: hidden;
+}
+.wdc-settings .condition:hover .remove .button {
+  visibility: visible;
+}
+.wdc-settings .condition td.param {
+  width: 25%;
+}
+.wdc-settings .condition td.value {
+  width: 25%;
+}
+.wdc-settings .condition td.and {
+  width: 1%;
+}
+.wdc-settings .condition select {
+  width: 100%;
+}
+.wdc-settings p.wdc-submit {
+  text-align: right;
+  margin-top: 20px;
+  margin-bottom: 1px;
+}
+
+html.with-wdc-modal {
+  /* disable global scrolling when wdc-modals are visible */
+  overflow: hidden;
+}
+
+.wdc-modal {
+  display: none;
+  /* dimensions: spanning the background from edge to edge */
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2147483647;
+  /* z-index needs to be >= elements on the site. */
+  /* position: centering content */
+  text-align: center;
+  /* insures that the ::before pseudo element doesn't force wrap with fixed width content; */
+  white-space: nowrap;
+  /* styling */
+  cursor: pointer;
+  background: #333;
+  /* IE8 "hack" for nested wdc-modals */
+  background: transparent;
+}
+.wdc-modal h1 {
+  margin: -20px -20px 20px -20px;
+  padding: 15px 48px 15px 20px;
+  color: #fff;
+  background-color: #0073aa;
+  font-size: 21px;
+  font-weight: 400;
+}
+
+/* support for nested wdc-modals. Does not work in IE8 (use JS to fix) */
+.wdc-modal:last-of-type {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.wdc-modal:before {
+  /* position: trick to center content vertically */
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+
+.wdc-modal .wdc-modal-content {
+  /* make content container for positioned elements (close button) */
+  position: relative;
+  /* position: centering vertical and horizontal */
+  text-align: left;
+  vertical-align: middle;
+  display: inline-block;
+  /* dimensions: cut off images */
+  overflow: auto;
+  padding: 20px 20px 0;
+  border-bottom: 20px solid transparent;
+  /* dimensions: handling large content */
+  margin-left: 5%;
+  margin-right: 5%;
+  max-height: 95%;
+  /* styling */
+  background: #fff;
+  cursor: auto;
+  width: 800px;
+  /* reset white-space wrapping */
+  white-space: normal;
+}
+
+/* contains the content */
+.wdc-modal .wdc-modal-inner {
+  /* make sure its visible */
+  display: block;
+}
+
+/* don't show these though */
+.wdc-modal script.wdc-modal-inner,
+.wdc-modal link.wdc-modal-inner,
+.wdc-modal style.wdc-modal-inner {
+  display: none;
+}
+
+.wdc-modal .wdc-modal-close-icon {
+  /* position: centering vertical and horizontal */
+  position: absolute;
+  z-index: 9999;
+  top: 0;
+  right: 0;
+  line-height: 48px;
+  width: 48px;
+  /* styling */
+  cursor: pointer;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  background: transparent;
+  color: #fff;
+  border: none;
+  padding: 0;
+}
+
+/* See http://stackoverflow.com/questions/16077341/how-to-reset-all-default-styles-of-the-html5-button-element */
+.wdc-modal .wdc-modal-close-icon::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+.wdc-modal .wdc-modal-image {
+  /* styling */
+  width: 100%;
+}
+
+.wdc-modal-iframe .wdc-modal-content {
+  /* removed the border for image croping since iframe is edge to edge */
+  border-bottom: 0;
+  padding: 0;
+  -webkit-overflow-scrolling: touch;
+  overflow-y: scroll;
+}
+
+.wdc-modal iframe {
+  /* styling */
+  border: none;
+}
+
+.wdc-modal * {
+  /* See https://github.com/noelboss/wdc-modal/issues/42 */
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* handling phones and small screens */
+@media only screen and (max-width: 959px) {
+  .wdc-modal .wdc-modal-content {
+    margin-left: 0;
+    margin-right: 0;
+    width: 90%;
+    max-height: 98%;
+    min-width: none;
+  }
+}
+/* hide non wdc-modal items when printing */
+@media print {
+  @page {
+    size: landscape;
+  }
+  html.with-wdc-modal > * > :not(.wdc-modal) {
+    display: none;
+  }
+}
+
+/*# sourceMappingURL=main.css.map */

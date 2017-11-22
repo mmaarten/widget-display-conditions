@@ -1,0 +1,101 @@
+
+.wdc-settings
+{
+	.wdc-show-if-conditions
+	{
+		display: none;
+	}
+
+	&.has-conditions
+	{
+		.wdc-hide-if-conditions
+		{
+			display: none;
+		}
+
+		.wdc-show-if-conditions
+		{
+			display: block;
+		}
+	}
+
+	.notice
+	{
+		margin: 20px 0;
+	}
+
+	.condition-groups
+	{
+		margin: 20px 0;
+	}
+
+	.condition-group
+	{
+		h4
+		{
+		    margin: 5px 0;
+		}
+
+		&:first-child
+		{
+			h4
+			{
+				display: none;
+			}
+		}
+	}
+
+	table.conditions
+	{
+		margin: 0 -5px;
+	}
+
+	.condition
+	{
+		.remove
+		{
+			.button
+			{
+				visibility : hidden;
+			}
+		}
+
+		&:hover
+		{
+			.remove
+			{
+				.button
+				{
+					visibility : visible;
+				}
+			}
+		}
+
+		td.param
+		{
+			width: 25%;
+		}
+
+		td.value
+		{
+			width: 25%;
+		}
+
+		td.and
+		{
+			width: 1%;
+		}
+
+		select
+		{
+			width: 100%;
+		}
+	}
+
+	p.wdc-submit
+	{
+		text-align: right;
+		margin-top: 20px;
+		margin-bottom: 1px;
+	}
+}
