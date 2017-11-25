@@ -1,4 +1,4 @@
-=== Widget Display Rules ===
+=== Widget Display Conditions ===
 Contributors: mmaarten
 Tags: widget, display, conditions, rules
 Stable tag: 0.1.0
