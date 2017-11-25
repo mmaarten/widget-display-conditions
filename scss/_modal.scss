@@ -32,11 +32,12 @@ html.with-wdc-modal
 	h1
 	{
 		margin: -$modal-padding (-$modal-padding) $modal-padding (-$modal-padding);
-	    padding: 15px 48px 15px 20px;
-	    color: #fff;
-	    background-color: $brand-primary;
-	    font-size: 21px;
-	    font-weight: 400;
+	    padding: 15px 53px 15px $modal-padding; // 53px = close button with
+	    //color: #fff;
+	    background-color: #FCFCFC;
+	    font-size: 22px;
+	    line-height: 1;
+	    border-bottom: 1px solid #ddd;
 	}
 }
 
@@ -105,17 +106,37 @@ html.with-wdc-modal
 	top: 0;
 	right: 0;
 
-	line-height: 48px;
-	width: 48px;
+    width: 53px;
+    height: 53px;
+    line-height: 53px;
 
 	/* styling */
 	cursor: pointer;
 	text-align: center;
 	font-family: Arial, sans-serif;
 	background: transparent;
-	color: #fff;
+	//color: #fff;
 	border: none;
 	padding: 0;
+
+	overflow: hidden;
+	color: transparent;
+
+	&:before
+	{
+		color: #23282d;
+	    content: "\f158";
+	    font: 400 20px/1 dashicons;
+	    speak: none;
+	    vertical-align: middle;
+	    -webkit-font-smoothing: antialiased;
+	    -moz-osx-font-smoothing: grayscale;
+	    width: 53px;
+	    height: 53px;
+	    line-height: 50px;
+	    text-align: center;
+	    display: inline-block;
+	}
 }
 
 /* See http://stackoverflow.com/questions/16077341/how-to-reset-all-default-styles-of-the-html5-button-element */
