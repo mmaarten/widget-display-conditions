@@ -1,11 +1,11 @@
 === Widget Display Rules ===
 Contributors: mmaarten
-Tags: widget, display, rules, rules
+Tags: widget, display, conditions, rules
 Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
  
-Manages widget display by rules.
+Manages widget display by conditions.
 
 == Description ==
 
@@ -25,7 +25,7 @@ Following built-in rule parameters are available:
  
 == Installation ==
 
-1. Upload `widget-display-rules` plugin folder to the `/wp-content/plugins/` directory
+1. Upload `widget-display-conditions` plugin folder to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
  
 == Screenshots ==
