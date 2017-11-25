@@ -1,43 +1,68 @@
-.wdc-settings .wdc-show-if-conditions {
+.select2-container {
+  z-index: 99999999999;
+}
+
+.wdc-settings .select2 .wdc-tag {
+  background: #fff;
+  display: inline-block;
+  margin-left: -8px;
+  padding: 0 8px;
+  margin-right: 8px;
+  border-right: 1px solid #ccc;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+.wdc-settings .select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 26px;
+}
+.wdc-settings .select2-container--default .select2-selection--single {
+  border-color: #ccc;
+}
+.wdc-settings .wdc-show-if-rules {
   display: none;
 }
-.wdc-settings.has-conditions .wdc-hide-if-conditions {
+.wdc-settings.has-rules .wdc-hide-if-rules {
   display: none;
 }
-.wdc-settings.has-conditions .wdc-show-if-conditions {
+.wdc-settings.has-rules .wdc-show-if-rules {
   display: block;
 }
 .wdc-settings .notice {
   margin: 20px 0;
 }
-.wdc-settings .condition-groups {
+.wdc-settings .rule-groups {
   margin: 20px 0;
 }
-.wdc-settings .condition-group h4 {
+.wdc-settings .rule-group h4 {
   margin: 5px 0;
 }
-.wdc-settings .condition-group:first-child h4 {
+.wdc-settings .rule-group:first-child h4 {
   display: none;
 }
-.wdc-settings table.conditions {
+.wdc-settings table.rules {
   margin: 0 -5px;
 }
-.wdc-settings .condition .remove .button {
+.wdc-settings .rule .remove button {
   visibility: hidden;
 }
-.wdc-settings .condition:hover .remove .button {
+.wdc-settings .rule:hover .remove button {
   visibility: visible;
 }
-.wdc-settings .condition td.param {
+.wdc-settings .rule td.param {
   width: 25%;
+  min-width: 75px;
 }
-.wdc-settings .condition td.value {
-  width: 25%;
+.wdc-settings .rule td.operator {
+  min-width: 75px;
 }
-.wdc-settings .condition td.and {
+.wdc-settings .rule td.value {
+  width: 35%;
+  min-width: 75px;
+}
+.wdc-settings .rule td.and {
   width: 1%;
 }
-.wdc-settings .condition select {
+.wdc-settings .rule select {
   width: 100%;
 }
 .wdc-settings p.wdc-submit {
@@ -73,11 +98,11 @@ html.with-wdc-modal {
 }
 .wdc-modal h1 {
   margin: -20px -20px 20px -20px;
-  padding: 15px 48px 15px 20px;
-  color: #fff;
-  background-color: #0073aa;
-  font-size: 21px;
-  font-weight: 400;
+  padding: 15px 53px 15px 20px;
+  background-color: #FCFCFC;
+  font-size: 22px;
+  line-height: 1;
+  border-bottom: 1px solid #ddd;
 }
 
 /* support for nested wdc-modals. Does not work in IE8 (use JS to fix) */
@@ -135,16 +160,32 @@ html.with-wdc-modal {
   z-index: 9999;
   top: 0;
   right: 0;
-  line-height: 48px;
-  width: 48px;
+  width: 53px;
+  height: 53px;
+  line-height: 53px;
   /* styling */
   cursor: pointer;
   text-align: center;
   font-family: Arial, sans-serif;
   background: transparent;
-  color: #fff;
   border: none;
   padding: 0;
+  overflow: hidden;
+  color: transparent;
+}
+.wdc-modal .wdc-modal-close-icon:before {
+  color: #23282d;
+  content: "\f158";
+  font: 400 20px/1 dashicons;
+  speak: none;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  width: 53px;
+  height: 53px;
+  line-height: 50px;
+  text-align: center;
+  display: inline-block;
 }
 
 /* See http://stackoverflow.com/questions/16077341/how-to-reset-all-default-styles-of-the-html5-button-element */

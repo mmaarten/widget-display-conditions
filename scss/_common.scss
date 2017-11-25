@@ -1,19 +1,49 @@
 
+.select2-container
+{
+	z-index: 99999999999; 
+}
+
 .wdc-settings
 {
-	.wdc-show-if-conditions
+	.select2
+	{
+		.wdc-tag
+		{
+			background: #fff;
+		    display: inline-block;
+		    margin-left: -8px;
+		    padding: 0 8px;
+		    margin-right: 8px;
+		    border-right: 1px solid #ccc;
+		    border-top-left-radius: 3px;
+		    border-bottom-left-radius: 3px;
+		}
+	}
+
+	.select2-container--default .select2-selection--single .select2-selection__rendered
+	{
+		line-height: 26px;
+	}
+
+	.select2-container--default .select2-selection--single
+	{
+		border-color: #ccc;
+	}
+
+	.wdc-show-if-rules
 	{
 		display: none;
 	}
 
-	&.has-conditions
+	&.has-rules
 	{
-		.wdc-hide-if-conditions
+		.wdc-hide-if-rules
 		{
 			display: none;
 		}
 
-		.wdc-show-if-conditions
+		.wdc-show-if-rules
 		{
 			display: block;
 		}
@@ -24,12 +54,12 @@
 		margin: 20px 0;
 	}
 
-	.condition-groups
+	.rule-groups
 	{
 		margin: 20px 0;
 	}
 
-	.condition-group
+	.rule-group
 	{
 		h4
 		{
@@ -45,16 +75,16 @@
 		}
 	}
 
-	table.conditions
+	table.rules
 	{
 		margin: 0 -5px;
 	}
 
-	.condition
+	.rule
 	{
 		.remove
 		{
-			.button
+			button
 			{
 				visibility : hidden;
 			}
@@ -64,7 +94,7 @@
 		{
 			.remove
 			{
-				.button
+				button
 				{
 					visibility : visible;
 				}
@@ -74,11 +104,18 @@
 		td.param
 		{
 			width: 25%;
+			min-width: 75px;
+		}
+
+		td.operator
+		{
+			min-width: 75px;
 		}
 
 		td.value
 		{
-			width: 25%;
+			width: 35%;
+			min-width: 75px;
 		}
 
 		td.and

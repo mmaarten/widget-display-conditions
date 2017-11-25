@@ -1,51 +1,55 @@
 (function()
 {
-	function Plugin( elem, options )
+	function WDC( elem, options )
 	{
 		this.$elem   = jQuery( elem );
-		this.options = jQuery.extend( {}, Plugin.defaultOptions, options );
+		this.options = jQuery.extend( {}, WDC.defaultOptions, options );
 
 		var _this = this;
 
-		// Add condition group button click
-		this.$elem.on( 'click', '.add-condition-group', function( event )
+		// Add rule group button click
+		this.$elem.on( 'click', '.add-rule-group', function( event )
 		{
 			event.preventDefault();
 
-			_this.addConditionGroup();
+			_this.addRuleGroup();
 		});
 
-		// Add condition button click
-		this.$elem.on( 'click', '.condition .and .button', function( event )
+		// Add rule button click
+		this.$elem.on( 'click', '.rule .and button', function( event )
 		{
 			event.preventDefault();
 
-			var $condition = jQuery( this ).closest( '.condition' );
-			var $group = $condition.closest( '.condition-group' );
+			var $group = jQuery( this ).closest( '.rule-group' );
 
-			_this.addCondition( $group.data( 'id' ) );
+			_this.addRule( $group.data( 'id' ) );
 		});
 
-		// Remove condition button click
-		this.$elem.on( 'click', '.condition .remove .button', function( event )
+		// Remove rule button click
+		this.$elem.on( 'click', '.rule .remove button', function( event )
 		{
 			event.preventDefault();
 
-			var $condition = jQuery( this ).closest( '.condition' );
+			var $rule = jQuery( this ).closest( '.rule' );
 
-			_this.removeCondition( $condition.data( 'id' ) );
+			_this.removeRule( $rule.data( 'id' ) );
 		});
 
-		// Condition param change
-		this.$elem.on( 'change', '.condition .param select', function( event )
+		// Rule param change
+		this.$elem.on( 'change', '.rule .param select', function( event )
 		{
 			event.preventDefault();
 
-			var $condition  = jQuery( this ).closest( '.condition' );
-			var $param = $condition.find( '.param select' );
-			var $value = $condition.find( '.value select' );
+			var $rule     = jQuery( this ).closest( '.rule' );
+			var $param    = $rule.find( '.param select' );
+			var $operator = $rule.find( '.operator select' );
+			var $value    = $rule.find( '.value select' );
 
-			_this.loadConditionValues( $value, $param.val() );
+			WDC.loadRule( $param.val(), function( data )
+			{
+				WDC.populateDropdown( $operator.empty(), data.operators );
+				WDC.populateDropdown( $value.empty(), data.choices );
+			});
 		});
 
 		// Form submit
@@ -53,60 +57,64 @@
 		{
 			event.preventDefault();
 
-			// gets all conditions from form
+			// Gets all rules from form
 
-			var data = jQuery( this ).serializeObject(), conditions = {};
+			var data = jQuery( this ).serializeObject(), rules = {};
 
-			if ( data.hasOwnProperty( 'conditions' ) ) 
+			if ( data.hasOwnProperty( 'rules' ) ) 
 			{
-				conditions = data.conditions;
+				rules = data.rules;
 			}
 
 			// Notifies clients
 
-			_this.$elem.trigger( 'widgetDisplayConditions/submit', [ conditions ] );
+			_this.$elem.trigger( 'wdc/submit', [ rules ] );
 		});
 
-		// Condition Removed
-		this.$elem.on( 'widgetDisplayConditions/conditionRemoved', function( event, $condition, $group )
+		// Rule Removed
+		this.$elem.on( 'wdc/ruleRemoved', function( event, $rule, $group )
 		{
-			// Removes group when no conditions
+			// Removes group when no rules
 
-			if ( ! $group.find( '.condition' ).length ) 
+			if ( ! $group.find( '.rule' ).length ) 
 			{
-				_this.removeConditionGroup( $group.data( 'id' ) );
+				_this.removeRuleGroup( $group.data( 'id' ) );
 			};
+		});
 
-			if ( ! _this.$elem.find( '.condition' ).length ) 
+		// Rule Added
+		this.$elem.on( 'wdc/ruleAdded', function( event, $rule )
+		{
+			_this.$elem.addClass( 'has-rules' );
+		});
+
+		// Rule removed
+		this.$elem.on( 'wdc/ruleRemoved', function( event, $rule )
+		{
+			if ( ! _this.$elem.find( '.rule' ).length ) 
 			{
-				_this.$elem.removeClass( 'has-conditions' );
+				_this.$elem.removeClass( 'has-rules' );
 			}
 		});
 
-		// Condition Added
-		this.$elem.on( 'widgetDisplayConditions/conditionAdded', function( event, $condition )
+		// Creates rules
+		jQuery.each( this.options.rules, function( groupId, rules )
 		{
-			_this.$elem.addClass( 'has-conditions' );
-		});
-
-		// creates conditions
-		jQuery.each( this.options.conditions, function( groupId, conditions )
-		{
-			_this.addConditionGroup( groupId, conditions );
+			_this.addRuleGroup( groupId, rules );
 		});
 
 		//
 
-		jQuery( document ).trigger( 'widgetDisplayConditions/init', [ this ] );
+		jQuery( document ).trigger( 'wdc/init', [ this ] );
 	}
 
-	Plugin.defaultOptions = 
+	WDC.defaultOptions = 
 	{
-		ajaxurl   : window.ajaxurl || '',
-		conditions : {}
+		ajaxurl : window.ajaxurl || '',
+		rules   : {}
 	};
 
-	Plugin.generateId = function()
+	WDC.generateId = function()
 	{
   		function s4() 
   		{
@@ -140,7 +148,7 @@
 	 *   }
 	 * ]
 	 */
-	Plugin.populateDropdown = function( elem, items )
+	WDC.populateDropdown = function( elem, items, selected )
 	{
 		var defaults =
 		{
@@ -161,7 +169,7 @@
 				$group
 					.attr( 'label', item.text );
 
-				Plugin.populateDropdown( $group, item.children );
+				WDC.populateDropdown( $group, item.children, selected );
 
 				jQuery( elem ).append( $group );
 			}
@@ -173,87 +181,86 @@
 				$option
 					.attr( 'value', item.id )
 					.text( item.text )
+					.prop( 'selected', item.id == selected );
 
 				jQuery( elem ).append( $option );
 			}
 		});
 	};
 
-	Plugin.prototype.loadConditionValues = function( $value, param, selected )
+	WDC.rulesLoaded = {};
+
+	WDC.loadRule = function( param, complete )
 	{
-		if ( typeof selected === 'undefined' ) 
+		// Checks if already loaded
+
+		if ( WDC.rulesLoaded.hasOwnProperty( param ) ) 
 		{
-			selected = '';
+			complete( WDC.rulesLoaded[ param ] );
+
+			return;
 		};
+
+		//
 
 		jQuery.ajax( 
 		{
-			url : this.options.ajaxurl,
+			url : ajaxurl,
 			method : 'POST',
-			data : { action : 'wdc_get_condition_param_values', param : param },
-			success : function( items )
+			data : { action : 'wdc_load_rule', param : $param.val() },
+			success : function( response )
 			{
-				$value.empty();
+				WDC.rulesLoaded[ param ] = response.data;
 
-				Plugin.populateDropdown( $value, items );
-
-				$value.find( 'option' ).filter( function()
-				{
-					return jQuery( this ).attr( 'value' ) == selected;
-
-				}).prop( 'selected', true );
+				complete( response.data );
 			}
 		});
-	}
+	};
 
-	Plugin.prototype.addConditionGroup = function( id, conditions ) 
+	WDC.prototype.addRuleGroup = function( id, rules ) 
 	{
 		if ( typeof id === 'undefined' ) 
 		{
-			id = 'group_' + Plugin.generateId();
+			id = 'group_' + WDC.generateId();
 		};
 
-		conditions = jQuery.extend( {}, conditions );
+		// Adds group
 
-		/**
-		 * View
-		 * -----------------------------------------------------------
-		 */
-
-		var template = wp.template( 'wdc-condition-group' );
+		var template = wp.template( 'wdc-rule-group' );
 			
 		var $group = jQuery( template(
 		{
 			id : id,
 		}));
 
-		this.$elem.find( '.condition-groups' )
+		this.$elem.find( '.rule-groups' )
 			.append( $group );
 
+		this.$elem.trigger( 'wdc/ruleGroupAdded', [ $group ] );
 
-		this.$elem.trigger( 'widgetDisplayConditions/conditionGroupAdded', [ $group ] );
+		// Adds rules (1 is required)
 
-		if ( Object.keys( conditions ).length ) 
+		if ( typeof rules === 'object' && Object.keys( rules ).length ) 
 		{
 			var _this = this;
 
-			jQuery.each( conditions, function()
+			jQuery.each( rules, function()
 			{
-				_this.addCondition( id, this );
+				_this.addRule( id, this );
 			});
 		}
 
 		else
 		{
-			this.addCondition( id );
+			this.addRule( id );
 		};
 	};
 
-	Plugin.prototype.removeConditionGroup = function( groupId ) 
+	WDC.prototype.removeRuleGroup = function( groupId ) 
 	{
-		// Removes condition
+		// Removes rule
 
-		var $group = this.$elem.find( '.condition-group' ).filter( function()
+		var $group = this.$elem.find( '.rule-group' ).filter( function()
 		{
 			return jQuery( this ).data( 'id' ) == groupId;
 		});
@@ -265,37 +272,26 @@
 
 		$group.remove();
 
-		this.$elem.trigger( 'widgetDisplayConditions/conditionGroupRemoved', [ $group ] );
+		this.$elem.trigger( 'wdc/ruleGroupRemoved', [ $group ] );
 	};
 
-	Plugin.prototype.addCondition = function( groupId, data ) 
+	WDC.prototype.addRule = function( groupId, data ) 
 	{
-		/**
-		 * Model
-		 * -----------------------------------------------------------
-		 */
-
 		var defaults = 
 		{
-			id       : 'condition_' + Plugin.generateId(),
+			id       : 'rule_' + WDC.generateId(),
 			param    : '',
 			operator : '',
-			value    : '',
-			group    : groupId
+			value    : ''
 		};
 
-		var condition = jQuery.extend( {}, defaults, data );
-
-		/**
-		 * View
-		 * -----------------------------------------------------------
-		 */
+		var rule = jQuery.extend( {}, defaults, data );
 
 		// Gets group
 
-		var $group =this.$elem.find( '.condition-group' ).filter( function()
+		var $group =this.$elem.find( '.rule-group' ).filter( function()
 		{
-			return jQuery( this ).data( 'id' ) == condition.group;
+			return jQuery( this ).data( 'id' ) == groupId;
 		});
 
 		if ( ! $group.length ) 
@@ -303,26 +299,26 @@
 			return;
 		}
 
-		// Creates condition
+		// Creates rule element
 
-		var template = wp.template( 'wdc-condition' );
+		var template = wp.template( 'wdc-rule' );
 			
-		var $condition = jQuery( template(
+		var $rule = jQuery( template(
 		{
-			id 	  : condition.id,
-			group : condition.group
+			id 	  : rule.id,
+			group : groupId
 		}));
 
-		$group.find( '.conditions' )
-			.append( $condition );
+		$group.find( '.rules' )
+			.append( $rule );
 
-		//
+		// param
 
-		$param = $condition.find( '.param select' );
+		$param = $rule.find( '.param select' );
 
-		if ( condition.param ) 
+		if ( rule.param ) 
 		{
-			$param.val( condition.param );
+			$param.val( rule.param );
 		}
 
 		else
@@ -330,13 +326,13 @@
 			$param.find( 'option:eq(0)' ).prop( 'selected', true );
 		};
 
-		// 
+		// operator
 
-		$operator = $condition.find( '.operator select' );
+		$operator = $rule.find( '.operator select' );
 
-		if ( condition.operator )
+		if ( rule.operator )
 		{
-			$operator.val( condition.operator );
+			$operator.val( rule.operator );
 		}
 
 		else
@@ -344,36 +340,75 @@
 			$operator.find( 'option:eq(0)' ).prop( 'selected', true );
 		};
 
-		// 
+		// value
 
-		$value = $condition.find( '.value select' );
+		$value = $rule.find( '.value select' );
+
+		
 
 		//
 
-		this.loadConditionValues( $value, $param.val(), condition.value );
-
-		this.$elem.trigger( 'widgetDisplayConditions/conditionAdded', [ $condition ] );
-	};
-
-	Plugin.prototype.removeCondition = function( conditionId ) 
-	{
-		// Removes condition
-
-		var $condition = this.$elem.find( '.condition' ).filter( function()
+		WDC.loadRule( $param.val(), function( data )
 		{
-			return jQuery( this ).data( 'id' ) == conditionId;
+			WDC.populateDropdown( $operator.empty(), data.operators, rule.operator );
+			WDC.populateDropdown( $value.empty(), data.choices, rule.value );
+
+			$value.select2(
+			{
+				templateSelection: function( item )
+				{
+					var $option = jQuery( item.element );
+
+					// Removes hierarchical prefix
+
+					var text = item.text.replace( /–+ ?/g, '' );
+
+					// Makes sure it is trimmed
+
+					text = jQuery.trim( text );
+
+					// Adds option group label
+
+					var $optgroup = $option.closest( 'optgroup' );
+
+					if ( $optgroup.length ) 
+					{
+						$elem = jQuery( '<span><span class="wdc-tag"></span><span class="wdc-text"></span></span>' );
+
+						$elem.find( '.wdc-tag' ).text( $optgroup.attr( 'label' ) );
+						$elem.find( '.wdc-text' ).text( text );
+
+						return $elem;
+					};
+
+
+					return text;
+				}
+			});
 		});
 
-		if ( ! $condition.length ) 
+		this.$elem.trigger( 'wdc/ruleAdded', [ $rule ] );
+	};
+
+	WDC.prototype.removeRule = function( ruleId ) 
+	{
+		// Removes rule
+
+		var $rule = this.$elem.find( '.rule' ).filter( function()
+		{
+			return jQuery( this ).data( 'id' ) == ruleId;
+		});
+
+		if ( ! $rule.length ) 
 		{
 			return;
 		};
 
-		var $group = $condition.closest( '.condition-group' );
+		var $group = $rule.closest( '.rule-group' );
 
-		$condition.remove();
+		$rule.remove();
 
-		this.$elem.trigger( 'widgetDisplayConditions/conditionRemoved', [ $condition, $group ] );
+		this.$elem.trigger( 'wdc/ruleRemoved', [ $rule, $group ] );
 	};
 
 	jQuery.fn.widgetDisplayConditions = function( options )
@@ -385,30 +420,30 @@
 				return true;
 			};
 
-			var instance = new Plugin( this, options );
+			var instance = new WDC( this, options );
 
 			jQuery( this ).data( 'widgetDisplayConditions', instance );
 		});
 	};
 
-	window.widgetDisplayConditions = Plugin;
+	window.widgetDisplayConditions = WDC;
 
 })();
 (function()
 {
-	// Widget Form
+	// Widget form
 
 	jQuery( window ).load( function()
 	{
 		var template = wp.template( 'wdc-settings' );
 
-		// Button click
+		// Settings button click
 
 		jQuery( document ).on( 'click', '.widget .wdc-settings-button', function()
 		{
 			var $widget = jQuery( this ).closest( '.widget' );
 
-			var $conditions = $widget.find( '.wdc-conditions' );
+			var $rules = $widget.find( '.wdc-rules' );
 
 			var $settings = jQuery( template() );
 
@@ -424,12 +459,15 @@
 					this.$content
 						.widgetDisplayConditions(
 						{
-							conditions : JSON.parse( $conditions.val() )
+							rules : JSON.parse( $rules.val() )
 						})
-						.on( 'widgetDisplayConditions/submit', function( event, conditions )
+						.on( 'wdc/submit', function( event, rules )
 						{
-							$conditions
-								.val( JSON.stringify( conditions ) )
+							// Stores rules in widget field.
+							// Trigger change so user can click the save button.
+
+							$rules
+								.val( JSON.stringify( rules ) )
 								.trigger( 'change' );
 
 							modal.close();
