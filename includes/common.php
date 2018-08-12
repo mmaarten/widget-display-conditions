@@ -1,5 +1,17 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
 
+function wdc()
+{
+	static $instance = null;
+
+	if ( ! $instance ) 
+	{
+		$instance = new WDC();
+	}
+
+	return $instance;
+}
+
 /**
  * Get Widget Instance
  *
@@ -27,7 +39,7 @@ function wdc_get_widget_instance( $widget_id )
 	return (array) $instances[ $num ];
 }
 
-function wdc_get_widget_rules( $widget_id )
+function wdc_get_widget_conditions( $widget_id )
 {
 	$instance = wdc_get_widget_instance( $widget_id );
 
@@ -36,9 +48,9 @@ function wdc_get_widget_rules( $widget_id )
 		return null;
 	}
 
-	if ( isset( $instance['wdc_rules'] ) ) 
+	if ( isset( $instance['wdc_conditions'] ) ) 
 	{
-		return (array) $instance['wdc_rules'];
+		return (array) $instance['wdc_conditions'];
 	}
 
 	return array();
@@ -46,10 +58,11 @@ function wdc_get_widget_rules( $widget_id )
 
 function wdc_post_choices( $args = null )
 {
-	$default = array
+	$defaults = array
 	(
-		'post_type' => 'post',
-		'group'     => false
+		'post_type'   => 'post',
+		'group'       => false,
+		'post_status' => 'any'
 	);
 
 	$args = wp_parse_args( $args, $defaults );
@@ -74,7 +87,8 @@ function wdc_post_choices( $args = null )
 			$posts = get_pages( array
 			(
 				'post_type'    => $post_type->name,
-				'hierarchical' => $args['hierarchical'],
+				'hierarchical' => true,
+				//'post_status'  => $args['post_status'], Does not work.
 				'numberposts'  => WDC_MAX_NUMBERPOSTS
 			));
 		}
@@ -86,6 +100,7 @@ function wdc_post_choices( $args = null )
 				'post_type'   => $post_type->name,
 				'orderby'     => 'post_title',
 				'order'       => 'ASC',
+				'post_status' => $args['post_status'],
 				'numberposts' => WDC_MAX_NUMBERPOSTS
 			));
 		}
@@ -240,6 +255,105 @@ function wdc_term_choices( $args )
 				'text' => $prefix. $term->name
 			);
 		}
+	}
+
+	return $choices;
+}
+
+function wdc_user_choices( $args = null )
+{
+	$defaults = array
+	(
+		'role' => '',
+		'who'  => ''
+	);
+
+	$args = wp_parse_args( $args, $defaults );
+
+	$choices = array();
+
+	$users = get_users( array
+	(
+		'role'    => $args['role'],
+		'who'     => $args['who'],
+		'orderby' => 'display_name',
+		'order'   => 'ASC'
+	));
+
+	foreach ( $users as $user ) 
+	{
+		$choices[] = array
+		(
+			'id'   => $user->ID,
+			'text' => $user->display_name
+		);
+	}
+
+	return $choices;
+}
+
+function wdc_post_type_choices( $args = null )
+{
+	$defaults = array
+	(
+		'public'      => true,
+		'has_archive' => null
+	);
+
+	$args = wp_parse_args( $args, $defaults );
+
+	$choices = array();
+
+	$post_types = get_post_types( array
+	(
+		'public' => $args['public']
+	), 'objects' );
+
+	foreach ( $post_types as $post_type ) 
+	{
+		if ( ! is_null( $args['has_archive'] ) )
+		{
+			if ( $args['has_archive'] && ! $post_type->has_archive ) 
+			{
+				continue;
+			}
+
+			elseif ( ! $args['has_archive'] && $post_type->has_archive ) 
+			{
+				continue;
+			}
+		}
+
+		$choices[] = array
+		(
+			'id'   => $post_type->name,
+			'text' => $post_type->labels->singular_name
+		);
+	}
+
+	return $choices;
+}
+
+function wdc_page_template_choices()
+{
+	$choices = array
+	(
+		array
+		(
+			'id'   => 'default',
+			'text' => __( 'Default', 'wdc' )
+		)
+	);
+
+	$page_templates = get_page_templates();
+
+	foreach ( $page_templates as $template_name => $template_file ) 
+	{
+		$choices[] = array
+		(
+			'id'   => $template_file,
+			'text' => $template_name
+		);
 	}
 
 	return $choices;
