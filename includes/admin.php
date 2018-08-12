@@ -5,11 +5,11 @@
  */
 function wdc_widget_form( $widget, $return, $instance )
 {
-	$rules = isset( $instance['wdc_rules'] ) ? (array) $instance['wdc_rules'] : array();
+	$conditions = isset( $instance['wdc_conditions'] ) ? (array) $instance['wdc_conditions'] : array();
 
 	?>
 
-	<input type="hidden" class="wdc-rules" name="<?php echo $widget->get_field_name( 'wdc_rules' ); ?>" value="<?php echo esc_attr( json_encode( $rules ) ); ?>">
+	<input type="hidden" class="wdc-conditions" name="<?php echo $widget->get_field_name( 'wdc_conditions' ); ?>" value="<?php echo esc_attr( json_encode( $conditions ) ); ?>">
 
 	<p>
 		<button type="button" class="button wdc-settings-button"><?php _e( 'Display conditions', 'wdc' ); ?></button>
@@ -27,14 +27,14 @@ add_action( 'in_widget_form', 'wdc_widget_form', 99, 3 );
  */
 function wdc_widget_update( $instance, $new_instance, $old_instance, $widget )
 {
-	if ( ! empty( $new_instance['wdc_rules'] ) ) 
+	if ( ! empty( $new_instance['wdc_conditions'] ) ) 
 	{
-		$instance['wdc_rules'] = json_decode( $new_instance['wdc_rules'] );
+		$instance['wdc_conditions'] = json_decode( $new_instance['wdc_conditions'] );
 	}
 
 	else
 	{
-		$instance['wdc_rules'] = array();
+		$instance['wdc_conditions'] = array();
 	}
 
 	return $instance;
@@ -45,7 +45,7 @@ add_action( 'widget_update_callback', 'wdc_widget_update', 10, 4 );
 /**
  * Enqueue Scripts
  */
-function wdc_enqueue_scripts( $hook )
+function wdc_admin_enqueue_scripts( $hook )
 {
 	// Checks if widgets screen
 
@@ -55,6 +55,8 @@ function wdc_enqueue_scripts( $hook )
 	}
 
 	// Vendor
+	wp_enqueue_style( 'dashicons' );
+
 	wp_enqueue_script( 'wp-util' );
 	wp_enqueue_script( 'featherlight', plugins_url( 'vendor/featherlight/featherlight.js', WDC_FILE ), array( 'jquery' ), '1.7.9', true );
 	wp_enqueue_script( 'serialize-object', plugins_url( 'vendor/serialize-object/serialize-object.js', WDC_FILE ), array( 'jquery' ), false, true );
@@ -62,16 +64,16 @@ function wdc_enqueue_scripts( $hook )
 	wp_enqueue_script( 'select2', plugins_url( 'vendor/select2/js/select2.min.js', WDC_FILE ), array( 'jquery' ), '4.0.6', true );
 
 	// Ours assets
-	wp_enqueue_style( 'widget-display-rules', plugins_url( 'css/main.css', WDC_FILE ) );
-	wp_enqueue_script( 'widget-display-rules', plugins_url( 'js/main.js', WDC_FILE ), array( 'jquery' ), false, true );
+	wp_enqueue_style( 'widget-display-conditions', plugins_url( 'css/main.css', WDC_FILE ) );
+	wp_enqueue_script( 'widget-display-conditions', plugins_url( 'js/main.js', WDC_FILE ), array( 'jquery' ), false, true );
 }
 
-add_action( 'admin_enqueue_scripts', 'wdc_enqueue_scripts' );
+add_action( 'admin_enqueue_scripts', 'wdc_admin_enqueue_scripts' );
 
 /**
  * Print Scripts
  */
-function wdc_print_scripts()
+function wdc_admin_print_scripts()
 {
 	// Checks if widgets screen
 
@@ -88,87 +90,108 @@ function wdc_print_scripts()
 		
 		<div class="wdc-settings">
 
-			<h1><?php _e( 'Display Conditions', 'wdc' ); ?></h1>
+			<h1><?php _e( 'Widget Display Conditions', 'wdc' ); ?></h1>
 
-			<div class="notice notice-info wdc-hide-if-rules">
-				<p><strong><?php _e( 'No conditions set.', 'wdc' ); ?></strong> <?php _e( 'Widget will be displayed on any page.', 'wdc' ); ?></p>
-			</div>
+			<section class="wdc-loader">
+				<p><strong><?php _e( 'Gathering data…', 'wdc' ); ?></strong></p>
+			</section><!-- .wdc-loader -->
 
-			<div class="notice notice-info wdc-show-if-rules">
-				<p><strong><?php _e( 'Widget will be displayed when following conditions are met.', 'wdc' ); ?></strong></p>
-			</div>
-
-			<form method="post">
+			<section class="wdc-main">
 				
-				<div class="rule-groups"></div>
+				<div class="notice notice-info wdc-hide-if-conditions">
+					<p><strong><?php _e( 'No conditions set.', 'wdc' ); ?></strong> <?php _e( 'Widget will be displayed on any page.', 'wdc' ); ?></p>
+				</div>
 
-				<p>
-					<button type="button" class="button add-rule-group"><?php _e( 'Add rule group', 'wdc' ); ?></button>
-				</p>
+				<div class="notice notice-info wdc-show-if-conditions">
+					<p><strong><?php _e( 'Widget will be displayed when following conditions are met.', 'wdc' ); ?></strong></p>
+				</div>
 
-				<p class="wdc-submit">
-					<button type="submit" class="button button-primary"><?php _e( 'Update', 'wdc' ); ?></button>
-				</p>
+				<form method="post">
+					
+					<div class="condition-groups"></div>
 
-			</form>
+					<p>
+						<button type="button" class="button add-condition-group"><?php _e( 'Add condition group', 'wdc' ); ?></button>
+					</p>
+
+					<p class="wdc-submit">
+						<button type="submit" class="button button-primary"><?php _e( 'Update', 'wdc' ); ?></button>
+					</p>
+
+				</form>
+
+			</section><!-- .wdc-main -->
 
 		</div><!-- .wdc-settings -->
 
 	</script>
 
-	<script id="tmpl-wdc-rule-group" type="text/html">
+	<script id="tmpl-wdc-condition-group" type="text/html">
 
-		<div class="rule-group" data-id="{{ data.id }}">
+		<div class="condition-group" data-id="{{ data.id }}">
 
 			<h4><?php _e( 'or', 'wdc' ); ?></h4>
 
-			<table class="rules"></table>
+			<table class="conditions"></table>
 
-		</div><!-- .rule-group -->
+		</div><!-- .condition-group -->
 		
 	</script>
 
-	<script id="tmpl-wdc-rule" type="text/html">
-		
-		<?php  
+	<script id="tmpl-wdc-condition" type="text/html">
+		<?php
 
-			$rules = WDC_API::get_rules();
+		$categories = wdc_get_categories();
 
 		?>
-
-		<tr class="rule" data-id="{{ data.id }}">
+		<tr class="condition" data-id="{{ data.id }}">
+			
 			<td class="param">
-				<select name="rules[{{ data.group }}][{{ data.id }}][param]">
-					<?php foreach ( $rules as $rule ) : ?>
-					<option value="<?php echo esc_attr( get_class( $rule ) ); ?>"><?php echo esc_html( $rule->get_title() ); ?></option>
+				<select name="conditions[{{ data.group }}][{{ data.id }}][param]">
+					<?php foreach ( $categories as $category ) : 
+
+						$conditions = wdc_get_conditions( $category['id'] );
+
+						if ( ! count( $conditions ) ) 
+						{
+							continue;
+						}
+
+					?>
+					<optgroup label="<?php echo esc_attr( $category['title'] ); ?>">
+						<?php foreach ( $conditions as $condition ) : ?>
+						<option value="<?php echo esc_attr( $condition->id ); ?>"><?php echo esc_html( $condition->title ); ?></option>
+						<?php endforeach; ?>
+					</optgroup>
 					<?php endforeach; ?>
 				</select>
 			</td>
 			<td class="operator">
-				<select name="rules[{{ data.group }}][{{ data.id }}][operator]"></select>
+				<select name="conditions[{{ data.group }}][{{ data.id }}][operator]"></select>
 			</td>
 			<td class="value">
-				<select name="rules[{{ data.group }}][{{ data.id }}][value]"></select>
+				<select name="conditions[{{ data.group }}][{{ data.id }}][value]"></select>
 			</td>
 			<td class="and">
-				<button class="button"><?php _e( 'And', 'wdc' ); ?></button>
+				<button type="button" class="button" title="<?php esc_attr_e( 'Add condition', 'wdc' ); ?>"><?php _e( 'And', 'wdc' ); ?></button>
 			</td>
 			<td class="remove">
-				<button class="button-link button-link-delete"><?php _e( 'Remove', 'wdc' ); ?></button>
+				<button type="button" class="button-link dashicons-before dashicons-trash" title="<?php esc_attr_e( 'Remove condition', 'wdc' ); ?>"><span class="screen-reader-text"><?php _e( 'Remove', 'wdc' ); ?></span></button>
 			</td>
-		</tr><!-- .rule -->
+			<td class="loader"></td>
+		</tr><!-- .condition -->
 
 	</script>
 
 	<?php
 }
 
-add_action( 'admin_print_scripts', 'wdc_print_scripts' );
+add_action( 'admin_print_scripts', 'wdc_admin_print_scripts' );
 
 /**
  * Get Rule Parameter Values
  */
-function wdc_load_rule()
+function wdc_get_param_items()
 {
 	if ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) 
 	{
@@ -177,34 +200,63 @@ function wdc_load_rule()
 
 	$param_id = isset( $_POST['param'] ) ? $_POST['param'] : '';
 
-	$rule = WDC_API::get_rule( $param_id );
+	$items = array();
 
-	// Checks if param is registered.
-
-	if ( ! $rule )
+	if ( ! empty( $param_id ) ) 
 	{
-		wp_send_json_error( sprintf( __( "Invalid param '%s'.", 'wdr' ), $param_id ) );
+		foreach ( (array) $param_id as $condition_id ) 
+		{
+			$condition = wdc_get_condition( $condition_id );
+
+			if ( ! $condition ) 
+			{
+				continue;
+			}
+
+			/**
+			 * Operators
+			 * -------------------------------------------------------
+			 */
+
+			$operators = $condition->operators;
+
+			$operator_choices = array();
+
+			foreach ( $operators as $operator_id ) 
+			{
+				$operator = wdc_get_operator( $operator_id );
+
+				if ( ! $operator ) 
+				{
+					continue;
+				}
+
+				$operator_choices[] = array
+				(
+					'id'   => $operator->id,
+					'text' => $operator->title
+				);
+			}
+
+			/**
+			 * Values
+			 * -------------------------------------------------------
+			 */
+
+			$values = $condition->get_values();
+
+			/* ---------------------------------------------------- */
+			
+			$items[ $condition->id ] = array
+			(
+				'operators' => $operator_choices,
+				'values'    => $values
+			);
+		}
 	}
 
-	$operators = $rule->get_operators();
-
-	$operator_choices = array();
-
-	foreach ( $operators as $operator ) 
-	{
-		$operator_choices[] = array
-		(
-			'id'   => get_class( $operator ),
-			'text' => $operator->get_title()
-		);
-	}
-
-	wp_send_json_success( array
-	(
-		'operators' => $operator_choices,
-		'choices'   => $rule->choices()
-	));
+	wp_send_json_success( $items );
 }
 
-add_action( 'wp_ajax_wdc_load_rule', 'wdc_load_rule' );
+add_action( 'wp_ajax_wdc_get_param_items', 'wdc_get_param_items' );
 
