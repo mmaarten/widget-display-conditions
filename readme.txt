@@ -69,6 +69,13 @@ You can easily alter or create conditions, categories, operators of your own.
 
 == Changelog ==
 
+= 0.2.0 =
+Release date: Aug 12th, 2018
+
+* Enhancement - objects are registered with their id instead of class name.
+* Enhancement - no class autoloading
+* Tested in WordPress 4.9
+
 = 0.1.8 =
 Release date: Dec 6th, 2017
 
