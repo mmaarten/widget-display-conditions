@@ -17,7 +17,7 @@ namespace wdc;
 define( 'WDC_FILE' , __FILE__ );
 define( 'WDC_VERSION', '0.2.0' );
 define( 'WDC_NONCE_NAME', 'wdc_nonce' );
-defined( 'WDC_MAX_NUMBER_POSTS' ) or define( 'WDC_MAX_NUMBER_POSTS', 9999 );
+defined( 'WDC_MAX_NUMBER_POSTS' ) or define( 'WDC_MAX_NUMBER_POSTS', 5000 );
 
 require_once plugin_dir_path( WDC_FILE ) . 'includes/common.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/widgets.php';
@@ -42,7 +42,6 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-page_t
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-page_template-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-page_parent-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-page-condition.php';
-
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post_type-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post_tag-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post_taxonomy-condition.php';
@@ -51,13 +50,10 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post_s
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post_template-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post_format-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-post-condition.php';
-
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-attachment-condition.php';
-
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archive_post_type-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archive_author-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archive_taxonomy-condition.php';
-
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-user_role-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-user_logged_in-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-user-condition.php';
@@ -66,4 +62,3 @@ if ( is_admin() )
 {
 	require_once plugin_dir_path( WDC_FILE ) . 'includes/ui.php';
 }
-
