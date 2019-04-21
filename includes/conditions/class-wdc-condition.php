@@ -11,14 +11,16 @@ class Condition
 	public $title     = null;
 	public $category  = null;
 	public $operators = array();
+	public $order     = null;
 
 	public function __construct( $id, $title, $args = array() )
 	{
-		$defaults = apply_filters( 'wdc/condition_defaults', array
+		$defaults = array
 		(
 			'category'  => '',
-			'operators' => array(),
-		));
+			'operators' => array( '==', '!=' ), // TODO : not here
+			'order'     => 10,
+		);
 
 		$args = wp_parse_args( $args, $defaults );
 
@@ -28,6 +30,7 @@ class Condition
 		$this->title     = $title;
 		$this->category  = $category;
 		$this->operators = (array) $operators;
+		$this->order     = (int) $order;
 
 		do_action( 'wdc/condition', $this );
 	}
@@ -58,15 +61,6 @@ class Condition
 	public function get_value_field_items()
 	{
 		return array();
-	}
-
-	public function get_fields_items()
-	{
-		return array
-		(
-			'operator' => $condition->get_operator_field_items(),
-			'value'    => $condition->get_value_field_items(),
-		);
 	}
 
 	public function apply( $operator, $value )

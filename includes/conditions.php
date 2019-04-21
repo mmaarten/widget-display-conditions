@@ -20,6 +20,7 @@ final class Conditions
 	}
 
 	protected $conditions = array();
+	protected $categories = array();
 
 	private function __construct()
 	{
@@ -33,17 +34,31 @@ final class Conditions
 	 */
 	function get_param_field_items()
 	{
-		$conditions = $this->get_conditions();
-
 		$items = array();
 
-		foreach ( $conditions as $condition ) 
+		foreach ( $this->categories as $category ) 
 		{
-			$items[ $condition->id ] = array
+			$conditions = wp_filter_object_list( $this->conditions, array( 'category' => $category['id'] ) );
+
+			if ( ! $conditions ) continue;
+
+			$group = array
 			(
-				'id'   => $condition->id,
-				'text' => $condition->title,
+				'id'       => $category['id'],
+				'text'     => $category['title'],
+				'children' => array(),
 			);
+
+			foreach ( $conditions as $condition ) 
+			{
+				$group['children'][ $condition->id ] = array
+				(
+					'id'   => $condition->id,
+					'text' => $condition->title,
+				);
+			}
+
+			$items[ $group['id'] ] = $group;
 		}
 
 		return $items;
@@ -79,12 +94,34 @@ final class Conditions
 	{
 		$condition = $this->get_condition( $condition_id );
 
-		if ( $condition ) 
+		if ( ! $condition ) 
 		{
-			return $condition->get_value_field_items();
+			return null;
 		}
 
-		return null;
+		$return = $condition->get_value_field_items();
+
+		$return = apply_filters( "wdc/value_field_items/condition={$condition->id}", $return, $condition );
+
+		return $return;
+	}
+
+	/**
+	 * Create condition
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 *
+	 * @return Condition
+	 */
+	public function create_condition( $id, $title, $args = array() )
+	{
+		$condition = new Condition( $id, $title, $args );
+
+		$this->register_condition( $condition );
+
+		return $condition;
 	}
 
 	/**
@@ -202,8 +239,62 @@ final class Conditions
 
 		$return = $condition->apply( $rule['operator'], $rule['value'] );
 
+		$return = apply_filters( "wdc/apply_condition/condition={$condition->id}", $return, $rule['operator'], $rule['value'], $condition );
+
+		// Return
+
 		return null === $return ? $return : (bool) $return;
 	}
+
+	/**
+	 * Add condition category
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 */
+	public function add_condition_category( $id, $title, $args = array() )
+	{
+		$args = wp_parse_args( $args, array
+		(
+			'order' => 10,
+		));
+
+		extract( $args, EXTR_SKIP );
+
+		$category = array
+		(
+			'id'    => $id,
+			'title' => $title,
+			'order' => $order,
+		);
+
+		$category = apply_filters( "wdc/condition_category", $category );
+
+		if ( ! $category ) 
+		{
+			return;
+		}
+
+		$this->categories[ $category['id'] ] = $category;
+	}
+
+	/**
+	 * Get condition categories
+	 *
+	 * @return array
+	 */
+	public function get_condition_categories()
+	{
+		return $this->categories;
+	}
+}
+
+function create_condition( $id, $title, $args = array() )
+{
+	$conditions = Conditions::get_instance();
+
+	return $conditions->create_condition( $id, $title, $args );
 }
 
 function register_condition( $condition )
@@ -246,6 +337,20 @@ function apply_condition( $rule )
 	$conditions = Conditions::get_instance();
 
 	return $conditions->apply_condition( $rule );
+}
+
+function add_condition_category( $id, $title, $args = array() )
+{
+	$conditions = Conditions::get_instance();
+
+	$conditions->add_condition_category( $id, $title, $args );
+}
+
+function get_condition_categories()
+{
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_condition_categories();
 }
 
 function get_param_field_items()

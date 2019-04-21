@@ -27,6 +27,23 @@ final class Operators
 	}
 
 	/**
+	 * Create operator
+	 *
+	 * @param string $id
+	 * @param string $title
+	 *
+	 * @return Operator
+	 */
+	public function create_operator( $id, $title )
+	{
+		$operator = new Operator( $id, $title );
+
+		$this->register_operator( $operator );
+
+		return $operator;
+	}
+
+	/**
 	 * Register operator
 	 *
 	 * @param mixed $operator
@@ -89,6 +106,8 @@ final class Operators
 	 */
 	public function apply_operator( $operator_id, $a, $b )
 	{
+		// Get operator
+		
 		$operator = $this->get_operator( $operator_id );
 
 		if ( ! $operator ) 
@@ -98,10 +117,23 @@ final class Operators
 			return null;
 		}
 
+		// Apply
+
 		$return = $operator->apply( $a, $b );
+
+		$return = apply_filters( "wdc/apply_operator/operator={$operator->id}", $return, $a, $b, $operator );
+
+		// Return
 
 		return null === $return ? $return : (bool) $return;
 	}
+}
+
+function create_operator( $id, $title )
+{
+	$operators = Operators::get_instance();
+
+	return $operators->create_operator( $id, $title );
 }
 
 function register_operator( $operator )
