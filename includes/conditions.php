@@ -1,18 +1,100 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly.
+<?php 
+/**
+ * Conditions API
+ */
 
-class WDC_Conditions
+namespace wdc;
+
+final class Conditions
 {
-	protected $conditions = array();
-	protected $categories = array();
+	static private $instance = null;
 
-	public function __construct()
+	static public function get_instance()
+	{
+		if ( ! self::$instance ) 
+		{
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	protected $conditions = array();
+
+	private function __construct()
 	{
 		
 	}
 
+	/**
+	 * Get Param Field Items
+	 *
+	 * @return array
+	 */
+	function get_param_field_items()
+	{
+		$conditions = $this->get_conditions();
+
+		$items = array();
+
+		foreach ( $conditions as $condition ) 
+		{
+			$items[ $condition->id ] = array
+			(
+				'id'   => $condition->id,
+				'text' => $condition->title,
+			);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Get Operator Field Items
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
+	function get_operator_field_items( $condition_id )
+	{
+		$condition = $this->get_condition( $condition_id );
+
+		if ( $condition ) 
+		{
+			return $condition->get_operator_field_items();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get Value Field Items
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
+	function get_value_field_items( $condition_id )
+	{
+		$condition = $this->get_condition( $condition_id );
+
+		if ( $condition ) 
+		{
+			return $condition->get_value_field_items();
+		}
+
+		return null;
+	}
+
+	/**
+	 * Register condition
+	 *
+	 * @param mixed $condition
+	 */
 	public function register_condition( $condition )
 	{
-		if ( ! $condition instanceof WDC_Condition ) 
+		if ( ! $condition instanceof Condition ) 
 		{
 			$condition = new $condition();
 		}
@@ -20,31 +102,33 @@ class WDC_Conditions
 		$this->conditions[ $condition->id ] = $condition;
 	}
 
+	/**
+	 * Unregister condition
+	 *
+	 * @param string $condition_id
+	 */
 	public function unregister_condition( $condition_id )
 	{
 		unset( $this->conditions[ $condition_id ] );
 	}
 
-	public function get_conditions( $category = '' )
+	/**
+	 * Get conditions
+	 *
+	 * @return array
+	 */
+	public function get_conditions()
 	{
-		if ( ! $category ) 
-		{
-			return $this->get_objects();
-		}
-
-		$conditions = array();
-
-		foreach ( $this->conditions as $key => $condition ) 
-		{
-			if ( $condition->category == $category ) 
-			{
-				$conditions[ $key ] = $condition;
-			}
-		}
-
-		return $conditions;
+		return $this->conditions;
 	}
 
+	/**
+	 * Get condition
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
 	public function get_condition( $condition_id )
 	{
 		if ( isset( $this->conditions[ $condition_id ] ) ) 
@@ -55,121 +139,132 @@ class WDC_Conditions
 		return null;
 	}
 
-	public function get_categories()
+	/**
+	 * Apply Conditions
+	 *
+	 * @param array $rules
+	 *
+	 * @return bool
+	 */
+	public function apply_conditions( $rules )
 	{
-		return $this->categories;
-	}
+		if ( ! $rules ) return true;
 
-	public function get_category( $id )
-	{
-		if ( isset( $this->categories[ $id ] ) ) 
+		$return = false;
+
+		foreach ( $rules as $group ) 
 		{
-			return $this->categories[ $id ];
-		}
-
-		return null;
-	}
-
-	public function add_category( $id, $title )
-	{
-		$this->categories[ $id ] = array
-		(
-			'id'    => $id,
-			'title' => $title
-		);
-	}
-
-	public function remove_category( $id )
-	{
-		unset( $this->categories[ $id ] );
-	}
-
-	public function apply( $conditions )
-	{
-		if ( empty( $conditions ) ) 
-		{
-			return true;
-		}
-
-		$valid = false;
-		
-		foreach ( $conditions as $condition_group ) 
-		{
-			foreach ( $condition_group as $instance )
+			foreach ( $group as $rule ) 
 			{
-				$condition = $this->get_condition( $instance->param );
-				$operator  = wdc()->operators->get_operator( $instance->operator );
+				$return = $this->apply_condition( $rule );
 
-				if ( $condition && $operator ) 
-				{
-					$valid = $condition->apply( $instance->value, $operator );
-				}
-
-				else
-				{
-					$valid = false;
-				}
-
-				if ( ! $valid ) 
-				{
-					break;
-				}
+				if ( ! $return ) break;
 			}
 
-			if ( $valid ) 
-			{
-				break;
-			}
+			if ( $return ) break;
 		}
 
-		return $valid;
+		return $return;
+	}
+
+	/**
+	 * Apply Condition
+	 *
+	 * @param array $rule
+	 *
+	 * @return mixed
+	 */
+	public function apply_condition( $rule )
+	{
+		// Check rule
+
+		if ( ! is_array( $rule ) || ! isset( $rule['param'], $rule['operator'], $rule['value'] ) ) 
+		{
+			trigger_error( "Invalid rule: 'param', 'operator' and 'value' are required.", E_USER_NOTICE );
+
+			return null;
+		}
+
+		// Get condition
+
+		$condition_id = $rule['param'];
+
+		$condition = $this->get_condition( $condition_id );
+
+		if ( ! $condition ) 
+		{
+			trigger_error( sprintf( "Unable to find condition '%s'.", $condition_id ), E_USER_NOTICE );
+
+			return null;
+		}
+
+		// Apply condition
+
+		$return = $condition->apply( $rule['operator'], $rule['value'] );
+
+		return null === $return ? $return : (bool) $return;
 	}
 }
 
-wdc()->conditions = new WDC_Conditions();
-
-function wdc_register_condition( $condition )
+function register_condition( $condition )
 {
-	wdc()->conditions->register_condition( $condition );
+	$conditions = Conditions::get_instance();
+
+	$conditions->register_condition( $condition );
 }
 
-function wdc_unregister_condition( $condition_id )
+function unregister_condition( $condition_id )
 {
-	wdc()->conditions->unregister_condition( $condition_id );
+	$conditions = Conditions::get_instance();
+
+	$conditions->unregister_condition( $condition_id );
 }
 
-function wdc_get_conditions( $category = '' )
+function get_conditions()
 {
-	return wdc()->conditions->get_conditions( $category );
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_conditions();
 }
 
-function wdc_get_condition( $condition_id )
+function get_condition( $condition_id )
 {
-	return wdc()->conditions->get_condition( $condition_id );
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_condition( $condition_id );
 }
 
-function wdc_add_category( $id, $title )
+function apply_conditions( $rules )
 {
-	return wdc()->conditions->add_category( $condition_id );
+	$conditions = Conditions::get_instance();
+
+	return $conditions->apply_conditions( $rules );
 }
 
-function wdc_remove_category( $category_id )
+function apply_condition( $rule )
 {
-	return wdc()->conditions->remove_category( $category_id );
+	$conditions = Conditions::get_instance();
+
+	return $conditions->apply_condition( $rule );
 }
 
-function wdc_get_categories()
+function get_param_field_items()
 {
-	return wdc()->conditions->get_categories();
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_param_field_items();
 }
 
-function wdc_get_category( $category_id )
+function get_operator_field_items( $condition_id )
 {
-	return wdc()->conditions->get_category( $category_id );
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_operator_field_items( $condition_id );
 }
 
-function wdc_apply_conditions( $conditions )
+function get_value_field_items( $condition_id )
 {
-	return wdc()->conditions->apply( $conditions );
-}
+	$conditions = Conditions::get_instance();
 
+	return $conditions->get_value_field_items( $condition_id );
+}

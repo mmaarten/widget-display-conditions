@@ -1,27 +1,26 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php 
 
-class WDC_Page_Condition extends WDC_Condition
+namespace wdc;
+
+class Page_Condition extends Condition
 {
 	public function __construct()
 	{
 		parent::__construct( 'page', __( 'Page', 'wdc' ), array
 		(
-			'category' => 'page'
+			'category' => 'page',
 		));
 	}
 
-	public function get_values()
+	public function get_value_field_items()
 	{
-		return wdc_post_choices( array
-		(
-			'post_type' => 'page'
-		));
+		return get_post_field_items( 'page' );
 	}
 
-	public function apply( $value, $operator )
+	public function apply( $operator, $value )
 	{
-		return $operator->apply( is_page( $value ), true );
+		return apply_operator( $operator, is_page( $value ), true );
 	}
 }
 
-wdc_register_condition( 'WDC_Page_Condition' );
+register_condition( 'wdc\Page_Condition' );

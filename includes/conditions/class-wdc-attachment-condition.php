@@ -1,27 +1,26 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php 
 
-class WDC_Attachment_Condition extends WDC_Condition
+namespace wdc;
+
+class Attachment_Condition extends Condition
 {
 	public function __construct()
 	{
 		parent::__construct( 'attachment', __( 'Attachment', 'wdc' ), array
 		(
-			'category' => 'attachment'
+			'category' => 'attachment',
 		));
 	}
 
-	public function get_values()
+	public function get_value_field_items()
 	{
-		return wdc_post_choices( array
-		(
-			'post_type' => 'attachment'
-		));
+		return get_post_field_items( 'attachment' );
 	}
 
-	public function apply( $value, $operator )
+	public function apply( $operator, $value )
 	{
-		return $operator->apply( is_attachment( $value ), true );
+		return apply_operator( $operator, is_attachment( $value ), true );
 	}
 }
 
-wdc_register_condition( 'WDC_Attachment_Condition' );
+register_condition( 'wdc\Attachment_Condition' );

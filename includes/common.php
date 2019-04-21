@@ -1,95 +1,82 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php
+/**
+ * Common
+ */
 
-function wdc()
+namespace wdc;
+
+// info|warning|error
+function admin_notice( $message, $type = 'info' ) 
 {
-	static $instance = null;
+	$class = sprintf( 'notice notice-%s', sanitize_html_class( $type ) );
 
-	if ( ! $instance ) 
-	{
-		$instance = new WDC();
-	}
-
-	return $instance;
+	printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message ); 
 }
 
 /**
- * Get Widget Instance
+ * Get Dropdown Options
  *
- * Returns an array containing widget settings.
+ * @param array $items
  *
- * @param string $widget_id The widget id.
- * @return array Widget settings.
+ * @return string
  */
-function wdc_get_widget_instance( $widget_id )
+function get_dropdown_options( $items )
 {
-	if ( ! preg_match( '/(.*?)-(\d+)$/', $widget_id, $matches ) ) 
+	$return = '';
+
+	foreach ( $items as $item ) 
 	{
-		return null;
+		$item = wp_parse_args( $item, array( 'id' => '', 'text' => '', 'selected' => false ) );
+
+		if ( array_key_exists( 'children', $item ) ) 
+		{
+			if ( is_array( $item['children'] ) ) 
+			{
+				$return .= sprintf( '<optgroup label="%s">', esc_attr( $item['text'] ) );
+				$return .= get_dropdown_options( $item['children'] );
+				$return .= '</optgroup>';
+			}
+		}
+
+		else
+		{
+			$return .= sprintf( '<option value="%s"%s>%s</option>>', 
+				esc_attr( $item['id'] ), $item['selected'] ? ' selected' : '', esc_html( $item['text'] ) );
+		}
 	}
 
-	list( , $id_base, $num ) = $matches;
-
-	$instances = get_option( "widget_$id_base" );
-
-	if ( ! is_array( $instances ) || ! isset( $instances[ $num ] ) ) 
-	{
-		return null;
-	}
-
-	return (array) $instances[ $num ];
+	return $return;
 }
 
-function wdc_get_widget_conditions( $widget_id )
+function get_post_field_items( $post_type )
 {
-	$instance = wdc_get_widget_instance( $widget_id );
+	$post_types = (array) $post_type;
+	$is_group   = count( $post_types ) > 1;
 
-	if ( ! $instance ) 
-	{
-		return null;
-	}
-
-	if ( isset( $instance['wdc_conditions'] ) ) 
-	{
-		return (array) $instance['wdc_conditions'];
-	}
-
-	return array();
-}
-
-function wdc_post_choices( $args = null )
-{
-	$defaults = array
-	(
-		'post_type'   => 'post',
-		'group'       => false,
-		'post_status' => 'any'
-	);
-
-	$args = wp_parse_args( $args, $defaults );
-
-	$choices = array();
-
-	$post_types = (array) $args['post_type'];
+	$counter = 0;
 
 	foreach ( $post_types as $post_type ) 
 	{
+		// Get post type object
+
 		$post_type = get_post_type_object( $post_type );
 
-		if ( ! $post_type ) 
-		{
-			continue;
-		}
+		if ( ! $post_type ) continue;
 
-		$is_post_type_hierarchical = is_post_type_hierarchical( $post_type->name );
+		// Get posts
 
-		if ( $is_post_type_hierarchical ) 
+		$is_hierarchical = is_post_type_hierarchical( $post_type->name );
+
+		if ( $is_hierarchical ) 
 		{
 			$posts = get_pages( array
 			(
 				'post_type'    => $post_type->name,
 				'hierarchical' => true,
-				//'post_status'  => $args['post_status'], Does not work.
-				'numberposts'  => WDC_MAX_NUMBERPOSTS
+				'post_status'  => 'publish',
+				'sort_column'  => 'post_title',
+				'sort_order'   => 'asc',
+				'number'       => WDC_MAX_NUMBER_POSTS,
 			));
 		}
 
@@ -98,102 +85,89 @@ function wdc_post_choices( $args = null )
 			$posts = get_posts( array
 			(
 				'post_type'   => $post_type->name,
+				'post_status' => 'attachment' == $post_type->name ? 'inherit' : 'publish',
 				'orderby'     => 'post_title',
 				'order'       => 'ASC',
-				'post_status' => $args['post_status'],
-				'numberposts' => WDC_MAX_NUMBERPOSTS
+				'numberposts' => WDC_MAX_NUMBER_POSTS,
 			));
 		}
 
-		if ( ! count( $posts ) ) 
-		{
-			continue;
-		}
+		// Check if posts
 
-		if ( $args['group'] ) 
-		{
-			// Creates `<optgroup>`.
+		if ( ! $posts ) continue;
 
-			$choices[ $post_type->name ] = array
-			(
-				'text'     => $post_type->labels->singular_name,
-				'children' => array()
-			);
+		// Create items
 
-			$parent = &$choices[ $post_type->name ]['children'];
-		}
-
-		else
-		{
-			$parent = &$choices;
-		}
-
-		// Creates `<option>` elements.
+		$group = array
+		(
+			'id'       => $post_type->name,
+			'text'     => $post_type->labels->singular_name,
+			'children' => array(),
+		);
 
 		foreach ( $posts as $post ) 
 		{
-			$prefix = '';
+			$text = $post->post_title;
+			$pad  = '';
 
-			// Shows hierarchy
-
-			if ( $is_post_type_hierarchical ) 
+			if ( '' == trim( $text ) ) 
 			{
-				$ancestors = get_ancestors( $post->ID, $post->post_type, 'post_type' );
+				$text = $post->ID;
+			}
 
-				$prefix = str_repeat( '–', count( $ancestors ) ) . ' ';
+			// Show hierarchy
+
+			if ( $is_hierarchical ) 
+			{
+				$depth = count( get_post_ancestors( $post ) );
+				$pad   = str_repeat( '&nbsp;', $depth * 3 );
 			}
 
 			//
 
-			$parent[] = array
+			$group['children'][] = array
 			(
 				'id'   => $post->ID,
-				'text' => $prefix . $post->post_title
+				//'text' => "{$text_before}{$text}",
+				'html' => $pad . esc_html( $text ),
 			);
 		}
+
+		$items[] = $group;
 	}
 
-	return $choices;
+	if ( ! $is_group && $items ) 
+	{
+		$items = $items[0]['children'];
+	}
+
+	return $items;
 }
 
-function wdc_term_choices( $args )
+function get_term_field_items( $taxonomy )
 {
-	$defaults = array
-	(
-		'taxonomy' => '',
-		'group'    => false
-	);
+	$taxonomies = (array) $taxonomy;
+	$is_group   = count( $taxonomies ) > 1;
 
-	$args = wp_parse_args( $args, $defaults );
+	$items = array();
 
-	$choices = array();
-
-	if ( $args['taxonomy'] ) 
+	foreach ( $taxonomies as $taxonomy ) 
 	{
-		$taxonomies = (array) $args['taxonomy'];
-	}
+		// Get taxonomy object
 
-	else
-	{
-		$taxonomies = get_taxonomies( array( 'public' => true ), 'names' );
-	}
+		$taxonomy = get_taxonomy( $taxonomy );
 
-	foreach ( $taxonomies as $taxonomy_name ) 
-	{
-		$taxonomy = get_taxonomy( $taxonomy_name );
+		if ( ! $taxonomy ) continue;
 
-		if ( ! $taxonomy ) 
-		{
-			continue;
-		}
+		$is_hierarchical = is_taxonomy_hierarchical( $taxonomy->name );
 
-		$is_taxonomy_hierarchical = is_taxonomy_hierarchical( $taxonomy->name );
+		// Get terms
 
-		if ( $is_taxonomy_hierarchical ) 
+		if ( $is_hierarchical ) 
 		{
 			$terms = get_categories( array
 			(
-				'taxonomy' => $taxonomy->name
+				'taxonomy' => $taxonomy->name,
 			));
 		}
 
@@ -207,60 +181,60 @@ function wdc_term_choices( $args )
 			));
 		}
 
-		// Checks if posts.
+		// Checks if terms.
 
-		if ( ! count( $terms ) ) 
-		{
-			continue;
-		}
+		if ( ! count( $terms ) ) continue;
 
-		if ( $args['group'] ) 
-		{
-			// Creates `<optgroup>`.
+		// Create items
 
-			$choices[ $taxonomy->name ] = array
-			(
-				'text'     => $taxonomy->labels->singular_name,
-				'children' => array()
-			);
-
-			$parent = &$choices[ $taxonomy->name ]['children'];
-		}
-
-		else
-		{
-			$parent = &$choices;
-		}
+		$group = array
+		(
+			'text'     => $taxonomy->labels->singular_name,
+			'children' => array(),
+		);
 
 		// Creates `<option>` elements.
 
 		foreach ( $terms as $term ) 
 		{
-			$prefix = '';
+			$text = $term->name;
+			$text_before = '';
 
-			// Shows hierarchy
+			if ( '' == trim( $text ) ) 
+			{
+				$text = $term->term_id;
+			}
 
-			if ( $is_taxonomy_hierarchical ) 
+			// Show hierarchy
+
+			if ( $is_hierarchical ) 
 			{
 				$ancestors = get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' );
 
-				$prefix = str_repeat( '–', count( $ancestors ) ) . ' ';
+				$text_before = str_repeat( '–', count( $ancestors ) ) . ' ';
 			}
 
 			//
 
-			$parent[] = array
+			$group['children'][] = array
 			(
 				'id'   => $term->term_id,
-				'text' => $prefix. $term->name
+				'text' => "{$text_before}{$text}"
 			);
 		}
+
+		$items[] = $group;
 	}
 
-	return $choices;
+	if ( ! $is_group && $items ) 
+	{
+		$items = $items[0]['children'];
+	}
+
+	return $items;
 }
 
-function wdc_user_choices( $args = null )
+function get_user_field_items( $args = null )
 {
 	$defaults = array
 	(
@@ -282,79 +256,34 @@ function wdc_user_choices( $args = null )
 
 	foreach ( $users as $user ) 
 	{
-		$choices[] = array
+		$choices[ $user->ID ] = array
 		(
 			'id'   => $user->ID,
-			'text' => $user->display_name
+			'text' => $user->display_name,
 		);
 	}
 
 	return $choices;
 }
 
-function wdc_post_type_choices( $args = null )
+function get_page_template_field_items()
 {
-	$defaults = array
+	$items['default'] = array
 	(
-		'public'      => true,
-		'has_archive' => null
-	);
-
-	$args = wp_parse_args( $args, $defaults );
-
-	$choices = array();
-
-	$post_types = get_post_types( array
-	(
-		'public' => $args['public']
-	), 'objects' );
-
-	foreach ( $post_types as $post_type ) 
-	{
-		if ( ! is_null( $args['has_archive'] ) )
-		{
-			if ( $args['has_archive'] && ! $post_type->has_archive ) 
-			{
-				continue;
-			}
-
-			elseif ( ! $args['has_archive'] && $post_type->has_archive ) 
-			{
-				continue;
-			}
-		}
-
-		$choices[] = array
-		(
-			'id'   => $post_type->name,
-			'text' => $post_type->labels->singular_name
-		);
-	}
-
-	return $choices;
-}
-
-function wdc_page_template_choices()
-{
-	$choices = array
-	(
-		array
-		(
-			'id'   => 'default',
-			'text' => __( 'Default', 'wdc' )
-		)
+		'id'   => 'default',
+		'text' => __( 'Default', 'wdc' )
 	);
 
 	$page_templates = get_page_templates();
 
 	foreach ( $page_templates as $template_name => $template_file ) 
 	{
-		$choices[] = array
+		$items[ $template_name ] = array
 		(
 			'id'   => $template_file,
 			'text' => $template_name
 		);
 	}
 
-	return $choices;
+	return $items;
 }

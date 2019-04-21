@@ -1,23 +1,24 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php 
+/**
+ * Condition
+ */
 
-class WDC_Condition
+namespace wdc;
+
+class Condition
 {
 	public $id        = null;
 	public $title     = null;
 	public $category  = null;
 	public $operators = array();
 
-	public function __construct( $id, $title, $args = null )
+	public function __construct( $id, $title, $args = array() )
 	{
-		$defaults = array
+		$defaults = apply_filters( 'wdc/condition_defaults', array
 		(
-			'category'  => 'default',
-			'operators' => apply_filters( 'wdc_default_operators', array
-			(
-				'==', 
-				'!='
-			))
-		);
+			'category'  => '',
+			'operators' => array(),
+		));
 
 		$args = wp_parse_args( $args, $defaults );
 
@@ -27,65 +28,48 @@ class WDC_Condition
 		$this->title     = $title;
 		$this->category  = $category;
 		$this->operators = (array) $operators;
+
+		do_action( 'wdc/condition', $this );
 	}
 
-	/**
-	 * Get Values
-	 *
-	 * @return array
-	 *
-	 * Format
-	 * ======
-	 *
-	 * basic
-	 * -----
-	 * array
-	 * (
-	 *   array( 'id' => 'php', 'text' => 'PHP' ),
-	 *   array( 'id' => 'python', 'text' => 'Python' )
-	 * );
-	 *
-	 * renders:
-	 *
-	 * <option value="php">PHP</option>
-	 * <option value="python">Python</option>
-	 *
-	 * grouped
-	 * -------
-	 * array
-	 * (
-	 *   array
-	 *	 ( 
-	 *	   'text'     => 'Programming language', 
-	 *     'children' => array
-	 *     (
-	 *        array( 'id' => 'php', 'text' => 'PHP' ),
-	 *        array( 'id' => 'python', 'text' => 'Python' )	
-	 *     )
-	 * );
-	 *
-	 * renders:
-	 *
-	 * <optgroup label="Programming language">
-	 *   <option value="php">PHP</option>
-	 *   <option value="python">Python</option>
-	 * </optgroup>
-	 */
-	public function get_values()
+	public function get_operator_objects()
+	{
+		return array_intersect_key( get_operators(), array_flip( $this->operators ) );
+	}
+
+	public function get_operator_field_items()
+	{
+		$operators = $this->get_operator_objects();
+
+		$items = array();
+
+		foreach ( $operators as $operator ) 
+		{
+			$items[ $operator->id ] = array
+			(
+				'id'   => $operator->id,
+				'text' => $operator->title,
+			);
+		}
+
+		return $items; 
+	}
+
+	public function get_value_field_items()
 	{
 		return array();
 	}
 
-	/**
-	 * Apply
-	 *
-	 * Returns the result of the condition.
-	 * 
-	 * @param $value mixed The value the user has choosen.
-	 * @param $operator WDC_Operator_Base The operator object
-	 * @return boolean
-	 */
-	public function apply( $value, $operator )
+	public function get_fields_items()
+	{
+		return array
+		(
+			'operator' => $condition->get_operator_field_items(),
+			'value'    => $condition->get_value_field_items(),
+		);
+	}
+
+	public function apply( $operator, $value )
 	{
 		return false;
 	}

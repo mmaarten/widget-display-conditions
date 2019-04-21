@@ -1,24 +1,26 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php 
 
-class WDC_User_Condition extends WDC_Condition
+namespace wdc;
+
+class User_Condition extends Condition
 {
 	public function __construct()
 	{
 		parent::__construct( 'user', __( 'User', 'wdc' ), array
 		(
-			'category' => 'user'
+			'category' => 'user',
 		));
 	}
 
-	public function get_values()
+	public function get_value_field_items()
 	{
-		return wdc_user_choices();
+		return get_user_field_items();
 	}
 
-	public function apply( $value, $operator )
+	public function apply( $operator, $value )
 	{
-		return $operator->apply( get_current_user_id(), $value );
+		return apply_operator( $operator, get_current_user_id(), $value );
 	}
 }
 
-wdc_register_condition( 'WDC_User_Condition' );
+register_condition( 'wdc\User_Condition' );

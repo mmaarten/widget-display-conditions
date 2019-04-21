@@ -1,6 +1,11 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php 
+/**
+ * Operator
+ */
 
-class WDC_Operator
+namespace wdc;
+
+class Operator
 {
 	public $id    = null;
 	public $title = null;
@@ -9,9 +14,11 @@ class WDC_Operator
 	{
 		$this->id    = $id;
 		$this->title = $title;
+
+		do_action( 'wdc/operator', $this );
 	}
 
-	public function apply( $param, $value )
+	public function apply( $a, $b )
 	{
 		return false;
 	}

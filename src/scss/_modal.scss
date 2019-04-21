@@ -1,0 +1,244 @@
+
+$modal-heading-padding-x		: 15px;
+$modal-heading-padding-y		: 0;
+$modal-heading-border			: 1px solid #ddd;
+$modal-heading-margin-bottom	: 1em;
+
+$modal-title-color     : inherit;
+$modal-title-font-size : 22px;
+$modal-title-line-height: 50px;
+
+$modal-content-padding-x	: 15px;
+$modal-content-padding-y	: 15px;
+$modal-content-bg-color		: #fcfcfc;
+$modal-content-box-shadow	: 0 5px 15px rgba( #000, .7 );
+
+$modal-bg-color	: rgba( #000, .7 );
+$modal-z-index	: 160000;
+
+$modal-close-height			: 50px;
+$modal-close-width			: 50px;
+$modal-close-color			: #666;
+$modal-close-hover-color	: #00a0d2;
+
+html.with-wdc-featherlight 
+{
+	/* disable global scrolling when wdc-modals are visible */
+	overflow: hidden;
+}
+
+.wdc-modal 
+{
+	display: none;
+
+	/* dimensions: spanning the background from edge to edge */
+	position:fixed;
+	top: 0; right: 0; bottom: 0; left: 0;
+	z-index: $modal-z-index; /* z-index needs to be >= elements on the site. */
+
+	/* position: centering content */
+	text-align: center;
+
+	/* insures that the ::before pseudo element doesn't force wrap with fixed width content; */
+	white-space: nowrap;
+
+	/* styling */
+	cursor: pointer;
+	
+	background: $modal-bg-color;
+}
+
+/* support for nested wdc-modals. Does not work in IE8 (use JS to fix) */
+.wdc-modal:last-of-type 
+{
+	//background: rgba(0, 0, 0, 0.8);
+}
+
+.wdc-modal:before 
+{
+	/* position: trick to center content vertically */
+	content: '';
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.wdc-modal-content 
+{
+	/* make content container for positioned elements (close button) */
+	position: relative;
+
+	/* position: centering vertical and horizontal */
+	text-align: left;
+	vertical-align: middle;
+	display: inline-block;
+
+	/* dimensions: cut off images */
+	overflow: auto;
+	padding: $modal-content-padding-y $modal-content-padding-x 0;
+	border-bottom: $modal-content-padding-y solid transparent;
+
+	/* dimensions: handling large content */
+	margin-left: 5%;
+	margin-right: 5%;
+	max-height: 95%;
+
+	/* styling */
+	cursor: auto;
+	background: $modal-content-bg-color;
+	box-shadow: $modal-content-box-shadow;
+
+	/* reset white-space wrapping */
+	white-space: normal;
+
+	h1
+	{
+		margin: ( -$modal-content-padding-y ) ( -$modal-content-padding-x ) $modal-heading-margin-bottom;
+		padding: $modal-heading-padding-y ( $modal-content-padding-x + $modal-close-width ) $modal-heading-padding-y $modal-content-padding-x;
+
+		font-size: $modal-title-font-size;
+		line-height: $modal-title-line-height;
+
+		border-bottom: $modal-heading-border;
+	}
+}
+
+/* contains the content */
+.wdc-modal-inner 
+{
+	/* make sure its visible */
+	display: block;
+}
+
+/* don't show these though */
+script.wdc-modal-inner,
+link.wdc-modal-inner,
+style.wdc-modal-inner 
+{
+	display: none;
+}
+
+.wdc-modal-close-icon 
+{
+	/* position: centering vertical and horizontal */
+	position: absolute;
+	z-index: 9999;
+	top: 0;
+	right: 0;
+
+	/* dimensions */
+	line-height: $modal-close-height;
+	width: $modal-close-width;
+
+	/* styling */
+	cursor: pointer;
+	text-align: center;
+	border: 1px solid transparent;
+    background: none;
+	padding: 0;
+
+	cursor: pointer;
+    outline: none;
+
+    // Custom icon
+
+    color: transparent;
+
+    &:before
+    {
+    	color: $modal-close-color;
+
+    	position: absolute;
+   	 	top: 50%;
+    	left: 50%;
+    	transform: translate( -50%, -50% );
+
+    	content: "\f158";
+	    font: normal 20px/1 dashicons;
+	    speak: none;
+	    vertical-align: middle;
+	    -webkit-font-smoothing: antialiased;
+	    -moz-osx-font-smoothing: grayscale;
+
+	    transition: color .1s ease-in-out, background .1s ease-in-out;
+    }
+
+    &:focus
+    {
+    	color: #00a0d2;
+	    border-color: #5b9dd9;
+	    box-shadow: 0 0 3px rgba( 0, 115, 170, .8 );
+	    outline: 2px solid transparent;
+	    outline-offset: -2px;
+    }
+
+    &:hover,
+    &:active
+    {
+    	&:before
+    	{
+    		color: $modal-close-hover-color;
+    	}
+    }
+}
+
+/* See http://stackoverflow.com/questions/16077341/how-to-reset-all-default-styles-of-the-html5-button-element */
+.wdc-modal-close-icon::-moz-focus-inner 
+{
+	border: 0;
+	padding: 0;
+}
+
+.wdc-modal-image 
+{
+	/* styling */
+	width: 100%;
+}
+
+.wdc-modal-iframe .wdc-modal-content 
+{
+	/* removed the border for image croping since iframe is edge to edge */
+	border-bottom: 0;
+	padding: 0;
+	-webkit-overflow-scrolling: touch;
+}
+
+.wdc-modal iframe 
+{
+	/* styling */
+	border: none;
+}
+
+/* See https://github.com/noelboss/wdc-modal/issues/42 */
+.wdc-modal * 
+{ 
+	box-sizing: border-box;
+}
+
+/* handling phones and small screens */
+
+@media only screen and ( max-width: 850px ) 
+{
+	.wdc-modal-content
+	{
+		max-width: 100%;
+	}
+}
+
+@media only screen and ( min-width: 851px ) 
+{
+	.wdc-modal-content
+	{
+		width: 800px;
+	}
+}
+
+
+/* hide non wdc-modal items when printing */
+@media print 
+{
+	html.with-featherlight > * > :not( .wdc-modal ) 
+	{
+		display: none;
+	}
+}

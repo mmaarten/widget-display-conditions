@@ -1,40 +1,31 @@
-<?php if ( ! defined( 'ABSPATH' ) ) exit; // Exits when accessed directly
+<?php 
 
-class WDC_Post_Condition extends WDC_Condition
+namespace wdc;
+
+class Post_Condition extends Condition
 {
 	public function __construct()
 	{
 		parent::__construct( 'post', __( 'Post', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category' => 'post',
 		));
 	}
 
-	public function get_values()
+	public function get_value_field_items()
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'names' );
 
-		if ( isset( $post_types['page'] ) ) 
-		{
-			unset( $post_types['page'] );
-		}
+		if ( isset( $post_types['page'] ) )       unset( $post_types['page'] );
+		if ( isset( $post_types['attachment'] ) ) unset( $post_types['attachment'] );
 
-		if ( isset( $post_types['attachment'] ) ) 
-		{
-			unset( $post_types['attachment'] );
-		}
-
-		return wdc_post_choices( array
-		(
-			'post_type' => $post_types,
-			'group'     => true
-		));
+		return get_post_field_items( $post_types );
 	}
 
-	public function apply( $value, $operator )
+	public function apply( $operator, $value )
 	{
-		return $operator->apply( is_single( $value ), true );
+		return apply_operator( $operator, is_single( $value ), true );
 	}
 }
 
-wdc_register_condition( 'WDC_Post_Condition' );
+register_condition( 'wdc\Post_Condition' );
