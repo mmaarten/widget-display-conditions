@@ -1,6 +1,6 @@
 <?php 
 /*
-Plugin Name:  Widget Display Conditions - NEW
+Plugin Name:  Widget Display Conditions
 Plugin URI:   https://wordpress.org/plugins/widget-display-conditions/
 Description:  Control on which page you want a particular widget to be displayed.
 Version:      0.2.0
