@@ -61,6 +61,8 @@ class Condition
 	{
 		$operators = $this->get_operator_objects();
 
+		uasort( $operators, 'wdc\sort_order' );
+
 		$items = array();
 
 		foreach ( $operators as $operator ) 

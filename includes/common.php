@@ -5,6 +5,19 @@
 
 namespace wdc;
 
+function sort_order( $a, $b )
+{
+	if ( ! is_array( $a ) ) $a = get_object_vars( $a );
+	if ( ! is_array( $b ) ) $b = get_object_vars( $b );
+
+	if ( $a['order'] == $b['order'] ) 
+	{
+        return 0;
+    }
+
+    return ( $a['order'] < $b['order'] ) ? -1 : 1;
+}
+
 // info|warning|error
 function admin_notice( $message, $type = 'info' ) 
 {

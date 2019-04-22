@@ -9,6 +9,7 @@ class Post_Format_Condition extends Condition
 		parent::__construct( 'post_format', __( 'Post Format', 'wdc' ), array
 		(
 			'category' => 'post',
+			'order'    => 70,
 		));
 	}
 

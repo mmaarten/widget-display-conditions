@@ -9,6 +9,7 @@ class User_Role_Condition extends Condition
 		parent::__construct( 'user_role', __( 'User Role', 'wdc' ), array
 		(
 			'category' => 'user',
+			'order'    => 10,
 		));
 	}
 

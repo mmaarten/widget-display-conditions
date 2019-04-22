@@ -9,6 +9,7 @@ class Archive_Taxonomy_Condition extends Condition
 		parent::__construct( 'taxonomy_archive', __( 'Archive Taxonomy', 'wdc' ), array
 		(
 			'category' => 'archive',
+			'order'    => 30,
 		));
 	}
 

@@ -31,11 +31,11 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/operators/class-wdc-is_equa
 require_once plugin_dir_path( WDC_FILE ) . 'includes/operators/class-wdc-is_not_equal_to-operator.php';
 
 // Condition categories
-add_condition_category( 'post'      , __( 'Post', 'wdc' ) );
-add_condition_category( 'page'      , __( 'Page', 'wdc' ) );
-add_condition_category( 'attachment', __( 'Attachment', 'wdc' ) );
-add_condition_category( 'archive'   , __( 'Archive', 'wdc' ) );
-add_condition_category( 'user'      , __( 'User', 'wdc' ) );
+add_condition_category( 'post'      , __( 'Post', 'wdc' )      , array( 'order' => 10 ) );
+add_condition_category( 'page'      , __( 'Page', 'wdc' )      , array( 'order' => 20 ) );
+add_condition_category( 'attachment', __( 'Attachment', 'wdc' ), array( 'order' => 30 ) );
+add_condition_category( 'archive'   , __( 'Archive', 'wdc' )   , array( 'order' => 40 ) );
+add_condition_category( 'user'      , __( 'User', 'wdc' )      , array( 'order' => 50 ) );
 
 // Conditions
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-page_type-condition.php';

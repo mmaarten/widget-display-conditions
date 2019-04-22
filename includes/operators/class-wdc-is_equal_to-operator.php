@@ -6,7 +6,10 @@ class Is_Equal_To_Operator extends Operator
 {
 	public function __construct()
 	{
-		parent::__construct( '==', __( 'Is equal to', 'wdc' ) );
+		parent::__construct( '==', __( 'Is equal to', 'wdc' ), array
+		(
+			'order' => 10,
+		));
 	}
 
 	public function apply( $a, $b )

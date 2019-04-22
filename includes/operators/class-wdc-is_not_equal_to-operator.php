@@ -6,7 +6,10 @@ class Is_Not_Equal_To_Operator extends Operator
 {
 	public function __construct()
 	{
-		parent::__construct( '!=', __( 'Is not equal to', 'wdc' ) );
+		parent::__construct( '!=', __( 'Is not equal to', 'wdc' ), array
+		(
+			'order' => 20,
+		));
 	}
 
 	public function apply( $a, $b )

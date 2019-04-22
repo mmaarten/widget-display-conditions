@@ -9,6 +9,7 @@ class Archive_Author_Condition extends Condition
 		parent::__construct( 'author_archive', __( 'Archive Author', 'wdc' ), array
 		(
 			'category' => 'archive',
+			'order'    => 20,
 		));
 	}
 

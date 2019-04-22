@@ -9,6 +9,7 @@ class Page_Template_Condition extends Condition
 		parent::__construct( 'page_template', __( 'Page Template', 'wdc' ), array
 		(
 			'category' => 'page',
+			'order'    => 20,
 		));
 	}
 

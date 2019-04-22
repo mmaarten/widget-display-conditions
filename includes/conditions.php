@@ -36,12 +36,18 @@ final class Conditions
 	{
 		$items = array();
 
-		foreach ( $this->categories as $category ) 
+		$categories = $this->categories;
+		
+		uasort( $categories, 'wdc\sort_order' );
+
+		foreach ( $categories as $category ) 
 		{
 			$conditions = wp_filter_object_list( $this->conditions, array( 'category' => $category['id'] ) );
 
 			if ( ! $conditions ) continue;
 
+			uasort( $conditions, 'wdc\sort_order' );
+			
 			$group = array
 			(
 				'id'       => $category['id'],

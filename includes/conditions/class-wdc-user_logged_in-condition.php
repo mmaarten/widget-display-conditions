@@ -9,6 +9,7 @@ class User_Logged_In_Condition extends Condition
 		parent::__construct( 'user_logged_in', __( 'User Logged In', 'wdc' ), array
 		(
 			'category' => 'user',
+			'order'    => 20,
 		));
 	}
 

@@ -9,6 +9,7 @@ class Page_Parent_Condition extends Condition
 		parent::__construct( 'page_parent', __( 'Page Parent', 'wdc' ), array
 		(
 			'category' => 'page',
+			'order'    => 30,
 		));
 	}
 

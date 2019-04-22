@@ -9,6 +9,7 @@ class Post_Template_Condition extends Condition
 		parent::__construct( 'post_template', __( 'Post Template', 'wdc' ), array
 		(
 			'category' => 'post',
+			'order'    => 60,
 		));
 	}
 

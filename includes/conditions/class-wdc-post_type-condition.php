@@ -9,6 +9,7 @@ class Post_Type_Condition extends Condition
 		parent::__construct( 'post_type', __( 'Post Type', 'wdc' ), array
 		(
 			'category' => 'post',
+			'order'    => 10,
 		));
 	}
 
