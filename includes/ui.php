@@ -187,7 +187,7 @@ final class UI
 					<input type="hidden" name="widget" value="{{ data.widget }}">
 
 					<div class="wdc-hide-if-conditions">
-						<?php admin_notice( __( 'No conditions set.', 'wdc' ) ); ?>
+						<?php admin_notice( __( 'No display limitations set.', 'wdc' ) ); ?>
 					</div>
 
 					<div class="wdc-show-if-conditions">
