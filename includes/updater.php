@@ -121,11 +121,13 @@ final class Updater
 			return;
 		}
 
-		$author = __( 'Widget Display Conditions', 'wdc' );
-		$message = __( 'Database update is required.', 'wdc' );
-		$message .= sprintf( ' <a href="%s">%s</a>', admin_url( 'admin.php?page=wdc-updater' ), esc_html__( 'Go to updater page.', 'wdc' ) );
+		$message = sprintf( '<strong>%s</strong>: %s <a href="%s">%s</a>', 
+			esc_html__( 'Widget Display Conditions', 'wdc' ),
+			esc_html__( 'Database update is required.', 'wdc' ),
+		 	admin_url( 'admin.php?page=wdc-updater' ),
+		 	esc_html__( 'Go to update page.', 'wdc' ) );
 
-		admin_notice( sprintf( '<strong>%s</strong>: %s', $author, $message ), 'warning' );
+		admin_notice( $message, 'warning' );
 	}
 
 	public function add_menu_page()
@@ -135,22 +137,6 @@ final class Updater
 
 	public function render_page()
 	{
-		$a = array();
-
-		foreach ( get_conditions() as $condition ) 
-		{
-			$class = get_class( $condition );
-			
-			preg_match( '/(\w+)_Condition/', $class, $matches );
-
-			$class = $matches[1];
-			$class = str_replace( '_', '', $class );
-
-			$a[ "WDC_Condition_$class" ] = $condition->id;
-		}
-
-		error_log( print_r( $a, true ) );
-
 		?>
 
 		<div class="wrap">
