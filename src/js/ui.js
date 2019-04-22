@@ -140,6 +140,12 @@
 
 		console.log( 'loading' );
 
+		var $main   = this.$elem.find( '.wdc-main' );
+		var $loader = this.$elem.find( '.wdc-loader' );
+
+		$main.hide();
+		$loader.show();
+
 		this.$elem.addClass( 'wdc-loading' );
 
 		this.preload( function( data )
@@ -175,9 +181,33 @@
 
 			_this.$elem.removeClass( 'wdc-loading' );
 
-			_this.isLoaded = true;
+			// Animation
 
-			$( _this ).trigger( 'loaded' );
+			$main.show();
+
+			var height = $main.height();
+
+			$main.hide();
+
+			$loader
+				.css( 'opacity', 0 )
+				.animate(
+				{
+					height : height
+				}, 300, function()
+				{
+					$loader
+						.hide()
+						.css( 'height', '' )
+						.css( 'opacity', '' );
+
+					$main
+						.css( 'height', '' )
+						.show();
+				});
+
+			_this.isLoaded = true;
+			
 		});
 	}
 
@@ -421,37 +451,26 @@
 
 	$( document.body ).on( 'click', '.wdc-open-ui', function( event )
 	{
-		var $button  = $( this );
-		var $spinner = $button.siblings( '.spinner' );
+		var $button = $( this );
 
 		var content = wp.template( 'wdc-ui' )(
 		{
 			widget : $button.data( 'widget' ),
 		});
 
-		var ui = new wdc.UI( content, 
+		$.featherlight( content, 
 		{
-			widgetId  : $button.data( 'widget' ),
-			nonceName : $button.data( 'noncename' ),
-			nonce     : $button.data( 'nonce' ),
-		});
+			namespace : 'wdc-modal',
 
-		$spinner.addClass( 'wdc-is-active' );
-
-		$( ui ).on( 'loaded', function( event )
-		{
-			$spinner.removeClass( 'wdc-is-active' );
-
-			$.featherlight( ui.$elem, 
+			afterContent : function()
 			{
-				namespace : 'wdc-modal',
-				persist : true,
-
-				afterContent : function()
+				var ui = new wdc.UI( this.$content, 
 				{
-					ui.setSubmit( 'saved' );
-				}
-			});
+					widgetId  : $button.data( 'widget' ),
+					nonceName : $button.data( 'noncename' ),
+					nonce     : $button.data( 'nonce' ),
+				});
+			}
 		});
 	});
 
