@@ -74,7 +74,7 @@ function updater_task_0_2_0()
 				{
 					foreach ( $group as $condition_id => $condition ) 
 					{
-						$update[ $group_id ][ $condition_id ] = array
+						$updated[ $group_id ][ $condition_id ] = array
 						(
 							'param'    => $param_map[ $condition->param ],
 							'operator' => $operator_map[ $condition->operator ],
