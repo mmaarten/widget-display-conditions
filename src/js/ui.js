@@ -436,16 +436,21 @@
 			nonce     : $button.data( 'nonce' ),
 		});
 
-		$spinner.addClass( 'is-active' );
+		$spinner.addClass( 'wdc-is-active' );
 
 		$( ui ).on( 'loaded', function( event )
 		{
-			$spinner.removeClass( 'is-active' );
+			$spinner.removeClass( 'wdc-is-active' );
 
 			$.featherlight( ui.$elem, 
 			{
 				namespace : 'wdc-modal',
 				persist : true,
+
+				afterContent : function()
+				{
+					ui.setSubmit( 'saved' );
+				}
 			});
 		});
 	});
