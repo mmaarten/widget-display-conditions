@@ -1,35 +1,6 @@
 
 @import "modal";
 
-// Spinner
-// Fix: when widget is saving WordPress adds 'is-active' class to all spinners inside widget form.
-.wdc-open-ui-wrap
-{
-	.spinner
-	{
-		&.wdc-is-active
-		{
-			visibility: visible;
-		}
-
-		&:not( .wdc-is-active )
-		{
-			visibility: hidden !important;
-		}
-	}
-}
-
-.wdc-open-ui-wrap
-{
-	display: flex;
-    align-items: center;
-
-    .spinner
-    {
-    	margin: 0 0 0 .75em;
-    }
-}
-
 .wdc-ui
 {
 	h4, p
@@ -63,6 +34,27 @@
 	.notice
 	{
 		margin: 1em 0;
+
+		.spinner
+		{
+			margin: 0;
+		}
+	}
+
+	&.wdc-loading
+	{
+		.wdc-hide-if-loading
+		{
+			display: none;
+		}
+	}
+
+	&:not( .wdc-loading )
+	{
+		.wdc-show-if-loading
+		{
+			display: none;
+		}
 	}
 
 	&.wdc-has-conditions
