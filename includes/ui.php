@@ -65,18 +65,8 @@ final class UI
 	public function widget_form( $widget )
 	{
 		// Output button that opens UI on click
-
-		$button = sprintf( '<button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button>',
+		printf( '<p><button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button></p>',
 			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display Conditions', 'wdc' ) );
-
-		?>
-
-		<p class="wdc-open-ui-wrap">
-			<?php echo $button;  ?>
-			<span class="spinner"></span>
-		</p>
-
-		<?php
 	}
 
 	public function preload()
@@ -179,33 +169,41 @@ final class UI
 
 				<h1><?php esc_html_e( 'Widget Display Conditions', 'wdc' ); ?></h1>
 
-				<form method="post">
-					
-					<?php wp_nonce_field( 'ui', WDC_NONCE_NAME ); ?>
+				<div class="wdc-loader">
+					<?php admin_notice( __( 'Gathering data…', 'wdc' ) . '<span class="spinner is-active"></span>' ); ?>
+				</div>
 
-					<input type="hidden" name="action" value="wdc_ui_update">
-					<input type="hidden" name="widget" value="{{ data.widget }}">
+				<div class="wdc-main">
 
-					<div class="wdc-hide-if-conditions">
-						<?php admin_notice( __( 'No display limitations set.', 'wdc' ) ); ?>
-					</div>
+					<form method="post">
+						
+						<?php wp_nonce_field( 'ui', WDC_NONCE_NAME ); ?>
 
-					<div class="wdc-show-if-conditions">
-						<h4><?php esc_html_e( 'Show widget if', 'wdc' ); ?></h4>
-					</div>
+						<input type="hidden" name="action" value="wdc_ui_update">
+						<input type="hidden" name="widget" value="{{ data.widget }}">
 
-					<div class="wdc-condition-groups"></div>
+						<div class="wdc-hide-if-conditions">
+							<?php admin_notice( __( 'No display limitations set.', 'wdc' ) ); ?>
+						</div>
 
-					<p>
-						<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add Group', 'wdc' ); ?></button>
-					</p>
+						<div class="wdc-show-if-conditions">
+							<h4><?php esc_html_e( 'Show widget if', 'wdc' ); ?></h4>
+						</div>
 
-					<p class="submit">
-						<span class="spinner"></span>
-						<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save', 'wdc' ); ?>" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>">
-					</p>
+						<div class="wdc-condition-groups"></div>
 
-				</form>
+						<p>
+							<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add Group', 'wdc' ); ?></button>
+						</p>
+
+						<p class="submit">
+							<span class="spinner"></span>
+							<input type="submit" name="submit" class="button button-primary" value="<?php esc_attr_e( 'Save', 'wdc' ); ?>" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>">
+						</p>
+
+					</form>
+
+				</div>
 
 			</div>
 
