@@ -6,7 +6,7 @@ class Archive_Author_Condition extends Condition
 {
 	public function __construct()
 	{
-		parent::__construct( 'author_archive', __( 'Archive Author', 'wdc' ), array
+		parent::__construct( 'archive_author', __( 'Archive Author', 'wdc' ), array
 		(
 			'category' => 'archive',
 			'order'    => 20,

@@ -2,8 +2,8 @@
 Contributors: MaartenM
 Tags: widget, display, conditions, rules, sidebar, custom, admin, interface, visibility
 Requires at least: 4.0.0
-Tested up to: 4.9
-Stable tag: 0.1.8
+Tested up to: 5.1.1
+Stable tag: 0.2.0
 Requires PHP: 5.6.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -43,19 +43,6 @@ You can easily alter or create conditions, categories, operators of your own.
 
 [read the tutorial](http://maartenmenten.be/plugins/widget-display-conditions/adding-a-condition/) for more information.
 
-=== Successfully tested in: ===
-
-* WordPress 4.0.0
-* WordPress 4.1.0
-* WordPress 4.2.0
-* WordPress 4.3.0
-* WordPress 4.4.0
-* WordPress 4.5.0
-* WordPress 4.6.0
-* WordPress 4.7.0
-* WordPress 4.8.0
-* WordPress 4.9.0
-
 == Installation ==
 
 1. Upload `widget-display-conditions` plugin folder to the `/wp-content/plugins/` directory
@@ -70,11 +57,12 @@ You can easily alter or create conditions, categories, operators of your own.
 == Changelog ==
 
 = 0.2.0 =
-Release date: Aug 12th, 2018
+Release date: Apr 22nd, 2019
 
 * Enhancement - objects are registered with their id instead of class name.
 * Enhancement - no class autoloading
-* Tested in WordPress 4.9
+* Enhancement - namespace `wdc`
+* Tested in WordPress 5.1
 
 = 0.1.8 =
 Release date: Dec 6th, 2017

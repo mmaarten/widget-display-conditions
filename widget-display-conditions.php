@@ -61,4 +61,6 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-user-c
 if ( is_admin() ) 
 {
 	require_once plugin_dir_path( WDC_FILE ) . 'includes/ui.php';
+	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater.php';
+	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater-tasks.php';
 }

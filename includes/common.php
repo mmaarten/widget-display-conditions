@@ -18,6 +18,14 @@ function sort_order( $a, $b )
     return ( $a['order'] < $b['order'] ) ? -1 : 1;
 }
 
+function sort_version( $a, $b )
+{
+	if ( ! is_array( $a ) ) $a = get_object_vars( $a );
+	if ( ! is_array( $b ) ) $b = get_object_vars( $b );
+
+    return version_compare( $a['version'], $a['version'] );
+}
+
 // info|warning|error
 function admin_notice( $message, $type = 'info' ) 
 {
