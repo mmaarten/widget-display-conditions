@@ -53,8 +53,8 @@ final class UI
 
 		$items = array
 		(
-			'operator' => get_operator_field_items( $condition_id ),
-			'value'    => get_value_field_items( $condition_id ),
+			'operator' => get_condition_operator_field_items( $condition_id ),
+			'value'    => get_condition_value_field_items( $condition_id ),
 		);
 
 		// Response
@@ -112,8 +112,8 @@ final class UI
 
 					$field_data[ $condition_id ] = array
 					(
-						'operator' => get_operator_field_items( $condition_id ),
-						'value'    => get_value_field_items( $condition_id ),
+						'operator' => get_condition_operator_field_items( $condition_id ),
+						'value'    => get_condition_value_field_items( $condition_id ),
 					);
 				}
 			}
@@ -229,7 +229,7 @@ final class UI
 
 				<td>
 					<select class="wdc-param" name="conditions[{{ data.group }}][{{ data.id }}][param]">
-						<?php echo get_dropdown_options( get_param_field_items() ); ?>
+						<?php echo get_dropdown_options( get_condition_param_field_items() ); ?>
 					</select>
 				</td>
 

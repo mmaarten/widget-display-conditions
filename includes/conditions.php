@@ -28,11 +28,11 @@ final class Conditions
 	}
 
 	/**
-	 * Get Param Field Items
+	 * Get condition param field items
 	 *
 	 * @return array
 	 */
-	function get_param_field_items()
+	function get_condition_param_field_items()
 	{
 		$items = array();
 
@@ -65,13 +65,13 @@ final class Conditions
 	}
 
 	/**
-	 * Get Operator Field Items
+	 * Get condition operator field items
 	 *
 	 * @param string $condition_id
 	 *
 	 * @return mixed
 	 */
-	function get_operator_field_items( $condition_id )
+	function get_condition_operator_field_items( $condition_id )
 	{
 		$condition = $this->get_condition( $condition_id );
 
@@ -84,13 +84,13 @@ final class Conditions
 	}
 
 	/**
-	 * Get Value Field Items
+	 * Get condition value field items
 	 *
 	 * @param string $condition_id
 	 *
 	 * @return mixed
 	 */
-	function get_value_field_items( $condition_id )
+	function get_condition_value_field_items( $condition_id )
 	{
 		$condition = $this->get_condition( $condition_id );
 
@@ -101,7 +101,7 @@ final class Conditions
 
 		$return = $condition->get_value_field_items();
 
-		$return = apply_filters( "wdc/value_field_items/condition={$condition->id}", $return, $condition );
+		$return = apply_filters( "wdc/condition_value_field_items/condition={$condition->id}", $return, $condition );
 
 		return $return;
 	}
@@ -217,7 +217,7 @@ final class Conditions
 
 		if ( ! is_array( $rule ) || ! isset( $rule['param'], $rule['operator'], $rule['value'] ) ) 
 		{
-			trigger_error( "Invalid rule: 'param', 'operator' and 'value' are required.", E_USER_NOTICE );
+			trigger_error( "Invalid rule: 'param', 'operator' and 'value' are required.", E_USER_WARNING );
 
 			return null;
 		}
@@ -230,7 +230,7 @@ final class Conditions
 
 		if ( ! $condition ) 
 		{
-			trigger_error( sprintf( "Unable to find condition '%s'.", $condition_id ), E_USER_NOTICE );
+			trigger_error( sprintf( "Unable to find condition '%s'.", $condition_id ), E_USER_WARNING );
 
 			return null;
 		}
@@ -353,23 +353,23 @@ function get_condition_categories()
 	return $conditions->get_condition_categories();
 }
 
-function get_param_field_items()
+function get_condition_param_field_items()
 {
 	$conditions = Conditions::get_instance();
 
-	return $conditions->get_param_field_items();
+	return $conditions->get_condition_param_field_items();
 }
 
-function get_operator_field_items( $condition_id )
+function get_condition_operator_field_items( $condition_id )
 {
 	$conditions = Conditions::get_instance();
 
-	return $conditions->get_operator_field_items( $condition_id );
+	return $conditions->get_condition_operator_field_items( $condition_id );
 }
 
-function get_value_field_items( $condition_id )
+function get_condition_value_field_items( $condition_id )
 {
 	$conditions = Conditions::get_instance();
 
-	return $conditions->get_value_field_items( $condition_id );
+	return $conditions->get_condition_value_field_items( $condition_id );
 }

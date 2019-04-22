@@ -13,6 +13,13 @@ class Condition
 	public $operators = array();
 	public $order     = null;
 
+	/**
+	 * Constructor
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 */
 	public function __construct( $id, $title, $args = array() )
 	{
 		$defaults = array
@@ -35,11 +42,21 @@ class Condition
 		do_action( 'wdc/condition', $this );
 	}
 
+	/**
+	 * Get operator objects
+	 *
+	 * @return array
+	 */
 	public function get_operator_objects()
 	{
 		return array_intersect_key( get_operators(), array_flip( $this->operators ) );
 	}
 
+	/**
+	 * Get operator field items
+	 *
+	 * @return array
+	 */
 	public function get_operator_field_items()
 	{
 		$operators = $this->get_operator_objects();
@@ -58,11 +75,21 @@ class Condition
 		return $items; 
 	}
 
+	/**
+	 * Get value field items
+	 *
+	 * @return array
+	 */
 	public function get_value_field_items()
 	{
 		return array();
 	}
 
+	/**
+	 * Apply
+	 *
+	 * @return bool
+	 */
 	public function apply( $operator, $value )
 	{
 		return false;
