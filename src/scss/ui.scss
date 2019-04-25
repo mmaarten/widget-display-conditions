@@ -1,46 +1,16 @@
 
 @import "modal";
 
+.wdc-show-if-conditions
+{
+	.wdc-has-conditions &
+	{
+
+	}
+}
+
 .wdc-ui
 {
-	h4, p
-	{
-		margin: 0.75em 0;
-	}
-
-	h4
-	{
-		line-height: 1;
-	}
-
-	p.submit
-	{
-		text-align: right;
-
-		margin: 1em 0 0;
-	    padding: 1px 0;
-
-	    display: flex;
-    	align-items: center;
-    	justify-content: flex-end;
-
-	    .spinner
-	    {
-    		float: none;
-    		margin: 0 .75em 0 0;
-	    }
-	}
-
-	.notice
-	{
-		margin: 1em 0;
-
-		.spinner
-		{
-			margin: 0;
-		}
-	}
-
 	&.wdc-loading
 	{
 		.wdc-hide-if-loading
@@ -72,55 +42,17 @@
 			display: none;
 		}
 	}
+	
+	h4, p, .notice
+	{
+		margin: 1em 0;
+	}
 }
 
-table.wdc-conditions
+.wdc-condition
 {
-	margin: -2px;
-    width: calc( 100% + 2px );
-    border-collapse: collapse;
-
-	&,
-	> tbody
-	{
-		> tr.wdc-condition
-		{
-			> td
-			{
-				padding: 2px;
-
-				text-align: left;
-				vertical-align: middle;
-
-				&:nth-child( 1 ) { width: 35%; }
-				&:nth-child( 2 ) { width: 20%; }
-				&:nth-child( 3 ) {}
-				&:nth-child( 4 ) { width: 1%; }
-				&:nth-child( 5 ) { width: 1%; }
-
-				
-			}
-		}
-	}
-
 	select
 	{
 		width: 100%;
-		margin: 0;
-	}
-
-	.button
-	{
-		line-height: 25px;
-    	height: 27px;
-	}
-}
-
-.wdc-remove-condition
-{
-	&.button-link
-	{
-		color: #666;
-		text-decoration: none;
 	}
 }

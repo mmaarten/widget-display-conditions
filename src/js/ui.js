@@ -12,60 +12,27 @@
 		this.$elem   = $( elem );
 		this.options = $.extend( {}, UI.defaultOptions, options );
 
-		this.$submit   = this.$elem.find( 'input[type="submit"]' );
-		this.fieldData = {};
-		this.isLoaded  = false;
+		this.fieldItems = {};
 
-		this.setSubmit( 'saved' );
+		this.isLoaded = false;
 
 		var _this = this;
 
-		this.$elem.on( 'change', ':input', function( event )
-		{
-			_this.setSubmit( 'unsaved' );
-		});
-
-		this.$elem.on( 'DOMNodeInserted DOMNodeRemoved', function( event )
-		{
-			var $elem = $( event.target );
-
-			if ( _this.isLoaded && ( $elem.is( ':input' ) || $elem.find( ':input' ).length ) ) 
-			{
-				_this.setSubmit( 'unsaved' );
-			};
-			
-			if ( _this.$elem.find( '.wdc-condition' ).length ) 
-			{
-				_this.$elem.addClass( 'wdc-has-conditions' );
-			}
-
-			else
-			{
-				_this.$elem.removeClass( 'wdc-has-conditions' )
-			}
-		});
-
 		this.$elem.on( 'click', '.wdc-add-condition-group', function( event )
 		{
-			// Add condition group
-
 			var $group = _this.createConditionGroup();
-
-			_this.$elem.find( '.wdc-condition-groups' ).append( $group );
-
-			// Add condition inside group
 
 			var $condition = _this.createCondition( { group : $group.data( 'id' ) } );
 
 			$group.find( '.wdc-conditions' ).append( $condition );
+
+			_this.$elem.find( '.wdc-condition-groups' ).append( $group );
 		});
 
 		this.$elem.on( 'click', '.wdc-add-condition', function( event )
 		{
 			var $condition = $( this ).closest( '.wdc-condition' );
 			var $group     = $condition.closest( '.wdc-condition-group' );
-
-			// Create new condition and add it after the condition
 
 			var $newCondition = _this.createCondition( { group : $group.data( 'id' ) } );
 
@@ -76,93 +43,254 @@
 		{
 			var $condition = $( this ).closest( '.wdc-condition' );
 			var $group     = $condition.closest( '.wdc-condition-group' );
-			
-			// Remove condition
+
 			$condition.remove();
 
-			// Remove condition group when empty
-			if ( ! $group.find( '.wdc-condition' ).length ) 
+			if ( 0 == $group.find( '.wdc-condition' ).length ) 
 			{
 				$group.remove();
 			}
 		});
 
-		// Param change
 		this.$elem.on( 'change', '.wdc-param', function( event )
 		{
 			var $condition = $( this ).closest( '.wdc-condition' );
 
-			// Populate condition 'operator' and 'value' fields
-
-			var $param    = $condition.find( '.wdc-param' );
-			var $operator = $condition.find( '.wdc-operator' );
-			var $value    = $condition.find( '.wdc-value' );
-
-			// Disable fields temporary until loading is complete.
-			$operator.prop( 'disabled', true );
-			$value.prop( 'disabled', true );
-
-			// Load field items
-			_this.getConditionFieldsItems( $condition, function( items )
-			{
-				// Populate fields
-				UI.populateSelectField( $operator, items.operator );
-				UI.populateSelectField( $value, items.value );
-
-				// Enable fields
-				$operator.prop( 'disabled', false );
-				$value.prop( 'disabled', false );
-			});
+			_this.updateConditionFields( $condition );
 		});
 
-		// Form submit
 		this.$elem.on( 'submit', 'form', function( event )
 		{
 			event.preventDefault();
 
-			var $spinner = _this.$submit.siblings( '.spinner' );
-
-			$spinner.addClass( 'is-active' );
-
-			// Save condition data
-			$.post( _this.options.ajaxurl, $( this ).serialize(), function( response )
+			$.post( ajaxurl, $( this ).serialize(), function( response )
 			{
 				console.log( response );
-
-				$spinner.removeClass( 'is-active' );
-
-				_this.$submit.val( _this.$submit.data( 'saved' ) );
-				_this.$submit.prop( 'disabled', true );
 			});
 		});
 
-		// Load
+		this.$elem.on( 'DOMNodeInserted DOMNodeRemoved', function( event )
+		{
+			var $elem = $( event.target );
 
-		console.log( 'loading' );
+			console.log( $elem.get(0) )
 
-		var $main   = this.$elem.find( '.wdc-main' );
-		var $loader = this.$elem.find( '.wdc-loader' );
+			if ( _this.$elem.find( '.wdc-condition' ).length ) 
+			{
+				_this.$elem.addClass( 'wdc-has-conditions' );
+			}
 
-		$main.hide();
-		$loader.show();
+			else
+			{
+				_this.$elem.removeClass( 'wdc-has-conditions' );
+			}
+
+			if ( _this.isLoaded && $elem.is( ':input' ) ) 
+			{
+				
+			}
+		});
+
+		this.preload();
+	}
+
+	UI.defaultOptions = 
+	{
+		widget    : '',
+		nonceName : '',
+		nonce     : '',
+	};
+
+	UI.generateId = function()
+	{
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function( c ) 
+		{
+    		var r = Math.random() * 16 | 0, v = c == 'x' ? r : ( r & 0x3 | 0x8 );
+    		
+    		return v.toString( 16 );
+  		});
+	};
+
+	UI.populateSelectField = function( $select, items )
+	{
+		$select.empty();
+
+		$.each( items, function( i, item )
+		{
+			item = $.extend( 
+			{
+				id       : '',
+				text     : '',
+				selected : false,
+			}, item );
+
+			if ( typeof item.children !== 'undefined' ) 
+			{
+				var $group = $( '<optgroup></optgroup>' );
+
+				$group.attr( 'label', item.text );
+
+				UI.populateSelectField( $group, item.children );
+
+				$select.append( $group );
+			}
+
+			else
+			{
+				var $option = $( '<option></option>' );
+
+				$option
+					.val( item.id )
+					.text( item.text )
+					.prop( 'selected', item.selected ? true : false );
+
+				if ( typeof item.html !== 'undefined' ) 
+				{
+					$option.html( item.html );
+				}
+
+				$select.append( $option );
+			}
+
+		});
+	};
+
+	UI.setSelected = function( $select, selected )
+	{
+		$select.find( 'option' ).filter( function()
+		{
+			return selected == $( this ).val();
+
+		}).prop( 'selected', true );
+	};
+
+	UI.prototype.createConditionGroup = function( data ) 
+	{
+		data = $.extend(
+		{
+			id : UI.generateId(),
+		}, data );
+
+		var $elem = $( wp.template( 'wdc-condition-group' )(
+		{
+			id : data.id,
+		}));
+
+		return $elem;
+	};
+
+	UI.prototype.createCondition = function( data ) 
+	{
+		data = $.extend(
+		{
+			id       : UI.generateId(),
+			param    : '',
+			operator : '',
+			value    : '',
+			group    : '',
+		}, data );
+
+		var $elem = $( wp.template( 'wdc-condition' )(
+		{
+			id    : data.id,
+			group : data.group,
+		}));
+
+		UI.setSelected( $elem.find( '.wdc-param' ), data.param );
+
+		this.updateConditionFields( $elem,
+		{
+			operator : data.operator,
+			value    : data.value,
+		});
+
+		return $elem;
+	};
+
+	UI.prototype.updateConditionFields = function( $condition, selected ) 
+	{
+		selected = $.extend( {}, selected );
+
+		var $param    = $condition.find( '.wdc-param' );
+		var $operator = $condition.find( '.wdc-operator' );
+		var $value    = $condition.find( '.wdc-value' );
+
+		// Disable fields
+		$operator.prop( 'disabled', true );
+		$value.prop( 'disabled', true );
+
+		// Load field items
+		this.getConditionFieldItems( $condition, function( items )
+		{
+			// Populate fields
+			UI.populateSelectField( $operator, items.operator );
+			UI.populateSelectField( $value, items.value );
+
+			// Set selected
+			if ( typeof selected.operator !== 'undefined' ) UI.setSelected( $operator, selected.operator );
+			if ( typeof selected.value    !== 'undefined' ) UI.setSelected( $value, selected.value );
+
+			// Enable fields
+			$operator.prop( 'disabled', false );
+			$value.prop( 'disabled', false );
+		});
+	};
+
+	UI.prototype.getConditionFieldItems = function( $condition, callback ) 
+	{
+		var param = $condition.find( '.wdc-param' ).val();
+
+		// Check if already loaded
+
+		if ( typeof this.fieldItems[ param ] !== 'undefined' ) 
+		{
+			// Callback
+			callback( this.fieldItems[ param ] );
+
+			return;
+		}
+
+		// Load field items
+
+		var _this = this;
+
+		var data = this.prepareAjax( 
+		{
+			action : 'wdc_ui_get_condition_field_items',
+			param  : param,
+		});
+
+		$.post( ajaxurl, data, function( items )
+		{
+			console.log( items );
+
+			// Save items
+			_this.fieldItems[ param ] = $.extend( {}, items );
+
+			// Callback
+			callback( _this.fieldItems[ param ] );
+		});
+	};
+
+	UI.prototype.preload = function() 
+	{
+		var _this = this;
 
 		this.$elem.addClass( 'wdc-loading' );
 
-		this.preload( function( data )
+		var data = this.prepareAjax( 
 		{
-			console.log( 'loaded', data );
+			action : 'wdc_ui_preload',
+			widget : this.options.widget,
+		});
 
-			_this.fieldData = $.extend( {}, data.fieldData );
+		$.post( ajaxurl, data, function( response )
+		{
+			_this.fieldItems = $.extend( {}, response.fieldItems );
 
-			$.each( data.conditions, function( groupId, conditions )
+			$.each( response.conditions, function( groupId, conditions )
 			{
-				// Add group
-
 				var $group = _this.createConditionGroup( { id : groupId } );
-
-				_this.$elem.find( '.wdc-condition-groups' ).append( $group );
-
-				// Add conditions
 
 				$.each( conditions, function( conditionId, condition )
 				{
@@ -172,257 +300,18 @@
 						param    : condition.param,
 						operator : condition.operator,
 						value    : condition.value,
-						group    : $group.data( 'id' ) 
+						group    : groupId,
 					});
 
 					$group.find( '.wdc-conditions' ).append( $condition );
 				});
+
+				_this.$elem.find( '.wdc-condition-groups' ).append( $group );
 			});
 
 			_this.$elem.removeClass( 'wdc-loading' );
 
-			// Animation
-
-			$main.show();
-
-			var height = $main.height();
-
-			$main.hide();
-
-			$loader
-				.css( 'opacity', 0 )
-				.animate(
-				{
-					height : height
-				}, 300, function()
-				{
-					$loader
-						.hide()
-						.css( 'height', '' )
-						.css( 'opacity', '' );
-
-					$main
-						.css( 'height', '' )
-						.show();
-				});
-
 			_this.isLoaded = true;
-			
-		});
-	}
-
-	UI.defaultOptions = 
-	{
-		widgetId  : '',
-		nonceName : '',
-		nonce     : '',
-		ajaxurl   : window.ajaxurl || '',
-	};
-
-	UI.generateId = function()
-	{
-		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace( /[xy]/g, function( c ) 
-		{
-		    var r = Math.random() * 16 | 0, v = c == 'x' ? r : ( r & 0x3 | 0x8 );
-
-		    return v.toString( 16 );
-		});
-	};
-
-	UI.populateSelectField = function( $select, items ) 
-	{
-		$select.empty();
-
-		$.each( items, function( i, item )
-		{
-			item = $.extend( { id : '', text : '', selected : false }, item );
-
-			// Create <optgroup>
-
-			if ( typeof item.children !== 'undefined' ) 
-			{
-				var $optgroup = $( '<optgroup></optgroup>' );
-
-				$optgroup.attr( 'label', item.text );
-
-				UI.populateSelectField( $optgroup, item.children );
-
-				$select.append( $optgroup );
-			}
-
-			// Create <option>
-
-			else
-			{
-				var $option = $( '<option></option>' );
-
-				$option
-					.text( item.text )
-					.val( item.id )
-					.prop( 'selected', item.selected ? true : false )
-
-				if ( item.html !== undefined ) 
-				{
-					$option.html( item.html );
-				}
-
-				$select.append( $option );
-			}
-		});
-	};
-
-	UI.prototype.setSubmit = function( state )
-	{
-		if ( typeof this.$submit.data( 'unsaved' ) === 'undefined' ) 
-		{
-			this.$submit.data( 'unsaved', this.$submit.val() );
-		}
-
-		switch( state )
-		{
-			case 'saved' :
-				this.$submit.val( this.$submit.data( 'saved' ) );
-				this.$submit.prop( 'disabled', true );
-				break;
-
-			case 'unsaved' :
-				this.$submit.val( this.$submit.data( 'unsaved' ) );
-				this.$submit.prop( 'disabled', false );
-				break;
-		}
-	};
-
-	UI.prototype.createConditionGroup = function( data ) 
-	{
-		var defaults = 
-		{
-			id : UI.generateId(),
-		};
-
-		var data = $.extend( {}, defaults, data );
-
-		var $group = $( wp.template( 'wdc-condition-group' )(
-		{
-			id : data.id,
-		}));
-
-		return $group;
-	};
-
-	UI.prototype.createCondition = function( data ) 
-	{
-		var defaults = 
-		{
-			id       : UI.generateId(),
-			param    : '',
-			operator : '',
-			value    : '',
-			group    : '', // required
-		};
-
-		var data = $.extend( {}, defaults, data );
-
-		if ( ! data.group ) 
-		{
-			console.warn( 'condition group should be set.' );
-		};
-
-		var $condition = $( wp.template( 'wdc-condition' )(
-		{
-			id    : data.id,
-			group : data.group,
-		}));
-
-		var $param    = $condition.find( '.wdc-param' );
-		var $operator = $condition.find( '.wdc-operator' );
-		var $value    = $condition.find( '.wdc-value' );
-
-		// Set selected param
-		$param.find( 'option' ).filter( function()
-		{
-			return data.param == $( this ).val();
-			
-		}).prop( 'selected', true );
-
-		// Populate condition 'operator' and 'value' fields
-
-		// Disable fields temporary until loading is complete.
-		$operator.prop( 'disabled', true );
-		$value.prop( 'disabled', true );
-
-		// Load field items
-		this.getConditionFieldsItems( $condition, function( items )
-		{
-			// Populate fields
-			UI.populateSelectField( $operator, items.operator );
-			UI.populateSelectField( $value, items.value );
-
-			// Set selected operator
-			$operator.find( 'option' ).filter( function()
-			{
-				return data.operator == $( this ).val();
-
-			}).prop( 'selected', true );
-
-			// Set selected value
-			$value.find( 'option' ).filter( function()
-			{
-				return data.value == $( this ).val();
-				
-			}).prop( 'selected', true );
-
-			// Enable fields
-			$operator.prop( 'disabled', false );
-			$value.prop( 'disabled', false );
-		});
-
-		// Return
-
-		return $condition;
-	};
-
-	UI.prototype.preload = function( callback ) 
-	{
-		var data = this.prepareAjax( 
-		{ 
-			action : 'wdc_ui_preload', 
-			widget : this.options.widgetId,
-		});
-
-		return $.post( this.options.ajaxurl, data, callback );
-	};
-
-	UI.prototype.getConditionFieldsItems = function( $condition, callback ) 
-	{
-		var _this = this;
-
-		var param = $condition.find( '.wdc-param' ).val();
-
-		// Check if already loaded
-
-		if ( typeof this.fieldData[ param ] !== 'undefined' ) 
-		{
-			// callback
-			callback( this.fieldData[ param ] );
-
-			return;
-		}
-
-		// load
-
-		var data = this.prepareAjax( 
-		{ 
-			action : 'wdc_ui_get_condition_fields_items', 
-			param  : param,
-		});
-
-		return $.post( this.options.ajaxurl, data, function( items )
-		{
-			// save data
-			_this.fieldData[ param ] = $.extend( {}, items );
-
-			// callback
-			callback( _this.fieldData[ param ] );
 		});
 	};
 
@@ -430,7 +319,6 @@
 	{
 		data = $.extend( {}, data );
 
-		// Add nonce
 		if ( this.options.nonceName ) 
 		{
 			data[ this.options.nonceName ] = this.options.nonce;
@@ -438,12 +326,13 @@
 
 		return data;
 	};
-
-	window.wdc.UI = UI;
+	
+	window.wdc.ui = UI;
 
 })( jQuery );
+
 /**
- * Open UI inside modal
+ * Open UI
  */
 (function( $ )
 {
@@ -452,7 +341,7 @@
 	$( document.body ).on( 'click', '.wdc-open-ui', function( event )
 	{
 		var $button = $( this );
-
+	
 		var content = wp.template( 'wdc-ui' )(
 		{
 			widget : $button.data( 'widget' ),
@@ -461,17 +350,18 @@
 		$.featherlight( content, 
 		{
 			namespace : 'wdc-modal',
-
+			
 			afterContent : function()
 			{
-				var ui = new wdc.UI( this.$content, 
+				var ui = new wdc.ui( this.$content, 
 				{
-					widgetId  : $button.data( 'widget' ),
+					widget    : $button.data( 'widget' ),
 					nonceName : $button.data( 'noncename' ),
 					nonce     : $button.data( 'nonce' ),
 				});
-			}
+			},
 		});
-	});
 
+	});
+	
 })( jQuery );

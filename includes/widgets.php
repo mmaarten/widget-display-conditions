@@ -1,12 +1,17 @@
 <?php 
 /**
- * Widgets API
+ * Widgets
  */
 
 namespace wdc;
 
+function get_widget_regex()
+{
+	return apply_filters( 'wdc/widget_regex', '^([\w-]+)-(\d+)$' );
+}
+
 /**
- * Get Widget Instance
+ * Get widget instance
  *
  * @param string $widget_id
  *
@@ -14,34 +19,25 @@ namespace wdc;
  */
 function get_widget_instance( $widget_id )
 {
-	if ( ! preg_match( '/^([\w-]+)-(\d+)$/', $widget_id, $matches ) ) 
+	if ( ! preg_match( '/' . get_widget_regex() . '/', $widget_id, $matches ) ) 
 	{
-		trigger_error( sprintf( 'Invalid widget id "%s".', $widget_id ), E_USER_WARNING );
-
 		return null;
 	}
 
 	list(, $id_base, $num ) = $matches;
 
-	$instances = get_option( "widget_{$id_base}" );
+	$instances = get_option( "widget_$id_base" );
 
-	if ( ! is_array( $instances ) || ! array_key_exists( $num, $instances ) ) 
+	if ( ! is_array( $instances ) || ! isset( $instances[ $num ] ) ) 
 	{
-		trigger_error( sprintf( 'Instance for widget "%s" could not be found.', $widget_id ), E_USER_WARNING );
-
 		return null;
 	}
 
-	if ( is_array( $instances[ $num ] ) ) 
-	{
-		return $instances[ $num ];
-	}
-
-	return array();
+	return (array) $instances[ $num ];
 }
 
 /**
- * Set Widget Instance
+ * Set widget instance
  *
  * @param string $widget_id
  * @param array  $instance
@@ -50,31 +46,27 @@ function get_widget_instance( $widget_id )
  */
 function set_widget_instance( $widget_id, $instance )
 {
-	if ( ! preg_match( '/^([\w-]+)-(\d+)$/', $widget_id, $matches ) ) 
+	if ( ! preg_match( '/' . get_widget_regex() . '/', $widget_id, $matches ) )
 	{
-		trigger_error( sprintf( 'Invalid widget id "%s".', $widget_id ), E_USER_WARNING );
-
-		return null;
+		return false;
 	}
 
 	list(, $id_base, $num ) = $matches;
 
-	$instances = get_option( "widget_{$id_base}" );
+	$instances = get_option( "widget_$id_base" );
 
-	if ( ! is_array( $instances ) || ! array_key_exists( $num, $instances ) ) 
+	if ( ! is_array( $instances ) || ! isset( $instances[ $num ] ) ) 
 	{
-		trigger_error( sprintf( 'Instance for widget "%s" could not be found.', $widget_id ), E_USER_WARNING );
-
 		return false;
 	}
 
 	$instances[ $num ] = (array) $instance;
 
-	return update_option( "widget_{$id_base}", $instances );
+	return update_option( "widget_$id_base", $instances );
 }
 
 /**
- * Get Widget Conditions
+ * Get widget conditions
  *
  * @param string $widget_id
  *
@@ -94,11 +86,11 @@ function get_widget_conditions( $widget_id )
 		return (array) $instance['wdc_conditions'];
 	}
 
-	return null;
+	return array();
 }
 
 /**
- * Set Widget Conditions
+ * Set widget conditions
  *
  * @param string $widget_id
  * @param array  $conditions
@@ -120,28 +112,28 @@ function set_widget_conditions( $widget_id, $conditions )
 }
 
 /**
- * Do Widget Conditions
+ * Do widget conditions
  *
  * @param string $widget_id
  *
  * @return bool
  */
-function apply_widget_conditions( $widget_id )
+function do_widget_conditions( $widget_id )
 {
-	$rules = get_widget_conditions( $widget_id );
+	$conditions = get_widget_conditions( $widget_id );
 
-	if ( ! is_array( $rules ) ) 
+	if ( is_array( $conditions ) ) 
 	{
-		return false;
+		return do_conditions( $conditions );
 	}
 
-	return apply_conditions( $rules );
+	return true;
 }
 
 /**
- * Sidebars Widgets
+ * Sidebars widgets
  *
- * @param array $sidebars_widgets
+ * @param array  $sidebars_widgets
  *
  * @return array
  */
@@ -153,17 +145,13 @@ function sidebars_widgets( $sidebars_widgets )
 
 	foreach ( $sidebars_widgets as $sidebar_index => $widgets ) 
 	{
-		// From WordPress 4.1.0 to 4.6.0 $widgets can be NULL
-		if ( is_array( $widgets ) ) 
-		{
-			$return[ $sidebar_index ] = array();
+		if ( ! is_array( $widgets ) ) continue;
 
-			foreach ( $widgets as $widget_id ) 
+		foreach ( $widgets as $widget_id ) 
+		{
+			if ( do_widget_conditions( $widget_id ) ) 
 			{
-				if ( apply_widget_conditions( $widget_id ) ) 
-				{
-					$return[ $sidebar_index ][] = $widget_id;
-				}
+				$return[ $sidebar_index ][] = $widget_id;
 			}
 		}
 	}
@@ -171,4 +159,4 @@ function sidebars_widgets( $sidebars_widgets )
 	return $return;
 }
 
-add_filter( 'sidebars_widgets', 'wdc\sidebars_widgets', 999 );
+add_filter( 'sidebars_widgets', __NAMESPACE__ . '\sidebars_widgets', 999 );

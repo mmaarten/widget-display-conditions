@@ -5,18 +5,35 @@ module.exports = function( grunt )
 		clean: 
 		{
 			assets : [ 'assets/**' ],
+			fonts  : [ 'assets/fonts/**' ],
+			images : [ 'assets/images/**' ]
 		},
 
 		copy: 
 		{
+			images: 
+			{
+				cwd: 'src/images/',     // source
+				dest: 'assets/images/', // destination
+				src: '**',
+				expand: true,
+			},
+
+			fonts: 
+			{
+				cwd: 'src/fonts/',     // source
+				dest: 'assets/fonts/', // destination
+				src: '**',
+				expand: true,
+			},
+
 			vendor: 
 			{
 				files: 
 				[
 					// Note : cssmin does not allow '.' in filenames.
+					{ src: ['node_modules/featherlight/src/featherlight.css'], dest: 'assets/css/featherlight.css' },
 					{ src: ['node_modules/featherlight/src/featherlight.js'], dest: 'assets/js/featherlight.js' },
-					{ src: ['node_modules/select2/dist/js/select2.js'], dest: 'assets/js/select2.js' },
-					{ src: ['node_modules/select2/dist/css/select2.css'], dest: 'assets/css/select2.css' },
 				],
 			},
 		},
@@ -33,7 +50,7 @@ module.exports = function( grunt )
 				files: 
 				{
 					// destination : source
-					'assets/css/ui.css': 'src/scss/ui.scss',
+					'assets/css/ui.css' : 'src/scss/ui.scss',
 				},
 			},
 		},
@@ -129,7 +146,7 @@ module.exports = function( grunt )
 				options: 
 				{
 					domainPath: '/languages/', // Where to save the POT file.
-					mainFile: '',     // Main project file.
+					mainFile: 'widget-display-conditions.php',     // Main project file.
 					potFilename: 'widget-display-conditions.pot',  // Name of the POT file.
 					type: 'wp-plugin',          // Type of project (wp-plugin or wp-theme).
 					exclude: [],               // List of files or directories to ignore.
@@ -154,6 +171,13 @@ module.exports = function( grunt )
 
 		watch: 
 		{
+			options: 
+	        {
+	        	// Reload browser when done. 
+	        	// Include `<script src="//localhost:35729/livereload.js"></script>`.
+				//livereload: true,
+	        },
+
 			css: 
 			{
 				files: [ 'src/scss/**/**.scss' ],
@@ -164,6 +188,18 @@ module.exports = function( grunt )
 			{
 		        files: [ 'src/js/**/*.js' ],
 		        tasks: [ 'concat', 'copy', 'uglify' ],
+	      	},
+
+	      	images: 
+			{
+		        files: [ 'src/images/**' ],
+		        tasks: [ 'clean:images', 'copy:images' ],
+	      	},
+
+	      	fonts: 
+			{
+		        files: [ 'src/fonts/**' ],
+		        tasks: [ 'clean:fonts', 'copy:fonts' ],
 	      	},
 		},
 	});

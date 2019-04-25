@@ -1,15 +1,35 @@
-<?php
+<?php 
 /**
  * Common
  */
 
 namespace wdc;
 
+/**
+ * Admin notice
+ *
+ * @param string $message
+ * @param string $type
+ *
+ * @link https://codex.wordpress.org/Plugin_API/Action_Reference/admin_notices
+ */
+function admin_notice( $message, $type = 'info' )
+{
+	$class = sprintf( 'notice notice-%s', sanitize_html_class( $type ) );
+
+	printf( '<div class="%s"><p>%s</p></div>', esc_attr( $class ), $message );
+}
+
+/**
+ * Sort order
+ *
+ * @param mixed $a
+ * @param mixed $b
+ *
+ * @return int
+ */
 function sort_order( $a, $b )
 {
-	if ( ! is_array( $a ) ) $a = get_object_vars( $a );
-	if ( ! is_array( $b ) ) $b = get_object_vars( $b );
-
 	if ( $a['order'] == $b['order'] ) 
 	{
         return 0;
@@ -18,24 +38,8 @@ function sort_order( $a, $b )
     return ( $a['order'] < $b['order'] ) ? -1 : 1;
 }
 
-function sort_version( $a, $b )
-{
-	if ( ! is_array( $a ) ) $a = get_object_vars( $a );
-	if ( ! is_array( $b ) ) $b = get_object_vars( $b );
-
-    return version_compare( $a['version'], $a['version'] );
-}
-
-// info|warning|error
-function admin_notice( $message, $type = 'info' ) 
-{
-	$class = sprintf( 'notice notice-%s', sanitize_html_class( $type ) );
-
-	printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), $message ); 
-}
-
 /**
- * Get Dropdown Options
+ * get dropdown options
  *
  * @param array $items
  *
@@ -47,34 +51,41 @@ function get_dropdown_options( $items )
 
 	foreach ( $items as $item ) 
 	{
-		$item = wp_parse_args( $item, array( 'id' => '', 'text' => '', 'selected' => false ) );
+		$item = wp_parse_args( $item, array
+		( 
+			'id'       => '', 
+			'text'     => '', 
+			'selected' => false,
+		));
 
-		if ( array_key_exists( 'children', $item ) ) 
+		if ( isset( $item['children'] ) ) 
 		{
-			if ( is_array( $item['children'] ) ) 
-			{
-				$return .= sprintf( '<optgroup label="%s">', esc_attr( $item['text'] ) );
-				$return .= get_dropdown_options( $item['children'] );
-				$return .= '</optgroup>';
-			}
+			$return .= sprintf( '<optgroup label="%s">', esc_attr( $item['text'] ) );
+			$return .= get_dropdown_options( $item['children'] );
+			$return .= '</optgroup>';
 		}
 
 		else
 		{
-			$return .= sprintf( '<option value="%s"%s>%s</option>>', 
-				esc_attr( $item['id'] ), $item['selected'] ? ' selected' : '', esc_html( $item['text'] ) );
+			$return .= sprintf( '<option value="%s"%s>%s</option>', 
+				esc_attr( $item['id'] ), selected( $item['selected'], true, false ), esc_html( $item['text'] ) );
 		}
 	}
 
 	return $return;
 }
 
+/**
+ * get post field items
+ *
+ * @param mixed $post_type
+ *
+ * @return array
+ */
 function get_post_field_items( $post_type )
 {
 	$post_types = (array) $post_type;
 	$is_group   = count( $post_types ) > 1;
-
-	$counter = 0;
 
 	foreach ( $post_types as $post_type ) 
 	{
@@ -86,18 +97,16 @@ function get_post_field_items( $post_type )
 
 		// Get posts
 
-		$is_hierarchical = is_post_type_hierarchical( $post_type->name );
-
-		if ( $is_hierarchical ) 
+		if ( is_post_type_hierarchical( $post_type->name ) ) 
 		{
 			$posts = get_pages( array
 			(
 				'post_type'    => $post_type->name,
-				'hierarchical' => true,
 				'post_status'  => 'publish',
+				'hierarchical' => true,
 				'sort_column'  => 'post_title',
 				'sort_order'   => 'asc',
-				'number'       => WDC_MAX_NUMBER_POSTS,
+				'number'       => WDC_MAX_NUMBERPOSTS,
 			));
 		}
 
@@ -109,15 +118,15 @@ function get_post_field_items( $post_type )
 				'post_status' => 'attachment' == $post_type->name ? 'inherit' : 'publish',
 				'orderby'     => 'post_title',
 				'order'       => 'ASC',
-				'numberposts' => WDC_MAX_NUMBER_POSTS,
+				'numberposts' => WDC_MAX_NUMBERPOSTS,
 			));
 		}
 
-		// Check if posts
+		// stop when no posts
 
 		if ( ! $posts ) continue;
 
-		// Create items
+		// Get items
 
 		$group = array
 		(
@@ -128,182 +137,30 @@ function get_post_field_items( $post_type )
 
 		foreach ( $posts as $post ) 
 		{
-			$text = $post->post_title;
+			$text = trim( $post->post_title ) ? $post->post_title : $post->ID;
 			$pad  = '';
 
-			if ( '' == trim( $text ) ) 
+			if ( is_post_type_hierarchical( $post_type->name ) ) 
 			{
-				$text = $post->ID;
+				$ancestors = get_post_ancestors( $post );
+				$pad = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
 			}
 
-			// Show hierarchy
-
-			if ( $is_hierarchical ) 
-			{
-				$depth = count( get_post_ancestors( $post ) );
-				$pad   = str_repeat( '&nbsp;', $depth * 3 );
-			}
-
-			//
-
-			$group['children'][] = array
+			$group['children'][ $post->ID ] = array
 			(
 				'id'   => $post->ID,
-				//'text' => "{$text_before}{$text}",
 				'html' => $pad . esc_html( $text ),
 			);
 		}
 
-		$items[] = $group;
+		$items[ $group['id'] ] = $group;
 	}
 
-	if ( ! $is_group && $items ) 
+	if ( ! $is_group ) 
 	{
-		$items = $items[0]['children'];
-	}
+		$first = array_keys( $items )[0];
 
-	return $items;
-}
-
-function get_term_field_items( $taxonomy )
-{
-	$taxonomies = (array) $taxonomy;
-	$is_group   = count( $taxonomies ) > 1;
-
-	$items = array();
-
-	foreach ( $taxonomies as $taxonomy ) 
-	{
-		// Get taxonomy object
-
-		$taxonomy = get_taxonomy( $taxonomy );
-
-		if ( ! $taxonomy ) continue;
-
-		$is_hierarchical = is_taxonomy_hierarchical( $taxonomy->name );
-
-		// Get terms
-
-		if ( $is_hierarchical ) 
-		{
-			$terms = get_categories( array
-			(
-				'taxonomy' => $taxonomy->name,
-			));
-		}
-
-		else
-		{
-			$terms = get_terms( array
-			(
-				'taxonomy' => $taxonomy->name,
-				'orderby'  => 'name',
-				'order'    => 'ASC'
-			));
-		}
-
-		// Checks if terms.
-
-		if ( ! count( $terms ) ) continue;
-
-		// Create items
-
-		$group = array
-		(
-			'text'     => $taxonomy->labels->singular_name,
-			'children' => array(),
-		);
-
-		// Creates `<option>` elements.
-
-		foreach ( $terms as $term ) 
-		{
-			$text = $term->name;
-			$text_before = '';
-
-			if ( '' == trim( $text ) ) 
-			{
-				$text = $term->term_id;
-			}
-
-			// Show hierarchy
-
-			if ( $is_hierarchical ) 
-			{
-				$ancestors = get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' );
-
-				$text_before = str_repeat( '–', count( $ancestors ) ) . ' ';
-			}
-
-			//
-
-			$group['children'][] = array
-			(
-				'id'   => $term->term_id,
-				'text' => "{$text_before}{$text}"
-			);
-		}
-
-		$items[] = $group;
-	}
-
-	if ( ! $is_group && $items ) 
-	{
-		$items = $items[0]['children'];
-	}
-
-	return $items;
-}
-
-function get_user_field_items( $args = null )
-{
-	$defaults = array
-	(
-		'role' => '',
-		'who'  => ''
-	);
-
-	$args = wp_parse_args( $args, $defaults );
-
-	$choices = array();
-
-	$users = get_users( array
-	(
-		'role'    => $args['role'],
-		'who'     => $args['who'],
-		'orderby' => 'display_name',
-		'order'   => 'ASC'
-	));
-
-	foreach ( $users as $user ) 
-	{
-		$choices[ $user->ID ] = array
-		(
-			'id'   => $user->ID,
-			'text' => $user->display_name,
-		);
-	}
-
-	return $choices;
-}
-
-function get_page_template_field_items()
-{
-	$items['default'] = array
-	(
-		'id'   => 'default',
-		'text' => __( 'Default', 'wdc' )
-	);
-
-	$page_templates = get_page_templates();
-
-	foreach ( $page_templates as $template_name => $template_file ) 
-	{
-		$items[ $template_name ] = array
-		(
-			'id'   => $template_file,
-			'text' => $template_name
-		);
+		$items = $items[ $first ]['children'];
 	}
 
 	return $items;
