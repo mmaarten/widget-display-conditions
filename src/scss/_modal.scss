@@ -1,0 +1,215 @@
+/**
+ * Modal
+ */
+
+$modal-content-padding-x  : 15px;
+$modal-content-padding-y  : 15px;
+$modal-content-bg-color   : #fff;
+$modal-content-box-shadow : 0 5px 15px rgba( #000, .7 );
+
+$modal-heading-padding-x  : 15px;
+$modal-heading-padding-y  : 15px;
+$modal-heading-border     : 1px solid #ddd;
+
+$modal-close-size: 48px;
+
+$modal-z-index  : 160000 - 100;
+$modal-bg-color : rgba( #000, .7 );
+
+html.with-featherlight 
+{
+	// disable global scrolling when wdc-modals are visible
+	overflow: hidden;
+}
+
+.wdc-modal 
+{
+	display: none;
+
+	// dimensions: spanning the background from edge to edge
+	position:fixed;
+	top: 0; 
+	right: 0; 
+	bottom: 0; 
+	left: 0;
+	z-index: $modal-z-index;
+
+	// position: centering content
+	text-align: center;
+
+	// insures that the ::before pseudo element doesn't force wrap with fixed width content;
+	white-space: nowrap;
+
+	// styling
+	cursor: pointer;
+	
+	background: $modal-bg-color;
+
+	&:before 
+	{
+		// position: trick to center content vertically
+		content: '';
+		display: inline-block;
+		height: 100%;
+		vertical-align: middle;
+	}
+
+	* 
+	{ 
+		// See https://github.com/noelboss/wdc-modal/issues/42
+		box-sizing: border-box;
+	}
+
+	iframe 
+	{
+		// styling
+		border: none;
+	}
+
+	h1
+	{
+		margin: ( -$modal-content-padding-y ) ( -$modal-content-padding-x ) $modal-content-padding-y;
+		padding: 0 ($modal-heading-padding-x + $modal-close-size ) 0 $modal-heading-padding-x;
+		line-height: 50px;
+		border-bottom : $modal-heading-border;
+		background: #fafafa;
+	}
+
+	p.submit
+	{
+		margin: 0;
+    	padding: 1px 0;
+	}
+}
+
+.wdc-modal-content 
+{
+	// make content container for positioned elements (close button)
+	position: relative;
+
+	// position: centering vertical and horizontal
+	text-align: left;
+	vertical-align: middle;
+	display: inline-block;
+
+	// dimensions: cut off images
+	overflow: auto;
+	padding: $modal-content-padding-y $modal-content-padding-x 0;
+	border-bottom: $modal-content-padding-y solid transparent;
+
+	// dimensions: handling large content
+	margin-left: 5%;
+	margin-right: 5%;
+	max-height: 95%;
+
+	// styling
+	background: $modal-content-bg-color;
+	box-shadow: $modal-content-box-shadow;
+	cursor: auto;
+
+	// reset white-space wrapping
+	white-space: normal;
+
+	max-width: 800px;
+
+	.wdc-modal-iframe &
+	{
+		// removed the border for image croping since iframe is edge to edge
+		border-bottom: 0;
+		padding: 0;
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
+// contains the content
+.wdc-modal-inner 
+{
+	// make sure its visible
+	display: block;
+}
+
+// don't show these though
+script.wdc-modal-inner,
+link.wdc-modal-inner,
+style.wdc-modal-inner 
+{
+	display: none;
+}
+
+.wdc-modal-close-icon 
+{
+	// position: centering vertical and horizontal
+	position: absolute;
+	z-index: 9999;
+	top: 0;
+	right: 0;
+
+	// dimensions
+	line-height: $modal-close-size;
+	width: $modal-close-size;
+
+	// styling
+	text-align: center;
+	padding: 0;
+	cursor: pointer;
+    
+
+	// See http://stackoverflow.com/questions/16077341/how-to-reset-all-default-styles-of-the-html5-button-element
+	&::-moz-focus-inner 
+	{
+		border: 0;
+		padding: 0;
+	}
+
+	// Custom icon
+
+	outline: none;
+    transition: color .1s ease-in-out, background .1s ease-in-out;
+	border: 1px solid transparent;
+    background: none;
+    color: #666;
+
+	&:before
+	{
+		position: absolute;
+	    top: 50%;
+	    left: 50%;
+	    transform: translate( -50%, -50% );
+
+		content: "\f158";
+	    font: normal 20px/1 dashicons;
+	    speak: none;
+	    vertical-align: middle;
+	    -webkit-font-smoothing: antialiased;
+	    -moz-osx-font-smoothing: grayscale;
+	}
+
+	&:hover
+	{
+		color: #00a0d2;
+	}
+
+	&:focus
+	{
+		color: #00a0d2;
+	    border-color: #5b9dd9;
+	    box-shadow: 0 0 3px rgba( 0, 115, 170, .8 );
+	    outline: 2px solid transparent;
+	    outline-offset: -2px;
+	}
+}
+
+.wdc-modal-image 
+{
+	// styling
+	width: 100%;
+}
+
+// hide non wdc-modal items when printing
+@media print 
+{
+	html.with-featherlight > * > :not( .wdc-modal ) 
+	{
+		display: none;
+	}
+}

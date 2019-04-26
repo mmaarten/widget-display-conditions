@@ -1,0 +1,105 @@
+
+@import "modal";
+
+$condition-padding-x: 4px;
+$condition-padding-y: 4px;
+
+.wdc-ui
+{
+	&.wdc-loading
+	{
+		.wdc-hide-if-loading
+		{
+			display: none;
+		}
+	}
+
+	&:not( .wdc-loading )
+	{
+		.wdc-show-if-loading
+		{
+			display: none;
+		}
+	}
+
+	&.wdc-has-conditions
+	{
+		.wdc-hide-if-conditions
+		{
+			display: none;
+		}
+	}
+
+	&:not( .wdc-has-conditions )
+	{
+		.wdc-show-if-conditions
+		{
+			display: none;
+		}
+	}
+	
+	h4
+	{
+		margin: .35em 0;
+    	line-height: 1;
+	}
+
+	.notice
+	{
+		margin: 1em 0;
+
+		.spinner
+		{
+			margin: 0 0 0 1em;
+		}
+	}
+
+	.button-link
+	{
+		color: inherit;
+		
+		&.dashicons-before
+		{
+			text-decoration: none;
+		}
+	}
+}
+
+table.wdc-conditions
+{
+	margin: 0;
+	padding: 0;
+	border: none;
+	border-collapse: collapse;
+
+	width: 100%;
+}
+
+tr.wdc-condition > td
+{
+	text-align: center;
+	vertical-align: middle;
+	padding: $condition-padding-y $condition-padding-x;
+
+	&:first-child
+	{
+		padding-left: 0;
+	}
+
+	&:last-child
+	{
+		padding-right: 0;
+	}
+
+	&:nth-child( 1 ) { width: 35%; }
+	&:nth-child( 2 ) { width: 20%; }
+	&:nth-child( 3 ) { }
+	&:nth-child( 4 ) { width: 1%; }
+	&:nth-child( 5 ) { width: 1%; }
+
+	select
+	{
+		margin: 0;
+		width: 100%;
+	}
+}

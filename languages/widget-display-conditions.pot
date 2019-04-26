@@ -1,0 +1,64 @@
+# Copyright (C) 2019 Maarten Menten
+# This file is distributed under the GPL2.
+msgid ""
+msgstr ""
+"Project-Id-Version: Widget Display Conditions 0.2.0\n"
+"Report-Msgid-Bugs-To: mentenmaarten@gmail.com\n"
+"POT-Creation-Date: 2019-04-25 09:21:41+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2019-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Maarten Menten <mentenmaarten@gmail.com>\n"
+"Language-Team: \n"
+"X-Generator: grunt-wp-i18n 1.0.3\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;_x;esc_html_e;esc_html__;esc_attr_e;esc_attr__;_ex:1,2c;_nx:4c,1,2;_"
+"nx_noop:4c,1,2;_x:1,2c;_n:1,2;_n_noop:1,2;__ngettext_noop:1,2;_c,_nc:4c,1,2"
+";\n"
+"X-Textdomain-Support: yes\n"
+
+#: includes/conditions/class-wdc-page-condition.php:15
+msgid "Page"
+msgstr ""
+
+#: includes/conditions/class-wdc-post-condition.php:15
+msgid "Post"
+msgstr ""
+
+#: includes/operators/class-wdc-is_equal_to-operator.php:15
+msgid "Is equal to"
+msgstr ""
+
+#: includes/operators/class-wdc-is_not_equal_to-operator.php:15
+msgid "Is not equal to"
+msgstr ""
+
+#: includes/ui.php:58
+msgid "Display Conditions"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Widget Display Conditions"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://wordpress.org/plugins/widget-display-conditions/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Control on which page you want a particular widget to be displayed."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Maarten Menten"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://profiles.wordpress.org/maartenm/"
+msgstr ""
