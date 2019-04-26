@@ -8,9 +8,8 @@ class Post_Template_Condition extends Condition
 	{
 		parent::__construct( 'post_template', __( 'Post Template', 'wdc' ), array
 		(
-			'category'  => 'post',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 30,
 		));
 	}
 

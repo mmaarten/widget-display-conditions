@@ -8,9 +8,8 @@ class Page_Template_Condition extends Condition
 	{
 		parent::__construct( 'page_template', __( 'Page Template', 'wdc' ), array
 		(
-			'category'  => 'page',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 110,
 		));
 	}
 

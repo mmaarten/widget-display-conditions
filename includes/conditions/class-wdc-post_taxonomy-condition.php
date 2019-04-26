@@ -8,9 +8,8 @@ class Post_Taxonomy_Condition extends Condition
 	{
 		parent::__construct( 'post_taxonomy', __( 'Post Taxonomy', 'wdc' ), array
 		(
-			'category'  => 'post',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 70,
 		));
 	}
 

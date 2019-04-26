@@ -8,9 +8,8 @@ class Attachment_Condition extends Condition
 	{
 		parent::__construct( 'attachment', __( 'Attachment', 'wdc' ), array
 		(
-			'category'  => 'attachment',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 130,
 		));
 	}
 

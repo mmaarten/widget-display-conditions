@@ -8,9 +8,8 @@ class Post_Tag_Condition extends Condition
 	{
 		parent::__construct( 'post_tag', __( 'Post Tag', 'wdc' ), array
 		(
-			'category'  => 'post',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 60,
 		));
 	}
 

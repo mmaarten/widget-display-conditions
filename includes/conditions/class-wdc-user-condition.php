@@ -8,9 +8,8 @@ class User_Condition extends Condition
 	{
 		parent::__construct( 'user', __( 'User', 'wdc' ), array
 		(
-			'category'  => 'user',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 190,
 		));
 	}
 

@@ -8,9 +8,8 @@ class Page_Condition extends Condition
 	{
 		parent::__construct( 'page', __( 'Page', 'wdc' ), array
 		(
-			'category'  => 'page',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 120,
 		));
 	}
 

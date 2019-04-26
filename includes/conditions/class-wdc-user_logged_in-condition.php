@@ -8,9 +8,8 @@ class User_Logged_In_Condition extends Condition
 	{
 		parent::__construct( 'user_logged_in', __( 'User Logged In', 'wdc' ), array
 		(
-			'category'  => 'user',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 180,
 		));
 	}
 

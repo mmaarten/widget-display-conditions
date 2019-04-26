@@ -32,6 +32,9 @@ if ( is_admin() )
 {
 	require_once plugin_dir_path( WDC_FILE ) . 'includes/fields.php';
 	require_once plugin_dir_path( WDC_FILE ) . 'includes/ui.php';
+
+	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater.php';
+	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater-tasks.php';
 }
 
 // Operators

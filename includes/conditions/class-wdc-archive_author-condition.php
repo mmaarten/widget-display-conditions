@@ -8,9 +8,8 @@ class Archive_Author_Condition extends Condition
 	{
 		parent::__construct( 'archive_author', __( 'Archive Author', 'wdc' ), array
 		(
-			'category'  => 'archive',
 			'operators' => array( '==', '!=' ),
-			'order'     => 10,
+			'order'     => 160,
 		));
 	}
 
