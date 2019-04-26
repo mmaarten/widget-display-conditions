@@ -50,6 +50,12 @@ You can use built-in conditions or create some of your own.
 
 == Changelog ==
 
+= 0.2.1 =
+Release date: Apr 26th, 2019
+
+* Enhancement - UI: updated submit styling
+* Enhancement - UI: added confirmation if unsaved changes
+
 = 0.2.0 =
 Release date: Apr 26th, 2019
 
