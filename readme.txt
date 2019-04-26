@@ -56,6 +56,7 @@ Release date: Apr 26th, 2019
 * Enhancement - Redesigned api. (custom functionality needs to be updated)
 * Enhancement - More hookable.
 * Enhancement - Plugin data is removed from database on uninstall.
+* Enhancement - used namespace.
 * Tested in WordPress 5.1
 
 = 0.1.8 =
