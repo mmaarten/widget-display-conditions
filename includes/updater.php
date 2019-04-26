@@ -17,33 +17,88 @@ class Updater
 
 	public function init()
 	{
-		add_action( 'admin_init'   , array( &$this, 'update' ) );
-		add_action( 'admin_menu'   , array( &$this, 'add_menu_page' ) );
-		add_action( 'admin_notices', array( &$this, 'update_notice' ) );
+		add_action( 'admin_init'               , array( &$this, 'save_version' ), 0 );
+		add_action( 'update_option_wdc_version', array( &$this, 'version_change' ), 10, 2 );
+		add_action( 'admin_init'               , array( &$this, 'update' ) );
+		add_action( 'admin_menu'               , array( &$this, 'add_menu_page' ) );
+		add_action( 'admin_notices'            , array( &$this, 'update_notice' ) );
 	}
 
+	/**
+	 * Save version
+	 */
+	public function save_version()
+	{
+		update_option( 'wdc_version', get_version() );
+	}
+
+	/**
+	 * Version change
+	 */
+	public function version_change( $old_version, $new_version )
+	{
+		update_option( 'wdc_update_from', $old_version );
+	}
+
+	/**
+	 * Add task
+	 *
+	 * @param string   $id
+	 * @param string   $version
+	 * @param callable $callback
+	 */
 	public function add_task( $id, $version, $callback )
 	{
-		$task = array
-		(
-			'id'       => $id,
-			'version'  => $version,
-			'callback' => $callback,
-		);
-
-		$this->tasks[ $task['id'] ] = $task;
+		$this->tasks[ $id ] = compact( 'id', 'version', 'callback' );
 	}
 
+	/**
+	 * Get tasks
+	 *
+	 * @return array
+	 */
 	public function get_tasks()
 	{
 		return $this->tasks;
 	}
 
+	/**
+	 * Get task
+	 *
+	 * @param string $task_id
+	 *
+	 * @return mixed
+	 */
+	public function get_task( $task_id )
+	{
+		if ( isset( $this->tasks[ $task_id ] ) ) 
+		{
+			return $this->tasks[ $task_id ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get applicable tasks
+	 *
+	 * @return array
+	 */
 	public function get_applicable_tasks()
 	{
-		$from = get_option( 'wdc_version' );
-		$to   = WDC_VERSION;
+		$from = get_option( 'wdc_update_from' );
+		$to   = get_version();
 
+		if ( ! has_widget_conditions() ) 
+		{
+			return array();
+		}
+
+		if ( false === $from ) 
+		{
+			return array();
+		}
+		
 		if ( version_compare( $from, $to, '=' ) ) 
 		{
 			return array();
@@ -53,22 +108,48 @@ class Updater
 
 		foreach ( $this->tasks as $key => $task ) 
 		{
-			if ( version_compare( $task['version'], $from , '<' ) ) 
+			if ( version_compare( $task['version'], $from, '>' ) 
+			  && version_compare( $task['version'], $to, '<=' ) ) 
 			{
-				continue;
+				$tasks[ $key ] = $task;
 			}
-
-			if ( version_compare( $task['version'], $to , '>' ) ) 
-			{
-				continue;
-			}
-
-			$tasks[ $key ] = $task;
 		}
 
-		uasort( $tasks, 'wdc\sort_version' );
+		uasort( $tasks, array( $this, 'sort_tasks' ) );
 
 		return $tasks;
+	}
+
+	/**
+	 * Sort tasks
+	 *
+	 * @param mixed $a
+	 * @param mixed $b
+	 *
+	 * @return int
+	 */
+	public function sort_tasks( $a, $b )
+	{
+		return version_compare( $a['version'], $b['version'] );
+	}
+
+	/**
+	 * Do tasks
+	 *
+	 * @return array
+	 */
+	protected function do_tasks()
+	{
+		$tasks = $this->get_applicable_tasks();
+
+		$result = array();
+
+		foreach ( $tasks as $task ) 
+		{
+			$result[ $task['id'] ] = call_user_func( $task['callback'] );
+		}
+
+		return $result;
 	}
 
 	public function update()
@@ -83,16 +164,9 @@ class Updater
 			return;
 		}
 
-		$tasks = $this->get_applicable_tasks();
+		$result = $this->do_tasks();
 
-		$results = array();
-
-		foreach ( $tasks as $key => $task ) 
-		{
-			$results[ $key ] = call_user_func( $task['callback'] );
-		}
-
-		update_option( 'wdc_version', WDC_VERSION );
+		delete_option( 'wdc_update_from' );
 	}
 
 	public function update_notice()
@@ -130,6 +204,8 @@ class Updater
 		<div class="wrap">
 
 			<h1><?php esc_html_e( 'Widget Display Conditions Updater', 'wdc' ); ?></h1>
+
+			<pre><?php var_dump( $this->get_applicable_tasks() ); ?></pre>
 
 			<?php if ( ! $this->get_applicable_tasks() ) : ?>
 			<p><?php esc_html_e( 'No updates available.' ); ?></p>
