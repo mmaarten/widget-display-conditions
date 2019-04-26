@@ -110,6 +110,8 @@ html.with-featherlight
 	// reset white-space wrapping
 	white-space: normal;
 
+	max-width: 800px;
+
 	.wdc-modal-iframe &
 	{
 		// removed the border for image croping since iframe is edge to edge
