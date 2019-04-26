@@ -23,6 +23,20 @@ function get_instance()
 }
 
 /**
+ * Get Version
+ *
+ * @return string
+ */
+function get_version()
+{
+	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+
+	$data = get_plugin_data( WDC_FILE, false, false );
+
+	return $data['Version'];
+}
+
+/**
  * Admin notice
  *
  * @param string $message
@@ -56,22 +70,6 @@ function sort_order( $a, $b )
     }
 
     return ( $a['order'] < $b['order'] ) ? -1 : 1;
-}
-
-/**
- * Sort version
- *
- * @param mixed $a
- * @param mixed $b
- *
- * @return int
- */
-function sort_version( $a, $b )
-{
-	if ( is_object( $a ) ) $a = get_object_vars( $a );
-	if ( is_object( $b ) ) $b = get_object_vars( $b );
-
-	return version_compare( $a['version'], $b['version'] );
 }
 
 /**
