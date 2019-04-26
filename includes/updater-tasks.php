@@ -10,9 +10,9 @@ add_update_task( '0.2.0', '0.2.0', 'wdc\updater_task_0_2_0' );
 /**
  * Version 0.2.0
  *
- * Convert widget condition param value to instance id.
- * Convert widget condition operator value to instance id.
- * Convert widget condition to array
+ * Convert condition param value to instance id.
+ * Convert condition operator value to instance id.
+ * Convert condition to array
  */
 function updater_task_0_2_0()
 {
