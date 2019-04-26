@@ -15,8 +15,9 @@
 		this.$submit    = this.$elem.find( ':input[type="submit"]' );	
 		this.fieldItems = {};
 		this.isLoaded   = false;
+		this.isSaved    = false;
 
-		this.setSubmit( 'saved' );
+		this.setSaved( 'saved' );
 
 		var _this = this;
 
@@ -63,20 +64,20 @@
 
 		this.$elem.on( 'change', '.wdc-param, .wdc-operator, .wdc-value', function( event )
 		{
-			_this.setSubmit( 'save' );
+			_this.setSaved( 'save' );
 		});
 
 		this.$elem.on( 'submit', 'form', function( event )
 		{
 			event.preventDefault();
 
-			_this.setSubmit( 'saving' );
+			_this.setSaved( 'saving' );
 
 			$.post( ajaxurl, $( this ).serialize(), function( response )
 			{
 				console.log( response );
 
-				_this.setSubmit( 'saved' );
+				_this.setSaved( 'saved' );
 			});
 		});
 
@@ -96,7 +97,7 @@
 
 			if ( _this.isLoaded && ( $elem.is( '.wdc-condition-group' ) || $elem.is( '.wdc-condition' ) ) ) 
 			{
-				_this.setSubmit( 'save' );
+				_this.setSaved( 'save' );
 			}
 		});
 
@@ -328,12 +329,15 @@
 		});
 	};
 
-	UI.prototype.setSubmit = function( state ) 
+	UI.prototype.setSaved = function( state ) 
 	{
+		// Backup submit text
 		if ( typeof this.$submit.data( 'save' ) === 'undefined' ) 
 		{
 			this.$submit.data( 'save', this.$submit.text() );
 		}
+
+		this.isSaved = false;
 
 		switch ( state )
 		{
@@ -354,6 +358,8 @@
 					.prop( 'disabled', true )
 						.siblings( '.spinner' )
 							.removeClass( 'is-active' );
+
+				this.isSaved = true;
 
 				break;
 
@@ -401,6 +407,8 @@
 			widget : $button.data( 'widget' ),
 		});
 
+		var ui;
+
 		$.featherlight( content, 
 		{
 			namespace    : 'wdc-modal',
@@ -409,13 +417,21 @@
 			
 			afterContent : function()
 			{
-				var ui = new wdc.ui( this.$content, 
+				ui = new wdc.ui( this.$content, 
 				{
 					widget    : $button.data( 'widget' ),
 					nonceName : $button.data( 'noncename' ),
 					nonce     : $button.data( 'nonce' ),
 				});
 			},
+
+			beforeClose : function()
+			{
+				if ( ! ui.isSaved && wdc.messages.notSaved ) 
+				{
+					return window.confirm( wdc.messages.notSaved );
+				}
+			}
 		});
 
 	});

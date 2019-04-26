@@ -144,6 +144,14 @@ class UI
 		// Core
 		wp_enqueue_style( 'wdc-ui', plugins_url( "assets/css/ui$min.css", WDC_FILE ), array(), WDC_VERSION );
 		wp_enqueue_script( 'wdc-ui', plugins_url( "assets/js/ui$min.js", WDC_FILE ), array( 'jquery', 'wp-util' ), WDC_VERSION, true );
+	
+		wp_localize_script( 'wdc-ui', 'wdc', array
+		(
+			'messages' => array
+			(
+				'notSaved' => __( 'Confirm unsaved changes.', 'wdc' ),
+			),
+		));
 	}
 
 	/**
