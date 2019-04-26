@@ -20,15 +20,37 @@ define( 'WDC_NONCE_NAME', 'wdc_nonce' );
 defined( 'WDC_MAX_NUMBERPOSTS' ) || define( 'WDC_MAX_NUMBERPOSTS', 5000 );
 
 require_once plugin_dir_path( WDC_FILE ) . 'includes/common.php';
-require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions.php';
-require_once plugin_dir_path( WDC_FILE ) . 'includes/widgets.php';
-require_once plugin_dir_path( WDC_FILE ) . 'includes/operators.php';
-require_once plugin_dir_path( WDC_FILE ) . 'includes/params.php';
+
+inc( array
+(
+	'operators/class-wdc-operator.php',
+	'operators.php',
+	'conditions/class-wdc-condition.php',
+	'conditions.php',
+	'conditions-api.php',
+	'widgets.php',
+));
+
+// Operators
+inc( array
+(
+	'operators/class-wdc-is_equal_to-operator.php',
+	'operators/class-wdc-is_not_equal_to-operator.php',
+));
+
+// Conditions
+inc( array
+(
+	'conditions/class-wdc-post-condition.php',
+	'conditions/class-wdc-page-condition.php',
+	'conditions/class-wdc-attachment-condition.php',
+));
 
 if ( is_admin() )
 {
-	require_once plugin_dir_path( WDC_FILE ) . 'includes/fields.php';
-	require_once plugin_dir_path( WDC_FILE ) . 'includes/ui.php';
+	inc( array
+	(
+		'fields.php',
+		'ui.php',
+	));
 }
-
-require_once plugin_dir_path( WDC_FILE ) . 'includes/application.php';

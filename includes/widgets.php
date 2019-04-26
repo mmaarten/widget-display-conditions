@@ -149,7 +149,9 @@ function sidebars_widgets( $sidebars_widgets )
 
 		foreach ( $widgets as $widget_id ) 
 		{
-			if ( do_widget_conditions( $widget_id ) ) 
+			$conditions_met = do_widget_conditions( $widget_id );
+
+			if ( ! isset( $conditions_met ) || $conditions_met ) 
 			{
 				$return[ $sidebar_index ][] = $widget_id;
 			}

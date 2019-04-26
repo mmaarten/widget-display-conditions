@@ -1,87 +1,92 @@
 <?php 
 /**
- * Params
+ * Operators
  */
 
 namespace wdc;
 
-$wdc_operators = array();
-
-/**
- * Add operator
- *
- * @param string $id
- * @param string $title
- * @param array  $args
- */
-function add_operator( $id, $title, $args = array() )
+class Operators
 {
-	$args = wp_parse_args( $args, array
-	(
-		'operators' => array(),
-		'order'     => 10,
-	));
+	protected $operators = array();
 
-	$operator = array
-	(
-		'id'        => $id,
-		'title'     => $title,
-		'operators' => (array) $args['operators'],
-		'order'     => (int) $args['order'],
-	);
-
-	$operator = apply_filters( 'wdc/operator', $operator );
-
-	$GLOBALS['wdc_operators'][ $operator['id'] ] = $operator;
-}
-
-/**
- * Remove operator
- *
- * @param string $id
- */
-function remove_operator( $id )
-{
-	unset( $GLOBALS['wdc_operators'][ $id ] );
-}
-
-/**
- * Get operators
- *
- * @return array
- */
-function get_operators()
-{
-	return $GLOBALS['wdc_operators'];
-}
-
-/**
- * Get operator
- *
- * @param string $id
- *
- * @return mixed
- */
-function get_operator( $id )
-{
-	$operators = get_operators();
-
-	if ( isset( $operators[ $id ] ) ) 
+	public function __construct()
 	{
-		return $operators[ $id ];
+		
 	}
 
-	return null;
+	public function create_operator( $id, $title, $args = array() )
+	{
+		$operator = new Operator( $id, $title, $args );
+
+		$this->register_operator( $operator );
+
+		return $operator;
+	}
+
+	public function register_operator( $operator )
+	{
+		if ( ! $operator instanceof Operator ) 
+		{
+			$operator = new $operator();
+		}
+
+		$this->operators[ $operator->id ] = $operator;
+	}
+
+	public function unregister_operator( $operator_id )
+	{
+		unset( $this->operators[ $operator_id ] );
+	}
+
+	public function get_operators()
+	{
+		return $this->operators;
+	}
+
+	public function get_operator( $operator_id )
+	{
+		if ( isset( $this->operators[ $operator_id ] ) ) 
+		{
+			return $this->operators[ $operator_id ];
+		}
+
+		return null;
+	}
+
+	public function get_operator_objects( $operator_ids )
+	{
+		return array_intersect_key( get_operators(), array_flip( (array) $operator_ids ) );
+	}
 }
 
-/**
- * Get operator Objects
- *
- * @param array $ids
- *
- * @return array
- */
-function get_operator_objects( $ids )
+get_instance()->operators = new Operators();
+
+function create_operator( $id, $title, $args = array() )
 {
-	return array_intersect_key( get_operators(), array_flip( (array) $ids ) );
+	return get_instance()->operators->create_operator( $id, $title, $args );
+}
+
+function register_operator( $operator )
+{
+	get_instance()->operators->register_operator( $operator );
+}
+
+function unregister_operator( $operator_id )
+{
+	get_instance()->operators->unregister_operator( $operator_id );
+}
+
+function get_operators()
+{
+	return get_instance()->operators->get_operators();
+}
+
+function get_operator( $operator_id )
+{
+	return get_instance()->operators->get_operator( $operator_id );
+}
+
+function get_operator_objects( $operator_ids )
+{
+	return get_instance()->operators->get_operator_objects( $operator_ids );
 }

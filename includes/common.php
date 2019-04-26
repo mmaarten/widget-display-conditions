@@ -5,6 +5,26 @@
 
 namespace wdc;
 
+function get_instance()
+{
+	static $wdc = null;
+
+	if ( ! isset( $wdc ) ) 
+	{
+		$wdc = new \stdClass();
+	}
+
+	return $wdc;
+}
+
+function inc( $files )
+{
+	foreach ( (array) $files as $file ) 
+	{
+		require_once plugin_dir_path( WDC_FILE ) . "includes/$file";
+	}
+}
+
 /**
  * Admin notice
  *
@@ -30,6 +50,9 @@ function admin_notice( $message, $type = 'info' )
  */
 function sort_order( $a, $b )
 {
+	if ( is_object( $a ) ) $a = get_object_vars( $a );
+	if ( is_object( $b ) ) $b = get_object_vars( $b );
+
 	if ( $a['order'] == $b['order'] ) 
 	{
         return 0;

@@ -12,107 +12,37 @@ namespace wdc;
  */
 function get_param_field_items()
 {
-	$params     = get_params();
-	$categories = get_param_categories();
+	$conditions = get_conditions();
 
-	uasort( $categories, 'wdc\sort_order' );
+	uasort( $conditions, 'wdc\sort_order' );
 
 	$items = array();
 
-	foreach ( $categories as $category ) 
+	foreach ( $conditions as $condition ) 
 	{
-		$category_params = wp_filter_object_list( $params, array( 'category' => $category['id'] ) );
-
-		if ( ! $category_params ) continue;
-
-		uasort( $category_params, 'wdc\sort_order' );
-
-		$group = array
+		$items[ $condition->id ] = array
 		(
-			'id'       => $category['id'],
-			'text'     => $category['title'],
-			'children' => array(),
-		);
-
-		foreach ( $category_params as $param ) 
-		{
-			$group['children'][ $param['id'] ] = array
-			(
-				'id'   => $param['id'],
-				'text' => $param['title'],
-			);
-		}
-
-		$items[ $group['id'] ] = $group;
-	}
-
-	return $items;
-}
-
-/**
- * Get operator field items
- *
- * @param string $param_id
- *
- * @return mixed
- */
-function get_operator_field_items( $param_id )
-{
-	$param = get_param( $param_id );
-
-	if ( ! $param ) return null;
-
-	$operators = get_operator_objects( $param['operators'] );
-
-	uasort( $operators, 'wdc\sort_order' );
-	
-	$items = array();
-
-	foreach ( $operators as $operator ) 
-	{
-		$items[ $operator['id'] ] = array
-		(
-			'id'   => $operator['id'],
-			'text' => $operator['title'],
+			'id'   => $condition->id,
+			'text' => $condition->title,
 		);
 	}
 
 	return $items;
-}
-
-/**
- * Get value field items
- *
- * @param string $param_id
- *
- * @return mixed
- */
-function get_value_field_items( $param_id )
-{
-	$param = get_param( $param_id );
-
-	if ( ! $param ) return null;
-
-	return apply_filters( "wdc/value_field_items/param={$param['id']}", array(), $param['id'] );
 }
 
 /**
  * Get condition field items
  *
- * @param string $param_id
+ * @param string $param
  *
  * @return mixed
  */
 
-function get_condition_field_items( $param_id )
+function get_condition_field_items( $param )
 {
-	$param = get_param( $param_id );
-
-	if ( ! $param ) return null;
-
 	return array
 	(
-		'operator' => get_operator_field_items( $param['id'] ),
-		'value'    => get_value_field_items( $param['id'] ),
+		'operator' => apply_filters( "wdc/operator_field_items/param=$param", array(), $param ),
+		'value'    => apply_filters( "wdc/value_field_items/param=$param", array(), $param ),
 	);
 }

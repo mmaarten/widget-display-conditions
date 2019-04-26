@@ -11,10 +11,12 @@
 	{
 		this.$elem   = $( elem );
 		this.options = $.extend( {}, UI.defaultOptions, options );
-
+	
+		this.$submit    = this.$elem.find( ':input[type="submit"]' );	
 		this.fieldItems = {};
+		this.isLoaded   = false;
 
-		this.isLoaded = false;
+		this.setSubmit( 'saved' );
 
 		var _this = this;
 
@@ -59,21 +61,28 @@
 			_this.updateConditionFields( $condition );
 		});
 
+		this.$elem.on( 'change', '.wdc-param, .wdc-operator, .wdc-value', function( event )
+		{
+			_this.setSubmit( 'save' );
+		});
+
 		this.$elem.on( 'submit', 'form', function( event )
 		{
 			event.preventDefault();
 
+			_this.setSubmit( 'saving' );
+
 			$.post( ajaxurl, $( this ).serialize(), function( response )
 			{
 				console.log( response );
+
+				_this.setSubmit( 'saved' );
 			});
 		});
 
 		this.$elem.on( 'DOMNodeInserted DOMNodeRemoved', function( event )
 		{
 			var $elem = $( event.target );
-
-			console.log( $elem.get(0) )
 
 			if ( _this.$elem.find( '.wdc-condition' ).length ) 
 			{
@@ -85,9 +94,9 @@
 				_this.$elem.removeClass( 'wdc-has-conditions' );
 			}
 
-			if ( _this.isLoaded && $elem.is( ':input' ) ) 
+			if ( _this.isLoaded && ( $elem.is( '.wdc-condition-group' ) || $elem.is( '.wdc-condition' ) ) ) 
 			{
-				
+				_this.setSubmit( 'save' );
 			}
 		});
 
@@ -222,6 +231,8 @@
 		// Load field items
 		this.getConditionFieldItems( $condition, function( items )
 		{
+			items = $.extend( {}, items );
+
 			// Populate fields
 			UI.populateSelectField( $operator, items.operator );
 			UI.populateSelectField( $value, items.value );
@@ -286,6 +297,8 @@
 
 		$.post( ajaxurl, data, function( response )
 		{
+			console.log( response );
+
 			_this.fieldItems = $.extend( {}, response.fieldItems );
 
 			$.each( response.conditions, function( groupId, conditions )
@@ -313,6 +326,47 @@
 
 			_this.isLoaded = true;
 		});
+	};
+
+	UI.prototype.setSubmit = function( state ) 
+	{
+		if ( typeof this.$submit.data( 'save' ) === 'undefined' ) 
+		{
+			this.$submit.data( 'save', this.$submit.text() );
+		}
+
+		switch ( state )
+		{
+			case 'save' :
+
+				this.$submit
+					.text( this.$submit.data( 'save' ) )
+					.prop( 'disabled', false )
+						.siblings( '.spinner' )
+							.removeClass( 'is-active' );
+
+				break;
+
+			case 'saved' :
+
+				this.$submit
+					.text( this.$submit.data( 'saved' ) )
+					.prop( 'disabled', true )
+						.siblings( '.spinner' )
+							.removeClass( 'is-active' );
+
+				break;
+
+			case 'saving' :
+
+				this.$submit
+					.text( this.$submit.data( 'save' ) )
+					.prop( 'disabled', true )
+						.siblings( '.spinner' )
+							.addClass( 'is-active' );
+
+				break;
+		}
 	};
 
 	UI.prototype.prepareAjax = function( data ) 
@@ -349,7 +403,9 @@
 
 		$.featherlight( content, 
 		{
-			namespace : 'wdc-modal',
+			namespace    : 'wdc-modal',
+			closeOnClick : false,
+			closeOnEsc   : false,
 			
 			afterContent : function()
 			{

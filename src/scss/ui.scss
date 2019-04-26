@@ -43,9 +43,19 @@
 		}
 	}
 	
-	h4, p, .notice
+	h4
+	{
+		margin: .25em 0;
+	}
+
+	.notice
 	{
 		margin: 1em 0;
+
+		.spinner
+		{
+			margin: 0 0 0 1em;
+		}
 	}
 }
 
@@ -53,6 +63,42 @@
 {
 	select
 	{
+		margin: 0;
 		width: 100%;
+	}
+
+	.button-link
+	{
+		text-decoration: none;
+		color: inherit;
+	}
+}
+
+table.wdc-conditions
+{
+	//margin: -6px;
+    //width: calc( 100% + 3px );
+	padding: 0;
+	border: none;
+	border-collapse: collapse;
+
+	&, > tbody
+	{
+		> tr
+		{
+			> td
+			{
+				text-align: left;
+				vertical-align: middle;
+
+				padding: 4px;
+
+				&:nth-child( 1 ) { width: 35%; }
+				&:nth-child( 2 ) { width: 20%; }
+				&:nth-child( 3 ) { }
+				&:nth-child( 4 ) { width: 1%; }
+				&:nth-child( 5 ) { width: 1%; }
+			}
+		}
 	}
 }
