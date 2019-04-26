@@ -413,7 +413,7 @@
 		{
 			namespace    : 'wdc-modal',
 			closeOnClick : false,
-			closeOnEsc   : false,
+			closeOnEsc   : true,
 			
 			afterContent : function()
 			{

@@ -151,8 +151,8 @@ class UI
 		wp_enqueue_script( 'featherlight', plugins_url( "assets/js/featherlight$min.js", WDC_FILE ), array( 'jquery' ), '1.7.13', true );
 
 		// Core
-		wp_enqueue_style( 'wdc-ui', plugins_url( "assets/css/ui$min.css", WDC_FILE ), array(), WDC_VERSION );
-		wp_enqueue_script( 'wdc-ui', plugins_url( "assets/js/ui$min.js", WDC_FILE ), array( 'jquery', 'wp-util' ), WDC_VERSION, true );
+		wp_enqueue_style( 'wdc-ui', plugins_url( "assets/css/ui$min.css", WDC_FILE ), array(), get_version() );
+		wp_enqueue_script( 'wdc-ui', plugins_url( "assets/js/ui$min.js", WDC_FILE ), array( 'jquery', 'wp-util' ), get_version(), true );
 	
 		wp_localize_script( 'wdc-ui', 'wdc', array
 		(
@@ -181,11 +181,11 @@ class UI
 
 				<h1><?php _e( 'Widget Display Conditions', 'wdc' ); ?></h1>
 
-				<div class="wdc-show-if-loading">
+				<div class="wdc-preloader">
 					<?php admin_notice( __( 'Gathering data…', 'wdc' ) . '<span class="spinner is-active"></span>' ); ?>
 				</div>
 
-				<div class="wdc-hide-if-loading">
+				<div class="wdc-main">
 
 					<form method="post">
 					

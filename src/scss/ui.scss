@@ -3,21 +3,33 @@
 
 .wdc-ui
 {
+	// Loading animation
+
+	.wdc-main
+	{
+		transition: max-height 1.5s ease-in-out, opacity .3s ease-in-out;
+		max-height: 10000px;
+		overflow: hidden;
+	}
+
 	&.wdc-loading
 	{
-		.wdc-hide-if-loading
+		.wdc-main
 		{
-			display: none;
+			opacity: 0;
+			max-height: 0px;
 		}
 	}
 
 	&:not( .wdc-loading )
 	{
-		.wdc-show-if-loading
+		.wdc-preloader
 		{
 			display: none;
 		}
 	}
+
+	//
 
 	&.wdc-has-conditions
 	{
