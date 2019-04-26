@@ -1,9 +1,6 @@
 
 @import "modal";
 
-$condition-padding-x: 4px;
-$condition-padding-y: 4px;
-
 .wdc-ui
 {
 	&.wdc-loading
@@ -102,7 +99,7 @@ tr.wdc-condition > td
 {
 	text-align: center;
 	vertical-align: middle;
-	padding: $condition-padding-y $condition-padding-x;
+	padding: 4px;
 
 	&:first-child
 	{
