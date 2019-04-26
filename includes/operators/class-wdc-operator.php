@@ -34,6 +34,15 @@ class Operator
 		do_action_ref_array( 'wdc/operator', array( &$this ) );
 	}
 
+	/**
+	 * Apply
+	 *
+	 * @param bool  $return
+	 * @param mixed $a
+	 * @param mixed $b
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $a, $b )
 	{
 		return $return;

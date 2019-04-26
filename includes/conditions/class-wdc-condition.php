@@ -39,6 +39,13 @@ class Condition
 		do_action_ref_array( 'wdc/condition', array( &$this ) );
 	}
 
+	/**
+	 * Operator field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function operator_field_items( $items )
 	{
 		$operators = get_operator_objects( $this->operators );
@@ -57,11 +64,27 @@ class Condition
 		return $items;
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		return $items;
 	}
 
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
 		return $return;

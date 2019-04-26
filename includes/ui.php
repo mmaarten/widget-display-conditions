@@ -7,11 +7,17 @@ namespace wdc;
 
 class UI
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		
 	}
 
+	/**
+	 * Init
+	 */
 	public function init()
 	{
 		add_action( 'in_widget_form'       , array( &$this, 'widget_form' ), 999 );
@@ -35,6 +41,9 @@ class UI
 			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'wdc' ) );
 	}
 
+	/**
+	 * Get condition field items
+	 */
 	public function get_condition_field_items()
 	{
 		// Check if ajax call

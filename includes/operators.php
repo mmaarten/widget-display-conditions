@@ -9,11 +9,23 @@ class Operators
 {
 	protected $operators = array();
 
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		
 	}
 
+	/**
+	 * Create operator
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 *
+	 * @return Operator
+	 */
 	public function create_operator( $id, $title, $args = array() )
 	{
 		$operator = new Operator( $id, $title, $args );
@@ -23,6 +35,11 @@ class Operators
 		return $operator;
 	}
 
+	/**
+	 * Register operator
+	 *
+	 * @param mixed $operator
+	 */
 	public function register_operator( $operator )
 	{
 		if ( ! $operator instanceof Operator ) 
@@ -33,16 +50,33 @@ class Operators
 		$this->operators[ $operator->id ] = $operator;
 	}
 
+	/**
+	 * Unregister operator
+	 *
+	 * @param string $operator_id
+	 */
 	public function unregister_operator( $operator_id )
 	{
 		unset( $this->operators[ $operator_id ] );
 	}
 
+	/**
+	 * Get operators
+	 *
+	 * @return array
+	 */
 	public function get_operators()
 	{
 		return $this->operators;
 	}
 
+	/**
+	 * Get operator
+	 *
+	 * @param string $operator_id
+	 *
+	 * @return mixed
+	 */
 	public function get_operator( $operator_id )
 	{
 		if ( isset( $this->operators[ $operator_id ] ) ) 
@@ -53,6 +87,13 @@ class Operators
 		return null;
 	}
 
+	/**
+	 * Get operator objects
+	 *
+	 * @param array $operator_ids
+	 *
+	 * @return array
+	 */
 	public function get_operator_objects( $operator_ids )
 	{
 		return array_intersect_key( get_operators(), array_flip( (array) $operator_ids ) );

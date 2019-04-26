@@ -5,6 +5,11 @@
 
 namespace wdc;
 
+/**
+ * Get widget regular expression
+ *
+ * @return string
+ */
 function get_widget_regex()
 {
 	return apply_filters( 'wdc/widget_regex', '^([\w-]+)-(\d+)$' );

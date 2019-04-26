@@ -9,11 +9,23 @@ class Conditions
 {
 	protected $conditions = array();
 
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		
 	}
 
+	/**
+	 * Create condition
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 *
+	 * @return Condition
+	 */
 	public function create_condition( $id, $title, $args = array() )
 	{
 		$condition = new Condition( $id, $title, $args );
@@ -23,6 +35,11 @@ class Conditions
 		return $condition;
 	}
 
+	/**
+	 * Register condition
+	 *
+	 * @param mixed $condition
+	 */
 	public function register_condition( $condition )
 	{
 		if ( ! $condition instanceof Condition ) 
@@ -33,16 +50,33 @@ class Conditions
 		$this->conditions[ $condition->id ] = $condition;
 	}
 
+	/**
+	 * Unregister condition
+	 *
+	 * @param string $condition_id
+	 */
 	public function unregister_condition( $condition_id )
 	{
 		unset( $this->conditions[ $condition_id ] );
 	}
 
+	/**
+	 * Get conditions
+	 *
+	 * @return array
+	 */
 	public function get_conditions()
 	{
 		return $this->conditions;
 	}
 
+	/**
+	 * Get condition
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
 	public function get_condition( $condition_id )
 	{
 		if ( isset( $this->conditions[ $condition_id ] ) ) 
