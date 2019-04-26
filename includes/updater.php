@@ -139,8 +139,6 @@ class Updater
 				
 				<?php wp_nonce_field( 'update', WDC_NONCE_NAME ); ?>
 
-				<pre><?php print_r( $this->get_applicable_tasks() ); ?></pre>
-
 				<p><strong><?php _e( 'A database update is required.', 'wdc' ); ?></strong></p>
 				<p><?php _e( 'Make sure to make a backup before updating.', 'wdc' ); ?></p>
 

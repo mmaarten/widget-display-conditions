@@ -59,6 +59,22 @@ function sort_order( $a, $b )
 }
 
 /**
+ * Sort version
+ *
+ * @param mixed $a
+ * @param mixed $b
+ *
+ * @return int
+ */
+function sort_version( $a, $b )
+{
+	if ( is_object( $a ) ) $a = get_object_vars( $a );
+	if ( is_object( $b ) ) $b = get_object_vars( $b );
+
+	return version_compare( $a['version'], $b['version'] );
+}
+
+/**
  * Get dropdown options
  *
  * @param array $items
