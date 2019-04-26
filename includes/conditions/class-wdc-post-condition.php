@@ -1,7 +1,4 @@
-<?php 
-/**
- * Post condition
- */
+<?php
 
 namespace wdc;
 
@@ -11,8 +8,7 @@ class Post_Condition extends Condition
 	{
 		parent::__construct( 'post', __( 'Post', 'wdc' ), array
 		(
-			'operators' => array( '==', '!=' ),
-			'order'     => 1000,
+			'category' => 'post'
 		));
 	}
 
@@ -20,10 +16,21 @@ class Post_Condition extends Condition
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'names' );
 
-		if ( isset( $post_types['page'] ) )       unset( $post_types['page'] );
-		if ( isset( $post_types['attachment'] ) ) unset( $post_types['attachment'] );
+		if ( isset( $post_types['page'] ) ) 
+		{
+			unset( $post_types['page'] );
+		}
 
-		return get_post_field_items( $post_types );
+		if ( isset( $post_types['attachment'] ) ) 
+		{
+			unset( $post_types['attachment'] );
+		}
+
+		return wdc_post_choices( array
+		(
+			'post_type' => $post_types,
+			'group'     => true
+		));
 	}
 
 	public function apply( $return, $operator, $value )

@@ -1,7 +1,4 @@
-<?php 
-/**
- * Page condition
- */
+<?php
 
 namespace wdc;
 
@@ -11,14 +8,16 @@ class Page_Condition extends Condition
 	{
 		parent::__construct( 'page', __( 'Page', 'wdc' ), array
 		(
-			'operators' => array( '==', '!=' ),
-			'order'     => 1000,
+			'category' => 'page'
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return get_post_field_items( 'page' );
+		return wdc_post_choices( array
+		(
+			'post_type' => 'page'
+		));
 	}
 
 	public function apply( $return, $operator, $value )

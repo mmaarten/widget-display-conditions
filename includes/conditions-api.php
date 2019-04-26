@@ -7,7 +7,7 @@ namespace wdc;
 
 function do_conditions( $conditions )
 {
-	$result = null;
+	$result = true;
 
 	foreach ( $conditions as $group ) 
 	{
@@ -15,10 +15,10 @@ function do_conditions( $conditions )
 		{
 			$result = do_condition( $condition['param'], $condition['operator'], $condition['value'] );
 
-			if ( isset( $result ) && ! $result ) break;
+			if ( ! $result ) break;
 		}
 
-		if ( isset( $result ) && $result ) break;
+		if ( $result ) break;
 	}
 
 	return $result;
@@ -26,20 +26,12 @@ function do_conditions( $conditions )
 
 function do_condition( $param, $operator, $value )
 {
-	$result = null;
-	$result = apply_filters( "wdc/do_condition/param=$param", $result, $operator, $value, $param );
-	$result = apply_filters( "wdc/do_condition"             , $result, $operator, $value, $param );
-
-	return sanitize_condition_result( $result );
+	return apply_filters( "wdc/do_condition/param=$param", true, $operator, $value, $param );
 }
 
 function do_operator( $operator, $a, $b )
 {
-	$result = null;
-	$result = apply_filters( "wdc/do_operator/operator=$operator", $result, $a, $b, $operator );
-	$result = apply_filters( "wdc/do_operator"                   , $result, $a, $b, $operator );
-
-	return sanitize_condition_result( $result );
+	return apply_filters( "wdc/do_operator/operator=$operator", true, $a, $b, $operator );
 }
 
 function sanitize_condition_result( $result )

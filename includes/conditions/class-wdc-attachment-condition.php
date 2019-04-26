@@ -1,7 +1,4 @@
-<?php 
-/**
- * Attachment condition
- */
+<?php
 
 namespace wdc;
 
@@ -11,14 +8,16 @@ class Attachment_Condition extends Condition
 	{
 		parent::__construct( 'attachment', __( 'Attachment', 'wdc' ), array
 		(
-			'operators' => array( '==', '!=' ),
-			'order'     => 1000,
+			'category' => 'attachment'
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return get_post_field_items( 'attachment' );
+		return wdc_post_choices( array
+		(
+			'post_type' => 'attachment'
+		));
 	}
 
 	public function apply( $return, $operator, $value )
