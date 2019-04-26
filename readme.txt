@@ -3,7 +3,7 @@ Contributors: MaartenM
 Tags: widget, display, conditions, rules, sidebar, custom, admin, interface, visibility
 Requires at least: 4.0.0
 Tested up to: 5.1
-Stable tag: 0.1.8
+Stable tag: 0.2.0
 Requires PHP: 5.6.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
