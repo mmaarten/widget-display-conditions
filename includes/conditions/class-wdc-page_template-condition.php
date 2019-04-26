@@ -8,13 +8,15 @@ class Page_Template_Condition extends Condition
 	{
 		parent::__construct( 'page_template', __( 'Page Template', 'wdc' ), array
 		(
-			'category' => 'page'
+			'category'  => 'page',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_page_template_choices();
+		return get_page_template_field_items();
 	}
 
 	public function apply( $return, $operator, $value )

@@ -8,16 +8,15 @@ class Attachment_Condition extends Condition
 	{
 		parent::__construct( 'attachment', __( 'Attachment', 'wdc' ), array
 		(
-			'category' => 'attachment'
+			'category'  => 'attachment',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_post_choices( array
-		(
-			'post_type' => 'attachment'
-		));
+		return get_post_field_items( 'attachment' );
 	}
 
 	public function apply( $return, $operator, $value )

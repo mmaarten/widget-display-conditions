@@ -8,16 +8,15 @@ class Page_Condition extends Condition
 	{
 		parent::__construct( 'page', __( 'Page', 'wdc' ), array
 		(
-			'category' => 'page'
+			'category'  => 'page',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_post_choices( array
-		(
-			'post_type' => 'page'
-		));
+		return get_post_field_items( 'page' );
 	}
 
 	public function apply( $return, $operator, $value )

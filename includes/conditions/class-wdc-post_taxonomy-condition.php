@@ -8,7 +8,9 @@ class Post_Taxonomy_Condition extends Condition
 	{
 		parent::__construct( 'post_taxonomy', __( 'Post Taxonomy', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category'  => 'post',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
@@ -17,11 +19,7 @@ class Post_Taxonomy_Condition extends Condition
 		// TODO : _builtin => false also returns 'category' and 'post_tag'
 		$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ), 'names' );
 
-		return wdc_term_choices( array
-		(
-			'taxonomy' => $taxonomies,
-			'group'    => true
-		));
+		return get_term_field_items( $taxonomies );
 	}
 
 	public function apply( $return, $operator, $value )

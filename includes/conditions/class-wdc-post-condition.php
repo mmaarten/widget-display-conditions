@@ -8,7 +8,9 @@ class Post_Condition extends Condition
 	{
 		parent::__construct( 'post', __( 'Post', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category'  => 'post',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
@@ -26,11 +28,7 @@ class Post_Condition extends Condition
 			unset( $post_types['attachment'] );
 		}
 
-		return wdc_post_choices( array
-		(
-			'post_type' => $post_types,
-			'group'     => true
-		));
+		return get_post_field_items( $post_types );
 	}
 
 	public function apply( $return, $operator, $value )

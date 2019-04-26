@@ -8,16 +8,15 @@ class Post_Category_Condition extends Condition
 	{
 		parent::__construct( 'post_category', __( 'Post Category', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category'  => 'post',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_term_choices( array
-		(
-			'taxonomy' => 'category'
-		));
+		return get_term_field_items( 'category' );
 	}
 
 	public function apply( $return, $operator, $value )

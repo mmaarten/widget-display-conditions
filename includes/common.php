@@ -5,6 +5,11 @@
 
 namespace wdc;
 
+/**
+ * Get instance
+ *
+ * @return stdClass
+ */
 function get_instance()
 {
 	static $wdc = null;
@@ -15,14 +20,6 @@ function get_instance()
 	}
 
 	return $wdc;
-}
-
-function inc( $files )
-{
-	foreach ( (array) $files as $file ) 
-	{
-		require_once plugin_dir_path( WDC_FILE ) . "includes/$file";
-	}
 }
 
 /**
@@ -62,7 +59,7 @@ function sort_order( $a, $b )
 }
 
 /**
- * get dropdown options
+ * Get dropdown options
  *
  * @param array $items
  *
@@ -99,7 +96,7 @@ function get_dropdown_options( $items )
 }
 
 /**
- * get post field items
+ * Get post field items
  *
  * @param mixed $post_type
  *
@@ -179,11 +176,123 @@ function get_post_field_items( $post_type )
 		$items[ $group['id'] ] = $group;
 	}
 
-	if ( ! $is_group ) 
+	if ( ! $is_group && $items ) 
 	{
 		$first = array_keys( $items )[0];
 
 		$items = $items[ $first ]['children'];
+	}
+
+	return $items;
+}
+
+/**
+ * Get term field items
+ *
+ * @param mixed $taxonomy
+ *
+ * @return array
+ */
+function get_term_field_items( $taxonomy )
+{
+	$taxonomies = (array) $taxonomy;
+	$is_group   = count( $taxonomies ) > 1;
+
+	$items = array();
+	
+	foreach ( $taxonomies as $taxonomy ) 
+	{
+		$taxonomy = get_taxonomy( $taxonomy );
+
+		if ( ! $taxonomy ) continue;
+
+		// Get terms
+
+		if ( is_taxonomy_hierarchical( $taxonomy->name ) ) 
+		{
+			$terms = get_categories( array
+			(
+				'taxonomy' => $taxonomy->name,
+			));
+		}
+
+		else
+		{
+			$terms = get_terms( array
+			(
+				'taxonomy' => $taxonomy->name,
+				'orderby'  => 'name',
+				'order'    => 'ASC'
+			));
+		}
+
+		if ( ! $terms ) continue;
+
+		// Get items
+
+		$group = array
+		(
+			'id'       => $taxonomy->name,
+			'text'     => $taxonomy->labels->singular_name,
+			'children' => array()
+		);
+
+		foreach ( $terms as $term ) 
+		{
+			$text = trim( $term->name ) ? $term->name : $term->term_id;
+			$pad  = '';
+
+			if ( is_taxonomy_hierarchical( $taxonomy->name ) ) 
+			{
+				$ancestors = get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' );
+				$pad = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
+			}
+
+			$group['children'][ $term->term_id ] = array
+			(
+				'id'   => $term->term_id,
+				'html' => $pad . esc_html( $text ),
+			);
+		}
+
+		$items[ $group['id'] ] = $group;
+	}
+
+	if ( ! $is_group && $items ) 
+	{
+		$first = array_keys( $items )[0];
+
+		$items = $items[ $first ]['children'];
+	}
+
+	return $items;
+}
+
+/**
+ * Get page template field items
+ *
+ * @return array
+ */
+function get_page_template_field_items()
+{
+	$items = array
+	(
+		array
+		(
+			'id'   => 'default',
+			'text' => __( 'Default', 'wdc' ),
+		),
+	);
+
+	$page_templates = get_page_templates();
+
+	foreach ( $page_templates as $template_name => $template_file ) 
+	{
+		$items[ $template_file ] = array
+		(
+			'id'   => $template_file,
+			'text' => $template_name,
+		);
 	}
 
 	return $items;

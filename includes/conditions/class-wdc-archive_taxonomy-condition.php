@@ -8,7 +8,9 @@ class Archive_Taxonomy_Condition extends Condition
 	{
 		parent::__construct( 'archive_taxonomy', __( 'Archive Taxonomy', 'wdc' ), array
 		(
-			'category' => 'archive'
+			'category'  => 'archive',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 

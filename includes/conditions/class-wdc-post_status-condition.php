@@ -8,7 +8,9 @@ class Post_Status_Condition extends Condition
 	{
 		parent::__construct( 'post_status', __( 'Post Status', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category'  => 'post',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 

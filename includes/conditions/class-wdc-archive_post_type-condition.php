@@ -8,7 +8,9 @@ class Archive_Post_Type_Condition extends Condition
 	{
 		parent::__construct( 'archive_post_type', __( 'Archive Post Type', 'wdc' ), array
 		(
-			'category' => 'archive'
+			'category'  => 'archive',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 

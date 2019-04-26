@@ -8,16 +8,31 @@ class Archive_Author_Condition extends Condition
 	{
 		parent::__construct( 'archive_author', __( 'Archive Author', 'wdc' ), array
 		(
-			'category' => 'archive'
+			'category'  => 'archive',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_user_choices( array
+		$users = get_users( array
 		(
-			'who' => 'authors'
+			'who'     => 'authors',
+			'orderby' => 'display_name',
+			'order'   => 'ASC'
 		));
+
+		foreach ( $users as $user ) 
+		{
+			$items[ $user->ID ] = array
+			(
+				'id'   => $user->ID,
+				'text' => $user->display_name,
+			);
+		}
+		
+		return $items;
 	}
 
 	public function apply( $return, $operator, $value )

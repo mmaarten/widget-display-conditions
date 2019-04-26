@@ -8,13 +8,30 @@ class User_Condition extends Condition
 	{
 		parent::__construct( 'user', __( 'User', 'wdc' ), array
 		(
-			'category' => 'user'
+			'category'  => 'user',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_user_choices();
+		$users = get_users( array
+		(
+			'orderby' => 'display_name',
+			'order'   => 'ASC'
+		));
+
+		foreach ( $users as $user ) 
+		{
+			$items[ $user->ID ] = array
+			(
+				'id'   => $user->ID,
+				'text' => $user->display_name,
+			);
+		}
+		
+		return $items;
 	}
 
 	public function apply( $return, $operator, $value )

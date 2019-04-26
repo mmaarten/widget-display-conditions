@@ -8,16 +8,15 @@ class Post_Tag_Condition extends Condition
 	{
 		parent::__construct( 'post_tag', __( 'Post Tag', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category'  => 'post',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_term_choices( array
-		(
-			'taxonomy' => 'post_tag'
-		));
+		return get_term_field_items( 'post_tag' );
 	}
 
 	public function apply( $return, $operator, $value )

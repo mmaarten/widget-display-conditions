@@ -8,16 +8,15 @@ class Post_Format_Condition extends Condition
 	{
 		parent::__construct( 'post_format', __( 'Post Format', 'wdc' ), array
 		(
-			'category' => 'post'
+			'category'  => 'post',
+			'operators' => array( '==', '!=' ),
+			'order'     => 10,
 		));
 	}
 
 	public function value_field_items( $items )
 	{
-		return wdc_term_choices( array
-		(
-			'taxonomy' => 'post_format'
-		));
+		return get_term_field_items( 'post_format' );
 	}
 
 	public function apply( $return, $operator, $value )
