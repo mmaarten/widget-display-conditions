@@ -7,21 +7,21 @@ namespace wdc;
 
 function do_conditions( $conditions )
 {
-	$result = true;
+	$return = true;
 
 	foreach ( $conditions as $group ) 
 	{
 		foreach ( $group as $condition ) 
 		{
-			$result = do_condition( $condition['param'], $condition['operator'], $condition['value'] );
+			$return = do_condition( $condition['param'], $condition['operator'], $condition['value'] );
 
-			if ( ! $result ) break;
+			if ( ! $return ) break;
 		}
 
-		if ( $result ) break;
+		if ( $return ) break;
 	}
 
-	return $result;
+	return $return;
 }
 
 function do_condition( $param, $operator, $value )
@@ -32,9 +32,4 @@ function do_condition( $param, $operator, $value )
 function do_operator( $operator, $a, $b )
 {
 	return apply_filters( "wdc/do_operator/operator=$operator", true, $a, $b, $operator );
-}
-
-function sanitize_condition_result( $result )
-{
-	return isset( $result ) ? (bool) $result : $result;
 }
