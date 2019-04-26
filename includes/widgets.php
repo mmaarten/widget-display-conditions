@@ -117,6 +117,35 @@ function set_widget_conditions( $widget_id, $conditions )
 }
 
 /**
+ * Has widget conditions
+ *
+ * @return bool
+ */
+function has_widget_conditions()
+{
+	$sidebars_widgets = get_option( 'sidebars_widgets' );
+
+	if ( ! is_array( $sidebars_widgets ) ) 
+	{
+		return false;
+	}
+
+	foreach ( $sidebars_widgets as $widgets ) 
+	{
+		if ( ! is_array( $widgets ) ) continue;
+
+		foreach ( $widgets as $widget_id ) 
+		{
+			$conditions = get_widget_conditions( $widget_id );
+			
+			if ( $conditions ) return true;
+		}
+	}
+
+	return false;
+}
+
+/**
  * Delete widget conditions
  *
  * @param string $widget_id
@@ -135,6 +164,34 @@ function delete_widget_conditions( $widget_id )
 	}
 
 	return false;
+}
+
+/**
+ * Delete widgets conditions
+ */
+function delete_widgets_conditions()
+{
+	$sidebars_widgets = get_option( 'sidebars_widgets' );
+
+	if ( ! is_array( $sidebars_widgets ) ) 
+	{
+		return;
+	}
+	
+	if ( isset( $sidebars_widgets['array_version'] ) ) 
+	{
+		unset( $sidebars_widgets['array_version'] );
+	}
+
+	foreach ( $sidebars_widgets as $widgets ) 
+	{
+		if ( ! is_array( $widgets ) ) continue;
+
+		foreach ( $widgets as $widget_id ) 
+		{
+			delete_widget_conditions( $widget_id );
+		}
+	}
 }
 
 /**
