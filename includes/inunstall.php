@@ -23,14 +23,7 @@ if ( is_array( $sidebars_widgets ) )
 
 		foreach ( $widgets as $widget_id ) 
 		{
-			$instance = get_widget_instance( $widget_id );
-
-			if ( is_array( $instance ) && isset( $instance['wdc_conditions'] )
-			{
-				unset( $instance['wdc_conditions'] );
-
-				set_widget_conditions( $widget_id, $instance );
-			}
+			delete_widget_conditions( $widget_id );
 		}
 	}
 }

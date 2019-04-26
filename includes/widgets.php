@@ -95,7 +95,7 @@ function get_widget_conditions( $widget_id )
  * @param string $widget_id
  * @param array  $conditions
  *
- * @return mixed
+ * @return bool
  */
 function set_widget_conditions( $widget_id, $conditions )
 {
@@ -109,6 +109,27 @@ function set_widget_conditions( $widget_id, $conditions )
 	$instance['wdc_conditions'] = (array) $conditions;
 
 	return set_widget_instance( $widget_id, $instance );
+}
+
+/**
+ * Delete widget conditions
+ *
+ * @param string $widget_id
+ *
+ * @return bool
+ */
+function delete_widget_conditions( $widget_id )
+{
+	$instance = get_widget_instance( $widget_id );
+
+	if ( is_array( $instance ) && isset( $instance['wdc_conditions'] ) ) 
+	{
+		unset( $instance['wdc_conditions'] );
+
+		return set_widget_instance( $widget_id, $instance );
+	}
+
+	return false;
 }
 
 /**
