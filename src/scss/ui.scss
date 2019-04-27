@@ -1,36 +1,40 @@
 
 @import "modal";
 
+.wdc-open-ui-wrap
+{
+	display: flex;
+	align-items: center;
+
+	.spinner
+	{
+		float: none;
+		margin: 0;
+
+		&:first-child
+		{
+			margin-right: 10px;
+		}
+
+		&:last-child
+		{
+			margin-left: 10px;
+		}
+
+		&.wdc-is-active
+		{
+			visibility: visible;
+		}
+
+		&:not( .wdc-is-active )
+		{
+			visibility: hidden !important;
+		}
+	}
+}
+
 .wdc-ui
 {
-	// Loading animation
-
-	.wdc-main
-	{
-		transition: max-height 1.5s ease-in-out, opacity .3s ease-in-out;
-		max-height: 10000px;
-		overflow: hidden;
-	}
-
-	&.wdc-loading
-	{
-		.wdc-main
-		{
-			opacity: 0;
-			max-height: 0px;
-		}
-	}
-
-	&:not( .wdc-loading )
-	{
-		.wdc-preloader
-		{
-			display: none;
-		}
-	}
-
-	//
-
 	&.wdc-has-conditions
 	{
 		.wdc-hide-if-conditions
@@ -71,6 +75,11 @@
 		{
 			text-decoration: none;
 		}
+	}
+
+	p
+	{
+		margin: 9px 0;
 	}
 
 	p.submit

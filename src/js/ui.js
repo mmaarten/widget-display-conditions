@@ -174,6 +174,20 @@
 		}).prop( 'selected', true );
 	};
 
+	UI.prototype.trigger = function() 
+	{
+		arguments[0] = 'wdc.' + arguments[0];
+
+		this.$elem.trigger.apply( this.$elem, arguments );
+	};
+
+	UI.prototype.on = function() 
+	{
+		arguments[0] = 'wdc.' + arguments[0];
+		
+		this.$elem.on.apply( this.$elem, arguments );
+	};
+
 	UI.prototype.createConditionGroup = function( data ) 
 	{
 		data = $.extend(
@@ -326,6 +340,8 @@
 			_this.$elem.removeClass( 'wdc-loading' );
 
 			_this.isLoaded = true;
+
+			_this.trigger( 'preloadComplete' );
 		});
 	};
 
@@ -400,38 +416,52 @@
 
 	$( document.body ).on( 'click', '.wdc-open-ui', function( event )
 	{
-		var $button = $( this );
-	
+		var $button  = $( this );
+		var $spinner = $button.siblings( '.spinner' );
+
+		$spinner.addClass( 'wdc-is-active' );
+		
+		// Get content
 		var content = wp.template( 'wdc-ui' )(
 		{
 			widget : $button.data( 'widget' ),
 		});
 
-		var ui;
-
-		$.featherlight( content, 
+		// Instantiate
+		var ui = new wdc.ui( content, 
 		{
-			namespace    : 'wdc-modal',
-			closeOnClick : false,
-			closeOnEsc   : true,
-			
-			afterContent : function()
-			{
-				ui = new wdc.ui( this.$content, 
-				{
-					widget    : $button.data( 'widget' ),
-					nonceName : $button.data( 'noncename' ),
-					nonce     : $button.data( 'nonce' ),
-				});
-			},
+			widget    : $button.data( 'widget' ),
+			nonceName : $button.data( 'noncename' ),
+			nonce     : $button.data( 'nonce' ),
+		});
 
-			beforeClose : function()
+		// Preload complete
+		ui.on( 'preloadComplete', function( event )
+		{
+			$spinner.removeClass( 'wdc-is-active' );
+
+			// Open content inside modal
+			$.featherlight( ui.$elem, 
 			{
-				if ( ! ui.isSaved && wdc.messages.notSaved ) 
+				namespace    : 'wdc-modal',
+				persist      : true,
+				closeOnClick : false,
+				closeOnEsc   : true,
+				
+				afterContent : function()
 				{
-					return window.confirm( wdc.messages.notSaved );
+					
+				},
+
+				beforeClose : function()
+				{
+					// Unsaved data confirmation
+					if ( ! ui.isSaved && wdc.messages.notSaved ) 
+					{
+						return window.confirm( wdc.messages.notSaved );
+					}
 				}
-			}
+			});
 		});
 
 	});

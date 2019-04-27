@@ -205,8 +205,6 @@ class Updater
 
 			<h1><?php esc_html_e( 'Widget Display Conditions Updater', 'wdc' ); ?></h1>
 
-			<pre><?php var_dump( $this->get_applicable_tasks() ); ?></pre>
-
 			<?php if ( ! $this->get_applicable_tasks() ) : ?>
 			<p><?php esc_html_e( 'No updates available.' ); ?></p>
 			<?php else : ?>

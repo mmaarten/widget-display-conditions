@@ -68,7 +68,7 @@ html.with-featherlight
 
 	h1
 	{
-		margin: ( -$modal-content-padding-y ) ( -$modal-content-padding-x ) 13px;
+		margin: ( -$modal-content-padding-y ) ( -$modal-content-padding-x ) $modal-content-padding-y;
 		padding: 0 ($modal-heading-padding-x + $modal-close-size ) 0 $modal-heading-padding-x;
 		font-size: 20px;
     	line-height: 50px;

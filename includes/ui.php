@@ -37,8 +37,10 @@ class UI
 	public function widget_form( $widget )
 	{
 		// Output button to open UI
-		printf( '<p><button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button></p>',
+		$button = sprintf( '<button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button>',
 			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'wdc' ) );
+	
+		printf( '<p class="wdc-open-ui-wrap">%s<span class="spinner"></span></p>', $button );
 	}
 
 	/**
@@ -92,6 +94,7 @@ class UI
 				{
 					$param = $condition['param'];
 
+					// Check if already added
 					if ( ! isset( $field_items[ $param ] ) ) 
 					{
 						$field_items[ $param ] = get_condition_field_items( $param );
@@ -181,42 +184,33 @@ class UI
 
 				<h1><?php _e( 'Widget Display Conditions', 'wdc' ); ?></h1>
 
-				<div class="wdc-preloader">
-					<?php admin_notice( __( 'Gathering data…', 'wdc' ) . '<span class="spinner is-active"></span>' ); ?>
-				</div>
-
-				<div class="wdc-main">
-
-					<form method="post">
-					
-						<?php wp_nonce_field( 'ui', WDC_NONCE_NAME ); ?>
-
-						<input type="hidden" name="action" value="wdc_ui_update">
-						<input type="hidden" name="widget" value="{{ data.widget }}">
-
-						<div class="wdc-hide-if-conditions">
-							<?php admin_notice( __( 'No conditions set.', 'wdc' ) ); ?>
-						</div>
-						
-						<h4 class="wdc-show-if-conditions"><?php _e( 'Show widget if', 'wdc' ); ?></h4>
-
-						<div class="wdc-condition-groups"></div>
-
-						<p>
-							<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add group', 'wdc' ); ?></button>
-						</p>
-
-						<p class="submit alignright">
-							<span class="spinner"></span>
-							<button class="button button-primary" type="submit" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>"><?php esc_html_e( 'Save', 'wdc' ); ?></button>
-						</p>
-
-					</form>
-
-				</div>
+				<form method="post">
 				
+					<?php wp_nonce_field( 'ui', WDC_NONCE_NAME ); ?>
 
-			</div>
+					<input type="hidden" name="action" value="wdc_ui_update">
+					<input type="hidden" name="widget" value="{{ data.widget }}">
+
+					<div class="wdc-hide-if-conditions">
+						<?php admin_notice( __( 'No conditions set.', 'wdc' ) ); ?>
+					</div>
+					
+					<h4 class="wdc-show-if-conditions"><?php _e( 'Show widget if', 'wdc' ); ?></h4>
+
+					<div class="wdc-condition-groups"></div>
+
+					<p>
+						<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add group', 'wdc' ); ?></button>
+					</p>
+
+					<p class="submit alignright">
+						<span class="spinner"></span>
+						<button class="button button-primary" type="submit" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>"><?php esc_html_e( 'Save', 'wdc' ); ?></button>
+					</p>
+
+				</form>
+
+			</div><!-- .wdc-ui -->
 
 		</script>
 
