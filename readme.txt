@@ -51,10 +51,12 @@ You can use built-in conditions or create some of your own.
 == Changelog ==
 
 = 0.2.1 =
-Release date: Apr 26th, 2019
+Release date: Apr 27th, 2019
 
-* Enhancement - UI: updated submit styling
-* Enhancement - UI: added confirmation if unsaved changes
+* Enhancement - UI: Updated submit button style.
+* Enhancement - UI: Confirmation dialog opens when unsaved changes.
+* Enhancement - UI: Preloading before modal opens.
+* Fix - admin Update notification shows when no previous version was installed.
 
 = 0.2.0 =
 Release date: Apr 26th, 2019
