@@ -15,17 +15,9 @@ class Post_Condition extends Condition
 
 	public function value_field_items( $items )
 	{
-		$post_types = get_post_types( array( 'public' => true ), 'names' );
+		$post_types = get_post_types( array( 'public' => true, '_builtin' => false ), 'names' );
 
-		if ( isset( $post_types['page'] ) ) 
-		{
-			unset( $post_types['page'] );
-		}
-
-		if ( isset( $post_types['attachment'] ) ) 
-		{
-			unset( $post_types['attachment'] );
-		}
+		array_unshift( $post_types, 'post' );
 
 		return get_post_field_items( $post_types );
 	}
