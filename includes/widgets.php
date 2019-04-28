@@ -6,7 +6,7 @@
 namespace wdc;
 
 /**
- * Get widget regular expression
+ * Get widget regex
  *
  * @return string
  */
@@ -38,7 +38,7 @@ function get_widget_instance( $widget_id )
 		return null;
 	}
 
-	return (array) $instances[ $num ];
+	return $instances[ $num ];
 }
 
 /**
@@ -47,11 +47,11 @@ function get_widget_instance( $widget_id )
  * @param string $widget_id
  * @param array  $instance
  *
- * @return mixed
+ * @return bool
  */
 function set_widget_instance( $widget_id, $instance )
 {
-	if ( ! preg_match( '/' . get_widget_regex() . '/', $widget_id, $matches ) )
+	if ( ! preg_match( '/' . get_widget_regex() . '/', $widget_id, $matches ) ) 
 	{
 		return false;
 	}
@@ -81,17 +81,17 @@ function get_widget_conditions( $widget_id )
 {
 	$instance = get_widget_instance( $widget_id );
 
-	if ( ! is_array( $instance ) ) 
+	if ( ! isset( $instance ) ) 
 	{
 		return null;
 	}
 
 	if ( isset( $instance['wdc_conditions'] ) ) 
 	{
-		return (array) $instance['wdc_conditions'];
+		return $instance['wdc_conditions'];
 	}
 
-	return array();
+	return null;
 }
 
 /**
@@ -106,11 +106,11 @@ function set_widget_conditions( $widget_id, $conditions )
 {
 	$instance = get_widget_instance( $widget_id );
 
-	if ( ! is_array( $instance ) ) 
+	if ( ! isset( $instance ) ) 
 	{
 		return false;
 	}
-
+	
 	$instance['wdc_conditions'] = (array) $conditions;
 
 	return set_widget_instance( $widget_id, $instance );
@@ -156,7 +156,7 @@ function delete_widget_conditions( $widget_id )
 {
 	$instance = get_widget_instance( $widget_id );
 
-	if ( is_array( $instance ) && isset( $instance['wdc_conditions'] ) ) 
+	if ( isset( $instance, $instance['wdc_conditions'] ) )
 	{
 		unset( $instance['wdc_conditions'] );
 
@@ -177,13 +177,8 @@ function delete_widgets_conditions()
 	{
 		return;
 	}
-	
-	if ( isset( $sidebars_widgets['array_version'] ) ) 
-	{
-		unset( $sidebars_widgets['array_version'] );
-	}
 
-	foreach ( $sidebars_widgets as $widgets ) 
+	foreach ( $sidebars_widgets as $sidebar_index => $widgets ) 
 	{
 		if ( ! is_array( $widgets ) ) continue;
 
@@ -205,18 +200,18 @@ function do_widget_conditions( $widget_id )
 {
 	$conditions = get_widget_conditions( $widget_id );
 
-	if ( is_array( $conditions ) ) 
+	if ( isset( $conditions ) ) 
 	{
 		return do_conditions( $conditions );
 	}
 
-	return true;
+	return false;
 }
 
 /**
  * Sidebars widgets
  *
- * @param array  $sidebars_widgets
+ * @param array $sidebars_widgets
  *
  * @return array
  */

@@ -1,10 +1,10 @@
 <?php 
-/**
- * Operator
- */
 
 namespace wdc;
 
+/**
+ * Operator
+ */
 class Operator
 {
 	public $id    = null;

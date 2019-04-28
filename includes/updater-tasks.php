@@ -5,7 +5,7 @@
 
 namespace wdc;
 
-add_update_task( '0.2.0', '0.2.0', 'wdc\updater_task_0_2_0' );
+add_update_task( '0.2.0', '0.2.0', 'wdc\update_task_0_2_0' );
 
 /**
  * Version 0.2.0
@@ -14,7 +14,7 @@ add_update_task( '0.2.0', '0.2.0', 'wdc\updater_task_0_2_0' );
  * Convert condition operator value to instance id.
  * Convert condition to array
  */
-function updater_task_0_2_0()
+function update_task_0_2_0()
 {
 	$param_map = array
 	(

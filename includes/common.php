@@ -6,37 +6,6 @@
 namespace wdc;
 
 /**
- * Get instance
- *
- * @return stdClass
- */
-function get_instance()
-{
-	static $wdc = null;
-
-	if ( ! isset( $wdc ) ) 
-	{
-		$wdc = new \stdClass();
-	}
-
-	return $wdc;
-}
-
-/**
- * Get Version
- *
- * @return string
- */
-function get_version()
-{
-	require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-
-	$data = get_plugin_data( WDC_FILE, false, false );
-
-	return $data['Version'];
-}
-
-/**
  * Admin notice
  *
  * @param string $message
@@ -116,10 +85,9 @@ function get_dropdown_options( $items )
  *
  * @return array
  */
-function get_post_field_items( $post_type )
+function get_post_field_items( $post_type = 'post' )
 {
 	$post_types = (array) $post_type;
-	$is_group   = count( $post_types ) > 1;
 
 	foreach ( $post_types as $post_type ) 
 	{
@@ -131,7 +99,7 @@ function get_post_field_items( $post_type )
 
 		// Get posts
 
-		if ( is_post_type_hierarchical( $post_type->name ) ) 
+		if ( $post_type->hierarchical ) 
 		{
 			$posts = get_pages( array
 			(
@@ -174,7 +142,7 @@ function get_post_field_items( $post_type )
 			$text = trim( $post->post_title ) ? $post->post_title : $post->ID;
 			$pad  = '';
 
-			if ( is_post_type_hierarchical( $post_type->name ) ) 
+			if ( $post_type->hierarchical ) 
 			{
 				$ancestors = get_post_ancestors( $post );
 				$pad = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
@@ -190,11 +158,11 @@ function get_post_field_items( $post_type )
 		$items[ $group['id'] ] = $group;
 	}
 
-	if ( ! $is_group && $items ) 
+	if ( $items && 1 == count( $post_types ) ) 
 	{
-		$first = array_keys( $items )[0];
+		$group = array_keys( $items )[0];
 
-		$items = $items[ $first ]['children'];
+		$items = $items[ $group ]['children'];
 	}
 
 	return $items;
@@ -210,7 +178,6 @@ function get_post_field_items( $post_type )
 function get_term_field_items( $taxonomy )
 {
 	$taxonomies = (array) $taxonomy;
-	$is_group   = count( $taxonomies ) > 1;
 
 	$items = array();
 	
@@ -222,7 +189,7 @@ function get_term_field_items( $taxonomy )
 
 		// Get terms
 
-		if ( is_taxonomy_hierarchical( $taxonomy->name ) ) 
+		if ( $taxonomy->hierarchical ) 
 		{
 			$terms = get_categories( array
 			(
@@ -256,7 +223,7 @@ function get_term_field_items( $taxonomy )
 			$text = trim( $term->name ) ? $term->name : $term->term_id;
 			$pad  = '';
 
-			if ( is_taxonomy_hierarchical( $taxonomy->name ) ) 
+			if ( $taxonomy->hierarchical ) 
 			{
 				$ancestors = get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' );
 				$pad = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
@@ -272,41 +239,11 @@ function get_term_field_items( $taxonomy )
 		$items[ $group['id'] ] = $group;
 	}
 
-	if ( ! $is_group && $items ) 
+	if ( $items && 1 == count( $taxonomies ) ) 
 	{
-		$first = array_keys( $items )[0];
+		$group = array_keys( $items )[0];
 
-		$items = $items[ $first ]['children'];
-	}
-
-	return $items;
-}
-
-/**
- * Get page template field items
- *
- * @return array
- */
-function get_page_template_field_items()
-{
-	$items = array
-	(
-		array
-		(
-			'id'   => 'default',
-			'text' => __( 'Default', 'wdc' ),
-		),
-	);
-
-	$page_templates = get_page_templates();
-
-	foreach ( $page_templates as $template_name => $template_file ) 
-	{
-		$items[ $template_file ] = array
-		(
-			'id'   => $template_file,
-			'text' => $template_name,
-		);
+		$items = $items[ $group ]['children'];
 	}
 
 	return $items;

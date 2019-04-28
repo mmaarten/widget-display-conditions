@@ -5,233 +5,151 @@
 
 namespace wdc;
 
-class Updater
+$wdc_update_tasks = array();
+
+function save_version()
 {
-	protected $tasks     = array();
-	protected $page_hook = null;
-
-	public function __construct()
-	{
-		
-	}
-
-	public function init()
-	{
-		add_action( 'admin_init'               , array( &$this, 'save_version' ), 0 );
-		add_action( 'update_option_wdc_version', array( &$this, 'version_change' ), 10, 2 );
-		add_action( 'admin_init'               , array( &$this, 'update' ) );
-		add_action( 'admin_menu'               , array( &$this, 'add_menu_page' ) );
-		add_action( 'admin_notices'            , array( &$this, 'update_notice' ) );
-	}
-
-	/**
-	 * Save version
-	 */
-	public function save_version()
-	{
-		update_option( 'wdc_version', get_version() );
-	}
-
-	/**
-	 * Version change
-	 */
-	public function version_change( $old_version, $new_version )
-	{
-		update_option( 'wdc_update_from', $old_version );
-	}
-
-	/**
-	 * Add task
-	 *
-	 * @param string   $id
-	 * @param string   $version
-	 * @param callable $callback
-	 */
-	public function add_task( $id, $version, $callback )
-	{
-		$this->tasks[ $id ] = compact( 'id', 'version', 'callback' );
-	}
-
-	/**
-	 * Get tasks
-	 *
-	 * @return array
-	 */
-	public function get_tasks()
-	{
-		return $this->tasks;
-	}
-
-	/**
-	 * Get task
-	 *
-	 * @param string $task_id
-	 *
-	 * @return mixed
-	 */
-	public function get_task( $task_id )
-	{
-		if ( isset( $this->tasks[ $task_id ] ) ) 
-		{
-			return $this->tasks[ $task_id ];
-		}
-
-		return null;
-	}
-
-	/**
-	 * Get applicable tasks
-	 *
-	 * @return array
-	 */
-	public function get_applicable_tasks()
-	{
-		$from = get_option( 'wdc_update_from' );
-		$to   = get_version();
-
-		if ( ! has_widget_conditions() ) 
-		{
-			return array();
-		}
-
-		if ( false === $from ) 
-		{
-			return array();
-		}
-		
-		if ( version_compare( $from, $to, '=' ) ) 
-		{
-			return array();
-		}
-
-		$tasks = array();
-
-		foreach ( $this->tasks as $key => $task ) 
-		{
-			if ( version_compare( $task['version'], $from, '>' ) 
-			  && version_compare( $task['version'], $to, '<=' ) ) 
-			{
-				$tasks[ $key ] = $task;
-			}
-		}
-
-		uasort( $tasks, array( $this, 'sort_tasks' ) );
-
-		return $tasks;
-	}
-
-	/**
-	 * Sort tasks
-	 *
-	 * @param mixed $a
-	 * @param mixed $b
-	 *
-	 * @return int
-	 */
-	public function sort_tasks( $a, $b )
-	{
-		return version_compare( $a['version'], $b['version'] );
-	}
-
-	/**
-	 * Do tasks
-	 *
-	 * @return array
-	 */
-	protected function do_tasks()
-	{
-		$tasks = $this->get_applicable_tasks();
-
-		$result = array();
-
-		foreach ( $tasks as $task ) 
-		{
-			$result[ $task['id'] ] = call_user_func( $task['callback'] );
-		}
-
-		return $result;
-	}
-
-	public function update()
-	{
-		if ( empty( $_POST[ WDC_NONCE_NAME ] ) ) 
-		{
-			return;
-		}
-
-		if ( ! wp_verify_nonce( $_POST[ WDC_NONCE_NAME ], 'update' ) ) 
-		{
-			return;
-		}
-
-		$result = $this->do_tasks();
-
-		delete_option( 'wdc_update_from' );
-	}
-
-	public function update_notice()
-	{
-		$screen = get_current_screen();
-
-		if ( $this->page_hook == $screen->id ) 
-		{
-			return;
-		}
-
-		if ( ! $this->get_applicable_tasks() ) 
-		{
-			return;
-		}
-
-		$message = sprintf( '<strong>%s</strong>: %s <a href="%s">%s</a>', 
-			esc_html__( 'Widget Display Conditions', 'wdc' ),
-			esc_html__( 'Database update is required.', 'wdc' ),
-		 	admin_url( 'admin.php?page=wdc-updater' ),
-		 	esc_html__( 'Go to update page.', 'wdc' ) );
-
-		admin_notice( $message, 'warning' );
-	}
-
-	public function add_menu_page()
-	{
-		$this->page_hook = add_submenu_page( null, __( 'Widget Display Conditions Updater', 'wdc' ), __( 'Updater', 'wdc' ), 'update_plugins', 'wdc-updater', array( &$this, 'render_page' ) );
-	}
-
-	public function render_page()
-	{
-		?>
-
-		<div class="wrap">
-
-			<h1><?php esc_html_e( 'Widget Display Conditions Updater', 'wdc' ); ?></h1>
-
-			<?php if ( ! $this->get_applicable_tasks() ) : ?>
-			<p><?php esc_html_e( 'No updates available.' ); ?></p>
-			<?php else : ?>
-
-			<form method="post">
-				
-				<?php wp_nonce_field( 'update', WDC_NONCE_NAME ); ?>
-
-				<p><strong><?php _e( 'A database update is required.', 'wdc' ); ?></strong></p>
-				<p><?php _e( 'Make sure to make a backup before updating.', 'wdc' ); ?></p>
-
-				<?php submit_button( __( 'Update', 'wdc' ) ); ?>
-
-			</form>
-
-			<?php endif; ?>
-
-		</div><!-- .wrap -->
-
-		<?php
-	}
+	update_option( 'wdc_version', WDC_VERSION );
 }
 
-get_instance()->updater = new Updater();
-get_instance()->updater->init();
+add_action( 'init', __NAMESPACE__ . '\save_version' );
+
+function version_change( $old_version, $new_version )
+{
+	update_option( 'wdc_update', $old_version );
+}
+
+add_action( 'update_option_wdc_version', __NAMESPACE__ . '\version_change', 10, 2 );
 
 function add_update_task( $id, $version, $callback )
 {
-	get_instance()->updater->add_task( $id, $version, $callback );
+	$GLOBALS['wdc_update_tasks'][ $id ] = compact( 'id', 'version', 'callback' );
 }
+
+function get_update_tasks( $applicable = true )
+{
+	$all_tasks = $GLOBALS['wdc_update_tasks'];
+
+	if ( ! $applicable ) 
+	{
+		return $all_tasks;
+	}
+
+	$prev_version = get_option( 'wdc_update' );
+	$curr_version = WDC_VERSION;
+
+	if ( false === $prev_version ) 
+	{
+		return array();
+	}
+
+	$tasks = array();
+
+	foreach ( $all_tasks as $key => $task ) 
+	{
+		if ( version_compare( $task['version'], $prev_version, '>' )
+		  && version_compare( $task['version'], $curr_version, '<=' ) )
+		{
+			$tasks[ $key ] = $task;
+		}
+	}
+
+	uasort( $tasks, __NAMESPACE__ . '\sort_update_tasks' );
+
+	return $tasks;
+}
+
+function sort_update_tasks( $a, $b )
+{
+	return version_compare( $a['version'], $b['version'] );
+}
+
+function update()
+{
+	if ( empty( $_POST[ WDC_NONCE_NAME ] ) ) 
+	{
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $_POST[ WDC_NONCE_NAME ], 'update' ) ) 
+	{
+		return;
+	}
+
+	$tasks = get_update_tasks();
+
+	$result = array();
+
+	foreach ( $tasks as $key => $task ) 
+	{
+		$result[ $key ] = call_user_func( $task['callback'] );
+	}
+
+	delete_option( 'wdc_update', WDC_VERSION );
+}
+
+add_action( 'admin_init', __NAMESPACE__ . '\update' );
+
+function updater_add_menu_page()
+{
+	add_submenu_page( null, __( 'Widget Display Conditions Updater', 'wdc' ), __( 'Updater', 'wdc' ), 'update_plugins', 'wdc-updater', __NAMESPACE__ . '\updater_render_page' );
+}
+
+add_action( 'admin_menu', __NAMESPACE__ . '\updater_add_menu_page' );
+
+function updater_render_page()
+{
+	$tasks = get_update_tasks();
+
+	?>
+
+	<div class="wrap">
+
+		<h1><?php esc_html_e( 'Widget Display Conditions Updater', 'wdc' ); ?></h1>
+
+		<?php if ( ! $tasks ) : ?>
+		<p><?php esc_html_e( 'No updates available.' ); ?></p>
+		<?php else : ?>
+
+		<form method="post">
+			
+			<?php wp_nonce_field( 'update', WDC_NONCE_NAME ); ?>
+
+			<p><strong><?php _e( 'A database update is required.', 'wdc' ); ?></strong></p>
+			<p><?php _e( 'Make sure to make a backup before updating.', 'wdc' ); ?></p>
+
+			<?php submit_button( __( 'Update', 'wdc' ) ); ?>
+
+		</form>
+
+		<?php endif; ?>
+
+	</div><!-- .wrap -->
+
+	<?php
+}
+
+function updater_notices()
+{
+	// Get tasks
+
+	$tasks = get_update_tasks();
+
+	// Stop when no tasks
+
+	if ( ! $tasks ) return;
+
+	// Output notice
+
+	$plugin = get_plugin_data( WDC_FILE );
+
+	$message = sprintf( '<strong>%s</strong>: %s <a href="%s">%s</a>.',
+		esc_html( $plugin['Name'] ),
+		esc_html__( 'Database needs to be updated.', 'wdc' ),
+		admin_url( '?page=wdc-updater', 'wdc' ),
+		esc_html__( 'Go to update page', 'wdc' ) );
+
+	admin_notice( $message, 'warning' );
+}
+
+add_action( 'admin_notices', __NAMESPACE__ . '\updater_notices' );

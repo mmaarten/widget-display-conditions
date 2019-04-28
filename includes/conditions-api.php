@@ -1,6 +1,6 @@
 <?php 
 /**
- * Conditions API
+ * Conditions
  */
 
 namespace wdc;
@@ -40,9 +40,13 @@ function do_conditions( $conditions )
  *
  * @return bool
  */
-function do_condition( $param, $operator, $value )
+function do_condition( $condition, $operator, $value )
 {
-	return apply_filters( "wdc/do_condition/param=$param", true, $operator, $value, $param );
+	$return = null;
+	$return = apply_filters( "wdc/do_condition/condition=$param", $return, $operator, $value, $param );
+	$return = apply_filters( "wdc/do_condition"                 , $return, $operator, $value, $param );
+
+	return isset( $return ) ? (bool) $return : $return;
 }
 
 /**
@@ -56,5 +60,9 @@ function do_condition( $param, $operator, $value )
  */
 function do_operator( $operator, $a, $b )
 {
-	return apply_filters( "wdc/do_operator/operator=$operator", true, $a, $b, $operator );
+	$return = null;
+	$return = apply_filters( "wdc/do_operator/operator=$operator", $return, $a, $b, $operator );
+	$return = apply_filters( "wdc/do_operator"                   , $return, $a, $b, $operator );
+
+	return isset( $return ) ? (bool) $return : $return;
 }

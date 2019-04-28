@@ -1,18 +1,32 @@
-<?php
+<?php 
 
 namespace wdc;
 
+/**
+ * Page Type condition
+ */
 class Page_Type_Condition extends Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'page_type', __( 'Page Type', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 90,
+			'category'  => 'page',
+			'order'     => 10,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		return array
@@ -28,7 +42,16 @@ class Page_Type_Condition extends Condition
 			'child'       => array( 'id' => 'child', 		'text' => __( 'Child Page (has parent)', 'wdc' ) ),
 		);
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
 		$queried_object = get_queried_object();
@@ -41,7 +64,7 @@ class Page_Type_Condition extends Condition
 
 			case 'posts_page' :
 				
-				return do_operator( $operator, is_front_page() && ! is_home(), true );
+				return do_operator( $operator, is_home(), true );
 
 			case 'search_page' :
 				
@@ -103,4 +126,4 @@ class Page_Type_Condition extends Condition
 	}
 }
 
-register_condition( 'wdc\Page_Type_Condition' );
+register_condition( __NAMESPACE__ . '\Page_Type_Condition' );
