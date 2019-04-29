@@ -33,8 +33,6 @@ $updater->add_task( '0.2.0', '0.2.0', __NAMESPACE__ . '\update_task_0_2_0' );
  */
 function update_task_0_2_0()
 {
-	error_log( __FUNCTION__ );
-
 	$param_map = array
 	(
 		'WDC_Condition_PageType'        => 'page_type',
@@ -101,8 +99,6 @@ function update_task_0_2_0()
 						);
 					}
 				}
-
-				error_log( var_export( $updated, true ) );
 
 				set_widget_conditions( $widget_id, $updated );
 			}
