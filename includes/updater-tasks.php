@@ -5,6 +5,22 @@
 
 namespace wdc;
 
+function update_version( $version, $curr_version )
+{
+	// Previous plugin versions dit not save their version into the database
+	// force version number when not set.
+
+	if ( false === $version && '0.2.0' == $curr_version && has_widget_conditions() ) 
+	{
+		$version = '0.1.0';
+	}
+
+	return $version;
+}
+
+add_filter( 'wdc_update_version', __NAMESPACE__ . '\update_version', 10, 2 );
+
+// Add tasks
 $updater = Updater::get_instance();
 $updater->add_task( '0.2.0', '0.2.0', 'wdc\update_task_0_2_0' );
 
