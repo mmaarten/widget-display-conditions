@@ -26,11 +26,11 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/operators/class-wdc-operato
 require_once plugin_dir_path( WDC_FILE ) . 'includes/operators.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions.php';
-require_once plugin_dir_path( WDC_FILE ) . 'includes/updater.php';
+
 if ( is_admin() )
 {
-	
 	require_once plugin_dir_path( WDC_FILE ) . 'includes/ui.php';
+	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater.php';
 }
 
 require_once plugin_dir_path( WDC_FILE ) . 'includes/application.php';

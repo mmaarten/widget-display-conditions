@@ -33,10 +33,11 @@ final class Updater
 	public function init()
 	{
 		add_action( 'admin_menu'               , array( &$this, 'add_page' ) );
-		add_action( 'update_option_wdc_version', array( &$this, 'version_change' ), 10, 2 );
-		add_action( 'init'               	   , array( &$this, 'save_version' ) );
+		add_action( 'admin_init'               , array( &$this, 'save_version' ) );
 		add_action( 'admin_init'               , array( &$this, 'update' ) );
 		add_action( 'admin_notices'            , array( &$this, 'admin_notices' ) );
+
+		add_action( 'update_option_wdc_version', array( &$this, 'version_change' ), 10, 2 );
 	}
 
 	public function save_version()

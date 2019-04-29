@@ -6,21 +6,6 @@
 namespace wdc;
 
 /**
- * Admin notice
- *
- * @param string $message
- * @param string $type
- *
- * @link https://codex.wordpress.org/Plugin_API/Action_Reference/admin_notices
- */
-function admin_notice( $message, $type = 'info' )
-{
-	$class = sprintf( 'notice notice-%s', sanitize_html_class( $type ) );
-
-	printf( '<div class="%s"><p>%s</p></div>', esc_attr( $class ), $message );
-}
-
-/**
  * Sort order
  *
  * @param mixed $a

@@ -164,8 +164,8 @@ function ui_template_scripts()
 				<input type="hidden" name="action" value="wdc_ui_update">
 				<input type="hidden" name="widget" value="{{ data.widget }}">
 
-				<div class="wdc-hide-if-conditions">
-					<?php admin_notice( __( 'No conditions set.', 'wdc' ) ); ?>
+				<div class="notice notice-info wdc-hide-if-conditions">
+					<p><?php esc_html_e( __( 'No conditions set.', 'wdc' ) ); ?></p>
 				</div>
 				
 				<h4 class="wdc-show-if-conditions"><?php _e( 'Show widget if', 'wdc' ); ?></h4>
