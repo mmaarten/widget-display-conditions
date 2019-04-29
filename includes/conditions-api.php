@@ -40,7 +40,7 @@ function do_conditions( $conditions )
  *
  * @return bool
  */
-function do_condition( $condition, $operator, $value )
+function do_condition( $param, $operator, $value )
 {
 	$return = null;
 	$return = apply_filters( "wdc/do_condition/condition=$param", $return, $operator, $value, $param );

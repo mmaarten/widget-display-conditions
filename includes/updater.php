@@ -33,24 +33,23 @@ final class Updater
 	public function init()
 	{
 		add_action( 'admin_menu'               , array( &$this, 'add_page' ) );
-		add_action( 'admin_init'               , array( &$this, 'save_version' ) );
+		add_action( 'admin_init'               , array( &$this, 'check_version' ) );
 		add_action( 'admin_init'               , array( &$this, 'update' ) );
 		add_action( 'admin_notices'            , array( &$this, 'admin_notices' ) );
-
-		add_action( 'update_option_wdc_version', array( &$this, 'version_change' ), 10, 2 );
 	}
 
-	public function save_version()
+	public function check_version()
 	{
-		update_option( 'wdc_version', WDC_VERSION );
-	}
+		$version = get_option( 'wdc_version' );
 
-	public function version_change( $old_version, $new_version )
-	{
-		// Fix for when previous releases did not save their version
-		$old_version = apply_filters( 'wdc_update_version', $old_version, $new_version );
+		if ( $version !== WDC_VERSION ) 
+		{
+			update_option( 'wdc_version', WDC_VERSION );
 
-		update_option( 'wdc_update', $old_version );
+			$version = apply_filters( 'wdc_update_version', $version, WDC_VERSION );
+
+			update_option( 'wdc_update', $version );
+		}
 	}
 
 	public function add_task( $id, $version, $callback )

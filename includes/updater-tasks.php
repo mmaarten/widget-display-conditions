@@ -22,7 +22,7 @@ add_filter( 'wdc_update_version', __NAMESPACE__ . '\update_version', 10, 2 );
 
 // Add tasks
 $updater = Updater::get_instance();
-$updater->add_task( '0.2.0', '0.2.0', 'wdc\update_task_0_2_0' );
+$updater->add_task( '0.2.0', '0.2.0', __NAMESPACE__ . '\update_task_0_2_0' );
 
 /**
  * Version 0.2.0
@@ -33,6 +33,8 @@ $updater->add_task( '0.2.0', '0.2.0', 'wdc\update_task_0_2_0' );
  */
 function update_task_0_2_0()
 {
+	error_log( __FUNCTION__ );
+
 	$param_map = array
 	(
 		'WDC_Condition_PageType'        => 'page_type',
@@ -83,7 +85,7 @@ function update_task_0_2_0()
 			{
 				$conditions = get_widget_conditions( $widget_id );
 
-				if ( ! is_array( $conditions ) ) continue;
+				if ( ! isset( $conditions ) ) continue;
 
 				$updated = array();
 
@@ -99,6 +101,8 @@ function update_task_0_2_0()
 						);
 					}
 				}
+
+				error_log( var_export( $updated, true ) );
 
 				set_widget_conditions( $widget_id, $updated );
 			}

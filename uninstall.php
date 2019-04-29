@@ -8,7 +8,7 @@ require_once dirname( __FILE__ ) . '/includes/widgets.php';
 
 // Remove options
 delete_option( 'wdc_version' );
-delete_option( 'wdc_update_from' );
+delete_option( 'wdc_update' );
 
 // Remove widget conditions
 delete_widgets_conditions();

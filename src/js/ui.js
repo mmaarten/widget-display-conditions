@@ -445,7 +445,7 @@
 			{
 				namespace    : 'wdc-modal',
 				persist      : true,
-				closeOnClick : false,
+				closeOnClick : 'background',
 				closeOnEsc   : true,
 				
 				afterContent : function()
