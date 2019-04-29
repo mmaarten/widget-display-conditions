@@ -138,3 +138,49 @@ function get_condition_field_items( $condition_id )
 
 	return $items;
 }
+
+function get_condition_field_items_json( $param )
+{
+	$items = get_condition_field_items( $param );
+
+	if ( ! isset( $items ) ) 
+	{
+		return null;
+	}
+
+	foreach ( $items as $key => $value ) 
+	{
+		$items[ $key ] = prepare_field_items_json( $value );
+	}
+
+	return $items;
+}
+
+/**
+ * Prepare field items json
+ *
+ * JSON sorts arrays keys alphabetically.
+ *
+ * e.g. $items = [ 'b' => 1, 'a' => 2 ]; becomes : [ 'a' => 2, 'b' => 1 ].
+ *
+ * @param array $items
+ */
+function prepare_field_items_json( $items )
+{
+	$sanitized = array();
+
+    foreach ( $items as $item )
+    {
+    	$i = count( $sanitized );
+
+    	$sanitized[] = $item;
+
+    	if ( isset( $item['children'] ) ) 
+    	{
+    		$sanitized[ $i ]['children'] = prepare_field_items_json( $item['children'] );
+    	}
+    }
+
+    return $sanitized;
+}
+

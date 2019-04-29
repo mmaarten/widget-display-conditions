@@ -34,7 +34,7 @@ function ui_get_condition_field_items()
 
 	//
 
-	$items = get_condition_field_items( $_POST['param'] );
+	$items = get_condition_field_items_json( $_POST['param'] );
 
 	// Reponse
 
@@ -68,7 +68,7 @@ function ui_preload()
 
 				if ( ! isset( $items[ $param ] ) ) 
 				{
-					$items[ $param ] = get_condition_field_items( $param );
+					$items[ $param ] = get_condition_field_items_json( $param );
 				}
 			}
 		}
