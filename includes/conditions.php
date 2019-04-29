@@ -1,147 +1,226 @@
 <?php 
 /**
- * Params
+ * Conditions
  */
 
 namespace wdc;
 
-$wdc_conditions           = array();
-$wdc_condition_categories = array();
+final class Conditions
+{
+	static private $instance = null;
 
-/**
- * Create condition
- *
- * @param string $id
- * @param string $title
- * @param array  $args
- *
- * @return Condition
- */
+	static public function get_instance()
+	{
+		if ( ! self::$instance ) 
+		{
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	protected $conditions = array();
+	protected $categories = array();
+
+	private function __construct()
+	{
+		
+	}
+
+	/**
+	 * Create condition
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 *
+	 * @return Condition
+	 */
+	public function create_condition( $id, $title, $args = array() )
+	{
+		$condition = new Condition( $id, $title, $args );
+
+		$this->register_condition( $condition );
+
+		return $condition;
+	}
+
+	/**
+	 * Register condition
+	 *
+	 * @param mixed $condition
+	 */
+	public function register_condition( $condition )
+	{
+		if ( ! $condition instanceof Condition ) 
+		{
+			$condition = new $condition();
+		}
+
+		$this->conditions[ $condition->id ] = $condition;
+	}
+
+	/**
+	 * Unregister condition
+	 *
+	 * @param string $condition_id
+	 */
+	public function unregister_condition( $condition_id )
+	{
+		unset( $this->conditions[ $condition_id ] );
+	}
+
+	/**
+	 * Get conditions
+	 *
+	 * @return array
+	 */
+	public function get_conditions()
+	{
+		return $this->conditions;
+	}
+
+	/**
+	 * Get condition
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
+	public function get_condition( $condition_id )
+	{
+		if ( isset( $this->conditions[ $condition_id ] ) ) 
+		{
+			return $this->conditions[ $condition_id ];
+		}
+
+		return null;
+	}
+
+	/**
+	 * Add condition category
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 */
+	public function add_condition_category( $id, $title, $args = array() )
+	{
+		$args = wp_parse_args( $args, array
+		(
+			'order' => 10,
+		));
+
+		$category = array
+		(
+			'id'    => $id,
+			'title' => $title,
+			'order' => (int) $args['order'],
+		);
+		
+		$category = apply_filters( 'wdc/condition_category', $category );
+
+		return $this->categories[ $category['id'] ] = $category;
+	}
+
+	/**
+	 * Remove condition category
+	 *
+	 * @param string $category_id
+	 *
+	 * @return mixed
+	 */
+	public function remove_condition_category( $category_id )
+	{
+		unset( $this->categories[ $category_id ] );
+	}
+	/**
+	 * Get condition categories
+	 *
+	 * @return array
+	 */
+	public function get_condition_categories()
+	{
+		return $this->categories;
+	}
+
+	/**
+	 * Get condition category
+	 *
+	 * @param string $category_id
+	 *
+	 * @return mixed
+	 */
+	public function get_condition_category( $category_id )
+	{
+		if ( isset( $this->categories[ $category_id ] ) ) 
+		{
+			return $this->categories[ $category_id ];
+		}
+
+		return null;
+	}
+}
+
 function create_condition( $id, $title, $args = array() )
 {
-	$condition = new Condition( $id, $title, $args );
+	$conditions = Conditions::get_instance();
 
-	register_condition( $condition );
-
-	return $condition;
+	return $conditions->create_condition( $id, $title, $args );
 }
 
-/**
- * Register condition
- *
- * @param mixed $condition
- */
 function register_condition( $condition )
 {
-	if ( ! $condition instanceof Condition ) 
-	{
-		$condition = new $condition();
-	}
+	$conditions = Conditions::get_instance();
 
-	$GLOBALS['wdc_conditions'][ $condition->id ] = $condition;
+	$conditions->register_condition( $condition );
 }
 
-/**
- * Unregister condition
- *
- * @param string $condition_id
- */
 function unregister_condition( $condition_id )
 {
-	unset( $GLOBALS['wdc_conditions'][ $condition_id ] );
+	$conditions = Conditions::get_instance();
+
+	$conditions->unregister_condition( $condition_id );
 }
 
-/**
- * Get conditions
- *
- * @return array
- */
 function get_conditions()
 {
-	return $GLOBALS['wdc_conditions'];
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_conditions();
 }
 
-/**
- * Get condition
- *
- * @param string $condition_id
- *
- * @return mixed
- */
 function get_condition( $condition_id )
 {
-	$conditions = get_conditions();
+	$conditions = Conditions::get_instance();
 
-	if ( isset( $conditions[ $condition_id ] ) ) 
-	{
-		return $conditions[ $condition_id ];
-	}
-
-	return null;
+	return $conditions->get_condition( $condition_id );
 }
 
-/**
- * Add condition category
- *
- * @param string $id
- * @param string $title
- * @param array  $args
- */
 function add_condition_category( $id, $title, $args = array() )
 {
-	$args = wp_parse_args( $args, array
-	(
-		'order' => 10,
-	));
+	$conditions = Conditions::get_instance();
 
-	$category = array
-	(
-		'id'    => $id,
-		'title' => $title,
-		'order' => (int) $args['order'],
-	);
-	
-	$category = apply_filters( 'wdc/condition_category', $category );
-
-	return $GLOBALS['wdc_condition_categories'][ $category['id'] ] = $category;
+	$conditions->add_condition_category( $id, $title, $args );
 }
 
-/**
- * Remove condition category
- *
- * @param string $category_id
- *
- * @return mixed
- */
 function remove_condition_category( $category_id )
 {
-	unset( $GLOBALS['wdc_condition_categories'][ $category_id ] );
+	$conditions = Conditions::get_instance();
+
+	$conditions->remove_condition_category( $category_id );
 }
-/**
- * Get condition categories
- *
- * @return array
- */
+
 function get_condition_categories()
 {
-	return $GLOBALS['wdc_condition_categories'];
+	$conditions = Conditions::get_instance();
+
+	return $conditions->get_condition_categories();
 }
 
-/**
- * Get condition category
- *
- * @param string $category_id
- *
- * @return mixed
- */
 function get_condition_category( $category_id )
 {
-	$categories = get_condition_categories();
+	$conditions = Conditions::get_instance();
 
-	if ( isset( $categories[ $category_id ] ) ) 
-	{
-		return $categories[ $category_id ];
-	}
-
-	return null;
+	return $conditions->get_condition_category( $category_id );
 }
