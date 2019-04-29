@@ -139,6 +139,13 @@ function get_condition_field_items( $condition_id )
 	return $items;
 }
 
+/**
+ * Get condition field items JSON
+ *
+ * @param string $condition_id
+ *
+ * @return mixed
+ */
 function get_condition_field_items_json( $param )
 {
 	$items = get_condition_field_items( $param );
@@ -164,6 +171,8 @@ function get_condition_field_items_json( $param )
  * e.g. $items = [ 'b' => 1, 'a' => 2 ]; becomes : [ 'a' => 2, 'b' => 1 ].
  *
  * @param array $items
+ *
+ * @return array
  */
 function prepare_field_items_json( $items )
 {
