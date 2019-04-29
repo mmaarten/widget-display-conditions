@@ -5,10 +5,10 @@
 
 namespace wdc;
 
-function update_version( $version, $curr_version )
+function updater_version( $version, $curr_version )
 {
-	// Previous plugin versions dit not save their version into the database
-	// force version number when not set.
+	// Before v0.2.0 versions were not stored into the database.
+	// Set update version to first release when no version and widget condition data is found.
 
 	if ( false === $version && '0.2.0' == $curr_version && has_widget_conditions() ) 
 	{
@@ -18,7 +18,7 @@ function update_version( $version, $curr_version )
 	return $version;
 }
 
-add_filter( 'wdc_update_version', __NAMESPACE__ . '\update_version', 10, 2 );
+add_filter( 'wdc_updater_version', __NAMESPACE__ . '\updater_version', 10, 2 );
 
 // Add tasks
 $updater = Updater::get_instance();

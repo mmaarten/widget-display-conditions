@@ -32,24 +32,32 @@ final class Updater
 
 	public function init()
 	{
-		add_action( 'admin_menu'               , array( &$this, 'add_page' ) );
-		add_action( 'admin_init'               , array( &$this, 'check_version' ) );
-		add_action( 'admin_init'               , array( &$this, 'update' ) );
-		add_action( 'admin_notices'            , array( &$this, 'admin_notices' ) );
+		add_action( 'admin_menu'   , array( &$this, 'add_page' ) );
+		add_action( 'admin_init'   , array( &$this, 'check_version' ) );
+		add_action( 'admin_init'   , array( &$this, 'update' ) );
+		add_action( 'admin_notices', array( &$this, 'admin_notices' ) );
 	}
 
 	public function check_version()
 	{
+		// Check version change
+
 		$version = get_option( 'wdc_version' );
 
-		if ( $version !== WDC_VERSION ) 
+		if ( $version === WDC_VERSION ) 
 		{
-			update_option( 'wdc_version', WDC_VERSION );
-
-			$version = apply_filters( 'wdc_update_version', $version, WDC_VERSION );
-
-			update_option( 'wdc_update', $version );
+			return;
 		}
+
+		// Save new version
+
+		update_option( 'wdc_version', WDC_VERSION );
+
+		// Set previous version as version to update from
+
+		$version = apply_filters( 'wdc_updater_version', $version, WDC_VERSION );
+
+		update_option( 'wdc_update', $version );
 	}
 
 	public function add_task( $id, $version, $callback )
@@ -67,10 +75,14 @@ final class Updater
 		$prev_version = get_option( 'wdc_update' );
 		$curr_version = get_option( 'wdc_version' );
 
+		// Stop when no previous version
+
 		if ( false === $prev_version ) 
 		{
 			return array();
 		}
+
+		// Get tasks related to versions
 
 		$tasks = array();
 
@@ -83,13 +95,19 @@ final class Updater
 			}
 		}
 
+		// Sort tasks
+
 		uasort( $tasks, array( $this, 'sort_tasks' ) );
+
+		// Return
 
 		return $tasks;
 	}
 
 	public function update()
 	{
+		// Check nonce
+
 		if ( empty( $_POST[ WDC_NONCE_NAME ] ) ) 
 		{
 			return;
@@ -100,6 +118,8 @@ final class Updater
 			return;
 		}
 
+		// Do tasks
+
 		$tasks = $this->get_applicable_tasks();
 
 		$result = array();
@@ -108,6 +128,8 @@ final class Updater
 		{
 			$result[ $key ] = call_user_func( $task['callback'] );
 		}
+
+		// Delete 'update' option
 
 		delete_option( 'wdc_update' );
 	}
