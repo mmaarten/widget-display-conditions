@@ -37,5 +37,8 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archiv
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archive_post_type-condition.php';
 require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archive_taxonomy-condition.php';
 
-// Add update tasks
-require_once plugin_dir_path( WDC_FILE ) . 'includes/updater-tasks.php';
+if ( is_admin() ) 
+{
+	// Add update tasks
+	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater-tasks.php';
+}

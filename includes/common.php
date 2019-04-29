@@ -70,8 +70,10 @@ function get_dropdown_options( $items )
 
 		else
 		{
+			$text = isset( $item['html'] ) ? $item['html'] : esc_html( $item['text'] );
+
 			$return .= sprintf( '<option value="%s"%s>%s</option>', 
-				esc_attr( $item['id'] ), selected( $item['selected'], true, false ), esc_html( $item['text'] ) );
+				esc_attr( $item['id'] ), selected( $item['selected'], true, false ), $text );
 		}
 	}
 

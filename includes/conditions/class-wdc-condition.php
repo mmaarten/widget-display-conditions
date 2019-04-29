@@ -35,8 +35,8 @@ class Condition
 		$this->category  = $args['category'];
 		$this->order     = (int) $args['order'];
 
-		add_filter( "wdc/value_field_items/condition={$this->id}", array( &$this, 'value_field_items' ) );
-		add_filter( "wdc/do_condition/condition={$this->id}"     , array( &$this, 'apply' ), 10, 3 );
+		add_filter( "wdc/condition_value_field_items/condition={$this->id}", array( &$this, 'value_field_items' ) );
+		add_filter( "wdc/do_condition/condition={$this->id}"               , array( &$this, 'apply' ), 10, 3 );
 
 		do_action_ref_array( 'wdc/condition', array( &$this ) );
 	}

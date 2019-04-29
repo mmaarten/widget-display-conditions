@@ -15,7 +15,7 @@ Domain Path:  /languages
 namespace wdc;
 
 define( 'WDC_FILE', __FILE__ );
-define( 'WDC_VERSION', '0.2.1' );
+define( 'WDC_VERSION', '0.2.3' );
 define( 'WDC_NONCE_NAME', 'wdc_nonce' );
 defined( 'WDC_MAX_NUMBERPOSTS' ) || define( 'WDC_MAX_NUMBERPOSTS', 5000 );
 

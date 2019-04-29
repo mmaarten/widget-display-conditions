@@ -46,7 +46,7 @@ function get_condition_param_field_items()
 		$items[ $group['id'] ] = $group;
 	}
 
-	$items = apply_filters( 'wdc/param_field_items', $items );
+	$items = apply_filters( 'wdc/condition_param_field_items', $items );
 
 	return $items;
 }
@@ -82,8 +82,8 @@ function get_condition_operator_field_items( $condition_id )
 		);
 	}
 
-	$items = apply_filters( "wdc/operator_field_items/condition={$condition->id}", $items, $condition );
-	$items = apply_filters( "wdc/operator_field_items"                           , $items, $condition );
+	$items = apply_filters( "wdc/condition_operator_field_items/condition={$condition->id}", $items, $condition );
+	$items = apply_filters( "wdc/condition_operator_field_items"                           , $items, $condition );
 
 	return $items;
 }
@@ -105,8 +105,8 @@ function get_condition_value_field_items( $condition_id )
 	}
 
 	$items = array();
-	$items = apply_filters( "wdc/value_field_items/condition={$condition->id}", $items, $condition );
-	$items = apply_filters( "wdc/value_field_items"                           , $items, $condition );
+	$items = apply_filters( "wdc/condition_value_field_items/condition={$condition->id}", $items, $condition );
+	$items = apply_filters( "wdc/condition_value_field_items"                           , $items, $condition );
 
 	return $items;
 }

@@ -5,7 +5,8 @@
 
 namespace wdc;
 
-add_update_task( '0.2.0', '0.2.0', 'wdc\update_task_0_2_0' );
+$updater = Updater::get_instance();
+$updater->add_task( '0.2.0', '0.2.0', 'wdc\update_task_0_2_0' );
 
 /**
  * Version 0.2.0
