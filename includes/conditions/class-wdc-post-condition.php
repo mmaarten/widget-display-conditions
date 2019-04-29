@@ -33,7 +33,7 @@ class Post_Condition extends Condition
 
 		array_unshift( $post_types, 'post' );
 
-		return get_post_field_items( $post_types );
+		return get_post_field_items( $post_types, true );
 	}
 	
 	/**

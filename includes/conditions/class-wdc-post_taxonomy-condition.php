@@ -31,7 +31,7 @@ class Post_Taxonomy_Condition extends Condition
 	{
 		$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ), 'names' );
 
-		return get_term_field_items( $taxonomies );
+		return get_term_field_items( $taxonomies, true );
 	}
 	
 	/**

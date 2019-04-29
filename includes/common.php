@@ -72,9 +72,11 @@ function get_dropdown_options( $items )
  *
  * @return array
  */
-function get_post_field_items( $post_type = 'post' )
+function get_post_field_items( $post_type = 'post', $show_labels = false )
 {
 	$post_types = (array) $post_type;
+
+	$items = array();
 
 	foreach ( $post_types as $post_type ) 
 	{
@@ -124,6 +126,18 @@ function get_post_field_items( $post_type = 'post' )
 			'children' => array(),
 		);
 
+		if ( $show_labels ) 
+		{
+			$items[ $group['id'] ] = $group;
+
+			$parent = &$items[ $group['id'] ]['children'];
+		}
+
+		else
+		{
+			$parent = &$items;  
+		}
+
 		foreach ( $posts as $post ) 
 		{
 			$text = trim( $post->post_title ) ? $post->post_title : $post->ID;
@@ -135,21 +149,12 @@ function get_post_field_items( $post_type = 'post' )
 				$pad = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
 			}
 
-			$group['children'][ $post->ID ] = array
+			$parent[ $post->ID ] = array
 			(
 				'id'   => $post->ID,
 				'html' => $pad . esc_html( $text ),
 			);
 		}
-
-		$items[ $group['id'] ] = $group;
-	}
-
-	if ( $items && 1 == count( $post_types ) ) 
-	{
-		$group = array_keys( $items )[0];
-
-		$items = $items[ $group ]['children'];
 	}
 
 	return $items;
@@ -162,7 +167,7 @@ function get_post_field_items( $post_type = 'post' )
  *
  * @return array
  */
-function get_term_field_items( $taxonomy )
+function get_term_field_items( $taxonomy, $show_labels = false )
 {
 	$taxonomies = (array) $taxonomy;
 
@@ -205,6 +210,18 @@ function get_term_field_items( $taxonomy )
 			'children' => array()
 		);
 
+		if ( $show_labels ) 
+		{
+			$items[ $group['id'] ] = $group;
+
+			$parent = &$items[ $group['id'] ]['children'];
+		}
+
+		else
+		{
+			$parent = &$items;  
+		}
+
 		foreach ( $terms as $term ) 
 		{
 			$text = trim( $term->name ) ? $term->name : $term->term_id;
@@ -216,21 +233,12 @@ function get_term_field_items( $taxonomy )
 				$pad = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
 			}
 
-			$group['children'][ $term->term_id ] = array
+			$parent[ $term->term_id ] = array
 			(
 				'id'   => $term->term_id,
 				'html' => $pad . esc_html( $text ),
 			);
 		}
-
-		$items[ $group['id'] ] = $group;
-	}
-
-	if ( $items && 1 == count( $taxonomies ) ) 
-	{
-		$group = array_keys( $items )[0];
-
-		$items = $items[ $group ]['children'];
 	}
 
 	return $items;
