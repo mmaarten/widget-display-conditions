@@ -33,19 +33,19 @@ function get_widget_instance( $widget_id )
 
 	$instances = get_option( "widget_$id_base" );
 
-	if ( ! is_array( $instances ) || ! isset( $instances[ $num ] ) ) 
+	if ( is_array( $instances ) && isset( $instances[ $num ] ) ) 
 	{
-		return null;
+		return $instances[ $num ];
 	}
 
-	return $instances[ $num ];
+	return null;
 }
 
 /**
  * Set widget instance
  *
  * @param string $widget_id
- * @param array  $instance
+ * @param array $instance
  *
  * @return bool
  */
@@ -60,14 +60,14 @@ function set_widget_instance( $widget_id, $instance )
 
 	$instances = get_option( "widget_$id_base" );
 
-	if ( ! is_array( $instances ) || ! isset( $instances[ $num ] ) ) 
+	if ( is_array( $instances ) && isset( $instances[ $num ] ) ) 
 	{
-		return false;
+		$instances[ $num ] = (array) $instance;
+
+		return update_option( "widget_$id_base", $instances );
 	}
 
-	$instances[ $num ] = (array) $instance;
-
-	return update_option( "widget_$id_base", $instances );
+	return false;
 }
 
 /**
@@ -81,12 +81,7 @@ function get_widget_conditions( $widget_id )
 {
 	$instance = get_widget_instance( $widget_id );
 
-	if ( ! isset( $instance ) ) 
-	{
-		return null;
-	}
-
-	if ( isset( $instance['wdc_conditions'] ) ) 
+	if ( isset( $instance, $instance['wdc_conditions'] ) )
 	{
 		return $instance['wdc_conditions'];
 	}
@@ -98,7 +93,7 @@ function get_widget_conditions( $widget_id )
  * Set widget conditions
  *
  * @param string $widget_id
- * @param array  $conditions
+ * @param array $conditions
  *
  * @return bool
  */
@@ -106,40 +101,11 @@ function set_widget_conditions( $widget_id, $conditions )
 {
 	$instance = get_widget_instance( $widget_id );
 
-	if ( ! isset( $instance ) ) 
+	if ( isset( $instance ) ) 
 	{
-		return false;
-	}
-	
-	$instance['wdc_conditions'] = (array) $conditions;
+		$instance['wdc_conditions'] = (array) $conditions;
 
-	return set_widget_instance( $widget_id, $instance );
-}
-
-/**
- * Has widget conditions
- *
- * @return bool
- */
-function has_widget_conditions()
-{
-	$sidebars_widgets = get_option( 'sidebars_widgets' );
-
-	if ( ! is_array( $sidebars_widgets ) ) 
-	{
-		return false;
-	}
-
-	foreach ( $sidebars_widgets as $widgets ) 
-	{
-		if ( ! is_array( $widgets ) ) continue;
-
-		foreach ( $widgets as $widget_id ) 
-		{
-			$conditions = get_widget_conditions( $widget_id );
-			
-			if ( $conditions ) return true;
-		}
+		return set_widget_instance( $widget_id, $instance );
 	}
 
 	return false;
@@ -156,7 +122,7 @@ function delete_widget_conditions( $widget_id )
 {
 	$instance = get_widget_instance( $widget_id );
 
-	if ( isset( $instance, $instance['wdc_conditions'] ) )
+	if ( isset( $instance, $instance['wdc_conditions'] ) ) 
 	{
 		unset( $instance['wdc_conditions'] );
 
@@ -167,16 +133,15 @@ function delete_widget_conditions( $widget_id )
 }
 
 /**
- * Delete widgets conditions
+ * Has widgets conditions
+ *
+ * @return bool
  */
-function delete_widgets_conditions()
+function has_widgets_conditions()
 {
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if ( ! is_array( $sidebars_widgets ) ) 
-	{
-		return;
-	}
+	if ( ! is_array( $sidebars_widgets ) ) return false;
 
 	foreach ( $sidebars_widgets as $sidebar_index => $widgets ) 
 	{
@@ -184,9 +149,14 @@ function delete_widgets_conditions()
 
 		foreach ( $widgets as $widget_id ) 
 		{
-			delete_widget_conditions( $widget_id );
+			if ( get_widget_conditions( $widget_id ) ) 
+			{
+				return true;
+			}
 		}
 	}
+
+	return false;
 }
 
 /**
@@ -194,7 +164,7 @@ function delete_widgets_conditions()
  *
  * @param string $widget_id
  *
- * @return bool
+ * @return mixed
  */
 function do_widget_conditions( $widget_id )
 {
@@ -205,7 +175,7 @@ function do_widget_conditions( $widget_id )
 		return do_conditions( $conditions );
 	}
 
-	return false;
+	return null;
 }
 
 /**
@@ -227,9 +197,11 @@ function sidebars_widgets( $sidebars_widgets )
 
 		foreach ( $widgets as $widget_id ) 
 		{
-			if ( do_widget_conditions( $widget_id ) ) 
+			$result = do_widget_conditions( $widget_id );
+
+			if ( isset( $result ) && $result ) 
 			{
-				$return[ $sidebar_index ][] = $widget_id;
+				$return[ $sidebar_index ][] = $widget_id; 
 			}
 		}
 	}
@@ -237,4 +209,4 @@ function sidebars_widgets( $sidebars_widgets )
 	return $return;
 }
 
-add_filter( 'sidebars_widgets', __NAMESPACE__ . '\sidebars_widgets', 999 );
+add_filter( 'sidebars_widgets', __NAMESPACE__ . '\sidebars_widgets' );

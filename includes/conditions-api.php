@@ -1,6 +1,6 @@
 <?php 
 /**
- * Conditions
+ * Conditions API
  */
 
 namespace wdc;
@@ -10,11 +10,11 @@ namespace wdc;
  *
  * @param array $conditions
  *
- * @return bool
+ * @return mixed
  */
 function do_conditions( $conditions )
 {
-	$return = true;
+	$return = null;
 
 	foreach ( $conditions as $group ) 
 	{
@@ -22,10 +22,10 @@ function do_conditions( $conditions )
 		{
 			$return = do_condition( $condition['param'], $condition['operator'], $condition['value'] );
 
-			if ( ! $return ) break;
+			if ( isset( $return ) && ! $return ) break;
 		}
 
-		if ( $return ) break;
+		if ( isset( $return ) && $return ) break;
 	}
 
 	return $return;
@@ -38,15 +38,11 @@ function do_conditions( $conditions )
  * @param string $operator
  * @param mixed  $value
  *
- * @return bool
+ * @return mixed
  */
 function do_condition( $param, $operator, $value )
 {
-	$return = null;
-	$return = apply_filters( "wdc/do_condition/condition=$param", $return, $operator, $value, $param );
-	$return = apply_filters( "wdc/do_condition"                 , $return, $operator, $value, $param );
-
-	return isset( $return ) ? (bool) $return : $return;
+	return apply_filters( "wdc/do_condition/param=$param", null, $operator, $value, $param );
 }
 
 /**
@@ -56,13 +52,9 @@ function do_condition( $param, $operator, $value )
  * @param mixed  $a
  * @param mixed  $b
  *
- * @return bool
+ * @return mixed
  */
 function do_operator( $operator, $a, $b )
 {
-	$return = null;
-	$return = apply_filters( "wdc/do_operator/operator=$operator", $return, $a, $b, $operator );
-	$return = apply_filters( "wdc/do_operator"                   , $return, $a, $b, $operator );
-
-	return isset( $return ) ? (bool) $return : $return;
+	return apply_filters( "wdc/do_operator/operator=$operator", null, $a, $b, $operator );
 }

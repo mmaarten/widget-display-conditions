@@ -62,10 +62,7 @@ function get_condition_operator_field_items( $condition_id )
 {
 	$condition = get_condition( $condition_id );
 
-	if ( ! $condition ) 
-	{
-		return null;
-	}
+	if ( ! $condition ) return null;
 
 	$operators = get_operator_objects( $condition->operators );
 
@@ -91,7 +88,7 @@ function get_condition_operator_field_items( $condition_id )
 /**
  * Get condition value field items
  *
- * @param string $condition_id
+ * @param string $param
  *
  * @return mixed
  */
@@ -99,10 +96,7 @@ function get_condition_value_field_items( $condition_id )
 {
 	$condition = get_condition( $condition_id );
 
-	if ( ! $condition ) 
-	{
-		return null;
-	}
+	if ( ! $condition ) return null;
 
 	$items = array();
 	$items = apply_filters( "wdc/condition_value_field_items/condition={$condition->id}", $items, $condition );
@@ -114,18 +108,15 @@ function get_condition_value_field_items( $condition_id )
 /**
  * Get condition field items
  *
- * @param string $condition_id
+ * @param string $param
  *
  * @return mixed
  */
-function get_condition_field_items( $condition_id )
+function get_condition_field_items( $condition_id, $prepare_json = false )
 {
 	$condition = get_condition( $condition_id );
 
-	if ( ! $condition ) 
-	{
-		return null;
-	}
+	if ( ! $condition ) return null;
 
 	$items = array
 	(
@@ -136,28 +127,198 @@ function get_condition_field_items( $condition_id )
 	$items = apply_filters( "wdc/condition_field_items/condition={$condition->id}", $items, $condition );
 	$items = apply_filters( "wdc/condition_field_items"                           , $items, $condition );
 
+	if ( $prepare_json ) 
+	{
+		$_items = array();
+
+		foreach ( $items as $key => $value ) 
+		{
+			$_items[ $key ] = prepare_field_items_json( $value );
+		}
+
+		$items = $_items;
+	}
+	
 	return $items;
 }
 
 /**
- * Get condition field items JSON
+ * Get post field items
  *
- * @param string $condition_id
+ * @param mixed $post_type
+ * @param bool  $labels
  *
- * @return mixed
+ * @return array
  */
-function get_condition_field_items_json( $param )
+function get_post_field_items( $post_type, $labels = false )
 {
-	$items = get_condition_field_items( $param );
+	$post_types = (array) $post_type;
 
-	if ( ! isset( $items ) ) 
+	$items = array();
+
+	foreach ( $post_types as $post_type ) 
 	{
-		return null;
+		// Get post type object
+
+		$post_type = get_post_type_object( $post_type );
+
+		if ( ! $post_type ) continue;
+
+		// Get posts
+
+		if ( $post_type->hierarchical ) 
+		{
+			$posts = get_pages( array
+			(
+				'post_type'   => $post_type->name,
+				'post_status' => 'publish',
+				'sort_column' => 'post_title',
+				'sort_order'  => 'asc',
+				'number'      => WDC_MAX_FIELD_ITEMS,
+			));
+		}
+
+		else
+		{
+			$posts = get_posts( array
+			(
+				'post_type'   => $post_type->name,
+				'post_status' => 'attachment' == $post_type->name ? 'inherit' : 'publish',
+				'orderby'     => 'post_title',
+				'order'       => 'asc',
+				'numberposts' => WDC_MAX_FIELD_ITEMS,
+			));
+		}
+
+		if ( ! $posts ) continue;
+
+		$group = array
+		(
+			'id'       => $post_type->name,
+			'text'     => $post_type->labels->singular_name,
+			'children' => array(),
+		);
+
+		// Get items
+
+		foreach ( $posts as $post ) 
+		{
+			$ancestors = get_post_ancestors( $post );
+
+			$text = trim( $post->post_title ) ? $post->post_title : $post->ID;
+			$pad  = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
+
+			$group['children'][ $post->ID ] = array
+			(
+				'id'   => $post->ID,
+				'html' => $pad . esc_html( $text ),
+			);
+		}
+
+		$items[ $group['id'] ] = $group;
 	}
 
-	foreach ( $items as $key => $value ) 
+	if ( ! $labels ) 
 	{
-		$items[ $key ] = prepare_field_items_json( $value );
+		$_items = array();
+
+		foreach ( $items as $group ) 
+		{
+			$_items += $group['children'];
+		}
+
+		$items = $_items;
+	}
+
+	return $items;
+}
+
+/**
+ * Get term field items
+ *
+ * @param mixed $taxonomy
+ * @param bool  $labels
+ *
+ * @return array
+ */
+function get_term_field_items( $taxonomy, $labels = false )
+{
+	$taxonomies = (array) $taxonomy;
+
+	$items = array();
+
+	foreach ( $taxonomies as $taxonomy ) 
+	{
+		// Get post type object
+
+		$taxonomy = get_post_type_object( $taxonomy );
+
+		if ( ! $taxonomy ) continue;
+
+		// Get terms
+
+		if ( $taxonomy->hierarchical ) 
+		{
+			$terms = get_categories( array
+			(
+				'taxonomy'     => $taxonomy->name,
+				'orderby'      => 'parent name',
+				'order'        => 'ASC',
+				'hierarchical' => true,
+				'number'       => WDC_MAX_FIELD_ITEMS,
+			));
+		}
+
+		else
+		{
+			$terms = get_terms( array
+			(
+				'taxonomy'     => $taxonomy->name,
+				'orderby'      => 'name',
+				'order'        => 'ASC',
+				'hierarchical' => false,
+				'number'       => WDC_MAX_FIELD_ITEMS,
+			));
+		}
+
+		if ( ! $terms ) continue;
+
+		$group = array
+		(
+			'id'       => $taxonomy->name,
+			'text'     => $taxonomy->labels->singular_name,
+			'children' => array(),
+		);
+
+		// Get items
+
+		foreach ( $terms as $term ) 
+		{
+			$ancestors = get_ancestors( $term->term_id, $taxonomy->name, 'taxonomy' );
+
+			$text = trim( $term->name ) ? $term->name : $term->term_id;
+			$pad  = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
+
+			$group['children'][ $term->term_id ] = array
+			(
+				'id'   => $term->term_id,
+				'html' => $pad . esc_html( $text ),
+			);
+		}
+
+		$items[ $group['id'] ] = $group;
+	}
+
+	if ( ! $labels ) 
+	{
+		$_items = array();
+
+		foreach ( $items as $group ) 
+		{
+			$_items += $group['children'];
+		}
+
+		$items = $_items;
 	}
 
 	return $items;
@@ -166,9 +327,7 @@ function get_condition_field_items_json( $param )
 /**
  * Prepare field items json
  *
- * JSON sorts arrays keys alphabetically.
- *
- * e.g. $items = [ 'b' => 1, 'a' => 2 ]; becomes : [ 'a' => 2, 'b' => 1 ].
+ * Make sure array keys are index based.
  *
  * @param array $items
  *
@@ -176,20 +335,59 @@ function get_condition_field_items_json( $param )
  */
 function prepare_field_items_json( $items )
 {
-	$sanitized = array();
+	$return = array();
 
-    foreach ( $items as $item )
-    {
-    	$i = count( $sanitized );
+	foreach ( $items as $item ) 
+	{
+		$i = count( $return );
 
-    	$sanitized[] = $item;
+		$return[] = $item;
 
-    	if ( isset( $item['children'] ) ) 
-    	{
-    		$sanitized[ $i ]['children'] = prepare_field_items_json( $item['children'] );
-    	}
-    }
+		if ( isset( $item['children'] ) ) 
+		{
+			$return[ $i ]['children'] = prepare_field_items_json( $item['children'] );
+		}
+	}
 
-    return $sanitized;
+	return $return;
+}
+
+/**
+ * Get dropdown options
+ *
+ * @param array $items
+ *
+ * @return string
+ */
+function get_dropdown_options( $items )
+{
+	$return = '';
+
+	foreach ( $items as $item ) 
+	{
+		$item = wp_parse_args( $item, array
+		(
+			'id'       => '',
+			'text'     => '',
+			'selected' => false,
+		));
+
+		if ( isset( $item['children'] ) ) 
+		{
+			$return .= sprintf( '<optgroup label="%s">', esc_attr( $item['text'] ) );
+			$return .= get_dropdown_options( $item['children'] );
+			$return .= '</optgroup>'; 
+		}
+
+		else
+		{
+			$text = isset( $item['html'] ) ? $item['html'] : esc_html( $item['text'] );
+
+			$return .= sprintf( '<option value="%s"%s>%s</option>', 
+				esc_attr( $item['id'] ), selected( $item['selected'], true, false ), $text );
+		}
+	}
+
+	return $return;
 }
 

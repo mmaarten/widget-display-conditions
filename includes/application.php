@@ -40,5 +40,5 @@ require_once plugin_dir_path( WDC_FILE ) . 'includes/conditions/class-wdc-archiv
 if ( is_admin() ) 
 {
 	// Add update tasks
-	require_once plugin_dir_path( WDC_FILE ) . 'includes/updater-tasks.php';
+	//require_once plugin_dir_path( WDC_FILE ) . 'updater-tasks.php' );
 }
