@@ -54,17 +54,23 @@ function wdc_get_condition_param_field_items()
  *
  * @param string $condition_id
  *
- * @return mixed
+ * @return array|null
  */
 function wdc_get_condition_operator_field_items( $condition_id )
 {
+	// Get condition
+
 	$condition = wdc_get_condition( $condition_id );
 
 	if ( ! $condition ) return null;
 
+	// Get condition operators
+
 	$operators = wdc_get_operator_objects( $condition->operators );
 
 	uasort( $operators, 'wdc_sort_order' );
+
+	// Get items
 
 	$items = array();
 
@@ -80,6 +86,8 @@ function wdc_get_condition_operator_field_items( $condition_id )
 	$items = apply_filters( "wdc/condition_operator_field_items/condition={$condition->id}", $items, $condition );
 	$items = apply_filters( "wdc/condition_operator_field_items"                           , $items, $condition );
 
+	// Return
+
 	return $items;
 }
 
@@ -92,13 +100,19 @@ function wdc_get_condition_operator_field_items( $condition_id )
  */
 function wdc_get_condition_value_field_items( $condition_id )
 {
+	// Get condition
+
 	$condition = wdc_get_condition( $condition_id );
 
 	if ( ! $condition ) return null;
 
+	// Get items
+
 	$items = array();
 	$items = apply_filters( "wdc/condition_value_field_items/condition={$condition->id}", $items, $condition );
 	$items = apply_filters( "wdc/condition_value_field_items"                           , $items, $condition );
+
+	// Return
 
 	return $items;
 }
@@ -119,9 +133,13 @@ function wdc_get_post_field_items( $post_type, $labels = false )
 
 	foreach ( $post_types as $post_type ) 
 	{
+		// Get post type object
+
 		$post_type = get_post_type_object( $post_type );
 
 		if ( ! $post_type ) continue;
+
+		// Get posts
 
 		if ( $post_type->hierarchical ) 
 		{
@@ -149,6 +167,8 @@ function wdc_get_post_field_items( $post_type, $labels = false )
 		}
 
 		if ( ! $posts ) continue;
+
+		// Get items
 
 		$group = array
 		(
@@ -205,9 +225,13 @@ function wdc_get_term_field_items( $taxonomy, $labels = false )
 
 	foreach ( $taxonomies as $taxonomy ) 
 	{
+		// Get taxonomy object
+
 		$taxonomy = get_taxonomy( $taxonomy );
 
 		if ( ! $taxonomy ) continue;
+
+		// Get terms
 
 		$terms = get_terms( array
 		(
@@ -219,6 +243,8 @@ function wdc_get_term_field_items( $taxonomy, $labels = false )
 		));
 
 		if ( ! $terms ) continue;
+
+		// Get items
 
 		$group = array
 		(
@@ -299,7 +325,7 @@ function wdc_get_dropdown_options( $items )
 }
 
 /**
- * Prepare field items json
+ * Prepare field items JSON
  *
  * Make sure array keys are nummeric indexes.
  *

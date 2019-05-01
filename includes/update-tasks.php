@@ -25,9 +25,9 @@ class WDC_Update_Tasks
 	/**
 	 * Version 0.2.0
 	 *
-	 * Convert condition param value to instance id.
-	 * Convert condition operator value to instance id.
-	 * Convert condition to array
+	 * Convert condition param value to class instance id.
+	 * Convert condition operator value to class instance id.
+	 * Convert condition object to array
 	 */
 	public static function task_0_2_0()
 	{

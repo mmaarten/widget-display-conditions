@@ -7,8 +7,6 @@ class WDC_UI
 {
 	/**
 	 * Init
-	 *
-	 * @return mixed
 	 */
 	public static function init()
 	{
@@ -79,7 +77,11 @@ class WDC_UI
 	{
 		if ( ! self::doing_ajax() ) return;
 
+		// Get widget conditions
+
 		$conditions = wdc_get_widget_conditions( $_POST['widget'] );
+
+		// Get conditions field items
 
 		$fields = array();
 
@@ -91,6 +93,7 @@ class WDC_UI
 				{
 					$condition_id = $condition['param'];
 
+					// Check if already added
 					if ( ! isset( $fields[ $condition_id ] ) ) 
 					{
 						$fields[ $condition_id ] = self::get_condition_field_items( $condition_id );
@@ -98,6 +101,8 @@ class WDC_UI
 				}
 			}
 		}
+
+		// Response
 
 		wp_send_json( array
 		(
