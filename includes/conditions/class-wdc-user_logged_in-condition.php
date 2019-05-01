@@ -1,18 +1,30 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class User_Logged_In_Condition extends Condition
+/**
+ * User logged in condition
+ */
+class WDC_User_Logged_In_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'user_logged_in', __( 'User Logged In', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 180,
+			'category'  => 'user',
+			'order'     => 20,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		return array
@@ -20,11 +32,20 @@ class User_Logged_In_Condition extends Condition
 			array( 'id' => '1', 'text' => __( 'Yes', 'wdc' ) )
 		);
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_user_logged_in(), true );
+		return wdc_do_operator( $operator, is_user_logged_in(), true );
 	}
 }
 
-register_condition( 'wdc\User_Logged_In_Condition' );
+wdc_register_condition( 'WDC_User_Logged_In_Condition' );

@@ -1,11 +1,29 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
  * Updater Tasks
  */
 
-namespace wdc;
+/**
+ * Init
+ */
+function wdc_updater_tasks_init()
+{
+	wdc_add_update_task( '0_2_0', '0.2.0', 'wdc_0_2_0_update' );
 
-add_update_task( '0.2.0', '0.2.0', 'wdc\updater_task_0_2_0' );
+	add_filter( 'wdc/db_version', 'wdc_db_version' );
+}
+
+add_action( 'admin_init', 'wdc_updater_tasks_init' );
+
+function wdc_db_version( $version )
+{
+	if ( false === $version && wdc_has_widgets_conditions() ) 
+	{
+		return '0.1.0';
+	}
+
+	return $version;
+}
 
 /**
  * Version 0.2.0
@@ -14,7 +32,7 @@ add_update_task( '0.2.0', '0.2.0', 'wdc\updater_task_0_2_0' );
  * Convert condition operator value to instance id.
  * Convert condition to array
  */
-function updater_task_0_2_0()
+function wdc_0_2_0_update()
 {
 	$param_map = array
 	(
@@ -51,42 +69,37 @@ function updater_task_0_2_0()
 
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
-	if ( is_array( $sidebars_widgets ) ) 
+	if ( ! is_array( $sidebars_widgets ) ) return;
+
+	foreach ( $sidebars_widgets as $widgets ) 
 	{
-		if ( isset( $sidebars_widgets['array_version'] ) ) 
-		{
-			unset( $sidebars_widgets['array_version'] );
-		}
+		if ( ! is_array( $widgets ) ) continue;
 
-		foreach ( $sidebars_widgets as $widgets ) 
+		foreach ( $widgets as $widget_id ) 
 		{
-			if ( ! is_array( $widgets ) ) continue;
+			$conditions = wdc_get_widget_conditions( $widget_id );
 
-			foreach ( $widgets as $widget_id ) 
+			if ( ! isset( $conditions ) ) continue;
+
+			$updated = array();
+
+			foreach ( $conditions as $group_id => $group ) 
 			{
-				$conditions = get_widget_conditions( $widget_id );
-
-				if ( ! is_array( $conditions ) ) continue;
-
-				$updated = array();
-
-				foreach ( $conditions as $group_id => $group ) 
+				foreach ( $group as $condition_id => $condition ) 
 				{
-					foreach ( $group as $condition_id => $condition ) 
+					if ( is_object( $condition ) ) 
 					{
-						$updated[ $group_id ][ $condition_id ] = array
-						(
-							'param'    => $param_map[ $condition->param ],
-							'operator' => $operator_map[ $condition->operator ],
-							'value'    => $condition->value,
-						);
+						$condition = get_object_vars( $condition );
 					}
-				}
 
-				set_widget_conditions( $widget_id, $updated );
+					$condition['param']    = $param_map[ $condition['param'] ];
+					$condition['operator'] = $operator_map[ $condition['operator'] ];
+
+					$updated[ $group_id ][ $condition_id ] = $condition;
+				}
 			}
+
+			wdc_set_widget_conditions( $widget_id, $updated );
 		}
 	}
-
-	return true;
 }

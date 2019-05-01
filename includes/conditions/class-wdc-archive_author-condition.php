@@ -1,18 +1,30 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class Archive_Author_Condition extends Condition
+/**
+ * Archive author condition
+ */
+class WDC_Archive_Author_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'archive_author', __( 'Archive Author', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 160,
+			'category'  => 'archive',
+			'order'     => 30,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		$users = get_users( array
@@ -21,6 +33,8 @@ class Archive_Author_Condition extends Condition
 			'orderby' => 'display_name',
 			'order'   => 'ASC'
 		));
+
+		$items = array();
 
 		foreach ( $users as $user ) 
 		{
@@ -33,11 +47,20 @@ class Archive_Author_Condition extends Condition
 		
 		return $items;
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_author( $value ), true );
+		return wdc_do_operator( $operator, is_author( $value ), true );
 	}
 }
 
-register_condition( 'wdc\Archive_Author_Condition' );
+wdc_register_condition( 'WDC_Archive_Author_Condition' );

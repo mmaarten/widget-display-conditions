@@ -1,27 +1,40 @@
 
 @import "modal";
 
-$condition-padding-x: 4px;
-$condition-padding-y: 4px;
+.wdc-open-ui-wrap
+{
+	display: flex;
+	align-items: center;
+
+	.spinner
+	{
+		float: none;
+		margin: 0;
+
+		&:first-child
+		{
+			margin-right: 10px;
+		}
+
+		&:last-child
+		{
+			margin-left: 10px;
+		}
+
+		&.wdc-is-active
+		{
+			visibility: visible;
+		}
+
+		&:not( .wdc-is-active )
+		{
+			visibility: hidden !important;
+		}
+	}
+}
 
 .wdc-ui
 {
-	&.wdc-loading
-	{
-		.wdc-hide-if-loading
-		{
-			display: none;
-		}
-	}
-
-	&:not( .wdc-loading )
-	{
-		.wdc-show-if-loading
-		{
-			display: none;
-		}
-	}
-
 	&.wdc-has-conditions
 	{
 		.wdc-hide-if-conditions
@@ -63,6 +76,34 @@ $condition-padding-y: 4px;
 			text-decoration: none;
 		}
 	}
+
+	p
+	{
+		margin: 9px 0;
+	}
+
+	p.submit
+	{
+		display: flex;
+    	align-items: center;
+    	justify-content: flex-end;
+
+    	.spinner
+    	{
+    		float: none;
+    		margin: 0;
+
+    		&:first-child
+    		{
+    			margin-right: 10px;
+    		}
+
+    		&:last-child
+    		{
+    			margin-left: 10px;
+    		}
+    	}
+	}
 }
 
 table.wdc-conditions
@@ -79,7 +120,7 @@ tr.wdc-condition > td
 {
 	text-align: center;
 	vertical-align: middle;
-	padding: $condition-padding-y $condition-padding-x;
+	padding: 4px;
 
 	&:first-child
 	{

@@ -15,8 +15,9 @@
 		this.$submit    = this.$elem.find( ':input[type="submit"]' );	
 		this.fieldItems = {};
 		this.isLoaded   = false;
+		this.isSaved    = false;
 
-		this.setSubmit( 'saved' );
+		this.setSaved( 'saved' );
 
 		var _this = this;
 
@@ -63,20 +64,20 @@
 
 		this.$elem.on( 'change', '.wdc-param, .wdc-operator, .wdc-value', function( event )
 		{
-			_this.setSubmit( 'save' );
+			_this.setSaved( 'save' );
 		});
 
 		this.$elem.on( 'submit', 'form', function( event )
 		{
 			event.preventDefault();
 
-			_this.setSubmit( 'saving' );
+			_this.setSaved( 'saving' );
 
 			$.post( ajaxurl, $( this ).serialize(), function( response )
 			{
 				console.log( response );
 
-				_this.setSubmit( 'saved' );
+				_this.setSaved( 'saved' );
 			});
 		});
 
@@ -96,7 +97,7 @@
 
 			if ( _this.isLoaded && ( $elem.is( '.wdc-condition-group' ) || $elem.is( '.wdc-condition' ) ) ) 
 			{
-				_this.setSubmit( 'save' );
+				_this.setSaved( 'save' );
 			}
 		});
 
@@ -171,6 +172,20 @@
 			return selected == $( this ).val();
 
 		}).prop( 'selected', true );
+	};
+
+	UI.prototype.trigger = function() 
+	{
+		arguments[0] = 'wdc.' + arguments[0];
+
+		this.$elem.trigger.apply( this.$elem, arguments );
+	};
+
+	UI.prototype.on = function() 
+	{
+		arguments[0] = 'wdc.' + arguments[0];
+		
+		this.$elem.on.apply( this.$elem, arguments );
 	};
 
 	UI.prototype.createConditionGroup = function( data ) 
@@ -325,15 +340,20 @@
 			_this.$elem.removeClass( 'wdc-loading' );
 
 			_this.isLoaded = true;
+
+			_this.trigger( 'preloadComplete' );
 		});
 	};
 
-	UI.prototype.setSubmit = function( state ) 
+	UI.prototype.setSaved = function( state ) 
 	{
+		// Backup submit text
 		if ( typeof this.$submit.data( 'save' ) === 'undefined' ) 
 		{
 			this.$submit.data( 'save', this.$submit.text() );
 		}
+
+		this.isSaved = false;
 
 		switch ( state )
 		{
@@ -354,6 +374,8 @@
 					.prop( 'disabled', true )
 						.siblings( '.spinner' )
 							.removeClass( 'is-active' );
+
+				this.isSaved = true;
 
 				break;
 
@@ -394,28 +416,52 @@
 
 	$( document.body ).on( 'click', '.wdc-open-ui', function( event )
 	{
-		var $button = $( this );
-	
+		var $button  = $( this );
+		var $spinner = $button.siblings( '.spinner' );
+
+		$spinner.addClass( 'wdc-is-active' );
+		
+		// Get content
 		var content = wp.template( 'wdc-ui' )(
 		{
 			widget : $button.data( 'widget' ),
 		});
 
-		$.featherlight( content, 
+		// Instantiate
+		var ui = new wdc.ui( content, 
 		{
-			namespace    : 'wdc-modal',
-			closeOnClick : false,
-			closeOnEsc   : false,
-			
-			afterContent : function()
+			widget    : $button.data( 'widget' ),
+			nonceName : $button.data( 'noncename' ),
+			nonce     : $button.data( 'nonce' ),
+		});
+
+		// Preload complete
+		ui.on( 'preloadComplete', function( event )
+		{
+			$spinner.removeClass( 'wdc-is-active' );
+
+			// Open content inside modal
+			$.featherlight( ui.$elem, 
 			{
-				var ui = new wdc.ui( this.$content, 
+				namespace    : 'wdc-modal',
+				persist      : true,
+				closeOnClick : false,
+				closeOnEsc   : true,
+				
+				afterContent : function()
 				{
-					widget    : $button.data( 'widget' ),
-					nonceName : $button.data( 'noncename' ),
-					nonce     : $button.data( 'nonce' ),
-				});
-			},
+					
+				},
+
+				beforeClose : function()
+				{
+					// Unsaved data confirmation
+					if ( ! ui.isSaved && wdc.messages.notSaved ) 
+					{
+						return window.confirm( wdc.messages.notSaved );
+					}
+				}
+			});
 		});
 
 	});

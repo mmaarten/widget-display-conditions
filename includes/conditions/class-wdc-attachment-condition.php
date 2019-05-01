@@ -1,27 +1,48 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class Attachment_Condition extends Condition
+/**
+ * Attachment condition
+ */
+class WDC_Attachment_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'attachment', __( 'Attachment', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 130,
+			'category'  => 'attachment',
+			'order'     => 1000,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
-		return get_post_field_items( 'attachment' );
+		return wdc_get_post_field_items( 'attachment' );
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_attachment( $value ), true );
+		return wdc_do_operator( $operator, is_attachment( $value ), true );
 	}
 }
 
-register_condition( 'wdc\Attachment_Condition' );
+wdc_register_condition( 'WDC_Attachment_Condition' );

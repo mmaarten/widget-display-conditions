@@ -1,18 +1,30 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class Archive_Taxonomy_Condition extends Condition
+/**
+ * Archive taxonomy condition
+ */
+class WDC_Archive_Taxonomy_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'archive_taxonomy', __( 'Archive Taxonomy', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 150,
+			'category'  => 'archive',
+			'order'     => 20,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
@@ -30,7 +42,16 @@ class Archive_Taxonomy_Condition extends Condition
 
 		return $items;
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
 		if ( ! is_category() && ! is_tag() && ! is_tax() ) 
@@ -38,8 +59,8 @@ class Archive_Taxonomy_Condition extends Condition
 			return false;
 		}
 
-		return do_operator( $operator, is_archive( $value ), true );
+		return wdc_do_operator( $operator, is_archive( $value ), true );
 	}
 }
 
-register_condition( 'wdc\Archive_Taxonomy_Condition' );
+wdc_register_condition( 'WDC_Archive_Taxonomy_Condition' );

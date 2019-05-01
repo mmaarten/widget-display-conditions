@@ -41,7 +41,7 @@ html.with-featherlight
 	white-space: nowrap;
 
 	// styling
-	cursor: pointer;
+	//cursor: pointer;
 	
 	background: $modal-bg-color;
 
@@ -70,7 +70,8 @@ html.with-featherlight
 	{
 		margin: ( -$modal-content-padding-y ) ( -$modal-content-padding-x ) $modal-content-padding-y;
 		padding: 0 ($modal-heading-padding-x + $modal-close-size ) 0 $modal-heading-padding-x;
-		line-height: 50px;
+		font-size: 20px;
+    	line-height: 50px;
 		border-bottom : $modal-heading-border;
 		background: #fafafa;
 	}
@@ -111,6 +112,12 @@ html.with-featherlight
 	white-space: normal;
 
 	max-width: 800px;
+
+	@media screen and ( min-width: 961px )
+	{
+		width: 800px;
+		max-width: none;
+	}
 
 	.wdc-modal-iframe &
 	{
@@ -164,13 +171,13 @@ style.wdc-modal-inner
 	// Custom icon
 
 	outline: none;
-    transition: color .1s ease-in-out, background .1s ease-in-out;
 	border: 1px solid transparent;
     background: none;
     color: #666;
 
 	&:before
 	{
+		transition: color .1s ease-in-out, background .1s ease-in-out;
 		position: absolute;
 	    top: 50%;
 	    left: 50%;

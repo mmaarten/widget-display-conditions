@@ -1,45 +1,63 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class Post_Status_Condition extends Condition
+/**
+ * Post status condition
+ */
+class WDC_Post_Status_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'post_status', __( 'Post Status', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
+			'category'  => 'post',
 			'order'     => 20,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
-		$items = array();
-
 		$post_statuses = get_post_statuses();
 
-		foreach ( $post_statuses as $id => $title ) 
+		$items = array();
+
+		foreach ( $post_statuses as $post_status => $text ) 
 		{
-			$items[] = array
+			$items[ $post_status ] = array
 			(
-				'id'   => $id,
-				'text' => $title
+				'id'   => $post_status,
+				'text' => $text,
 			);
 		}
 
 		return $items;
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
-		if ( ! is_singular() ) 
-		{
-			return false;
-		}
+		if ( ! is_singular() ) return false;
 
-		return do_operator( $operator, $value, get_post_status() );
+		return wdc_do_operator( $operator, $value, get_post_status() );
 	}
 }
 
-register_condition( 'wdc\Post_Status_Condition' );
+wdc_register_condition( 'WDC_Post_Status_Condition' );

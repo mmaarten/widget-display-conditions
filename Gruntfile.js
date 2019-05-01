@@ -32,7 +32,6 @@ module.exports = function( grunt )
 				files: 
 				[
 					// Note : cssmin does not allow '.' in filenames.
-					{ src: ['node_modules/featherlight/src/featherlight.css'], dest: 'assets/css/featherlight.css' },
 					{ src: ['node_modules/featherlight/src/featherlight.js'], dest: 'assets/js/featherlight.js' },
 				],
 			},

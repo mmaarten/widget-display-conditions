@@ -1,18 +1,30 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class Page_Type_Condition extends Condition
+/**
+ * Page Type condition
+ */
+class WDC_Page_Type_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'page_type', __( 'Page Type', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 90,
+			'category'  => 'page',
+			'order'     => 10,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		return array
@@ -28,7 +40,16 @@ class Page_Type_Condition extends Condition
 			'child'       => array( 'id' => 'child', 		'text' => __( 'Child Page (has parent)', 'wdc' ) ),
 		);
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
 		$queried_object = get_queried_object();
@@ -37,27 +58,27 @@ class Page_Type_Condition extends Condition
 		{
 			case 'front_page' :
 				
-				return do_operator( $operator, is_front_page(), true );
+				return wdc_do_operator( $operator, is_front_page(), true );
 
 			case 'posts_page' :
 				
-				return do_operator( $operator, is_front_page() && ! is_home(), true );
+				return wdc_do_operator( $operator, is_home(), true );
 
 			case 'search_page' :
 				
-				return do_operator( $operator, is_search(), true );
+				return wdc_do_operator( $operator, is_search(), true );
 
 			case '404_page' :
 				
-				return do_operator( $operator, is_404(), true );
+				return wdc_do_operator( $operator, is_404(), true );
 
 			case 'date_page' :
 				
-				return do_operator( $operator, is_date(), true );
+				return wdc_do_operator( $operator, is_date(), true );
 
 			case 'author_page' :
 				
-				return do_operator( $operator, is_author(), true );
+				return wdc_do_operator( $operator, is_author(), true );
 
 			case 'top_level' :
 				
@@ -68,7 +89,7 @@ class Page_Type_Condition extends Condition
 
 				$ancestors = get_post_ancestors( $queried_object->ID );
 
-				return do_operator( $operator, count( $ancestors ) == 0, true );
+				return wdc_do_operator( $operator, count( $ancestors ) == 0, true );
 
 			case 'parent' :
 				
@@ -85,7 +106,7 @@ class Page_Type_Condition extends Condition
 					'post_status' => 'any'
 				));
 
-				return do_operator( $operator, count( $children ) > 0, true );
+				return wdc_do_operator( $operator, count( $children ) > 0, true );
 
 			case 'child' :
 
@@ -96,11 +117,11 @@ class Page_Type_Condition extends Condition
 
 				$ancestors = get_post_ancestors( $queried_object->ID );
 
-				return do_operator( $operator, count( $ancestors ) > 0, true );
+				return wdc_do_operator( $operator, count( $ancestors ) > 0, true );
 		}
 
 		return false;
 	}
 }
 
-register_condition( 'wdc\Page_Type_Condition' );
+wdc_register_condition( 'WDC_Page_Type_Condition' );

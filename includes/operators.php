@@ -1,31 +1,63 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
  * Operators
  */
 
-namespace wdc;
-
-class Operators
+final class WDC_Operators
 {
-	protected $operators = array();
+	static private $instance = null;
 
-	public function __construct()
+	/**
+	 * Get instance
+	 *
+	 * @return WDC_Operators
+	 */
+	static public function get_instance()
+	{
+		if ( ! self::$instance ) 
+		{
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
+
+	private $operators = array();
+
+	/**
+	 * Constructor
+	 */
+	private function __construct()
 	{
 		
 	}
 
+	/**
+	 * Create operator
+	 *
+	 * @param string $id
+	 * @param string $title
+	 * @param array  $args
+	 *
+	 * @return WDC_Operator
+	 */
 	public function create_operator( $id, $title, $args = array() )
 	{
-		$operator = new Operator( $id, $title, $args );
+		$operator = new WDC_Operator( $id, $title, $args );
 
 		$this->register_operator( $operator );
 
 		return $operator;
 	}
 
+	/**
+	 * Register operator
+	 *
+	 * @param mixed $operator
+	 */
 	public function register_operator( $operator )
 	{
-		if ( ! $operator instanceof Operator ) 
+		if ( ! $operator instanceof WDC_Operator ) 
 		{
 			$operator = new $operator();
 		}
@@ -33,16 +65,33 @@ class Operators
 		$this->operators[ $operator->id ] = $operator;
 	}
 
+	/**
+	 * Unregister operator
+	 *
+	 * @param string $operator_id
+	 */
 	public function unregister_operator( $operator_id )
 	{
 		unset( $this->operators[ $operator_id ] );
 	}
 
+	/**
+	 * Get operators
+	 *
+	 * @return array
+	 */
 	public function get_operators()
 	{
 		return $this->operators;
 	}
 
+	/**
+	 * Get operator
+	 *
+	 * @param string $operator_id
+	 *
+	 * @return mixed
+	 */
 	public function get_operator( $operator_id )
 	{
 		if ( isset( $this->operators[ $operator_id ] ) ) 
@@ -53,40 +102,57 @@ class Operators
 		return null;
 	}
 
+	/**
+	 * Get operator objects
+	 *
+	 * @param array $operator_ids
+	 *
+	 * @return array
+	 */
 	public function get_operator_objects( $operator_ids )
 	{
-		return array_intersect_key( get_operators(), array_flip( (array) $operator_ids ) );
+		return array_intersect_key( $this->operators, array_flip( (array) $operator_ids ) );
 	}
 }
 
-get_instance()->operators = new Operators();
-
-function create_operator( $id, $title, $args = array() )
+function wdc_create_operator( $id, $title, $args = array() )
 {
-	return get_instance()->operators->create_operator( $id, $title, $args );
+	$operators = WDC_Operators::get_instance();
+	
+	return $operators->create_operator( $id, $title, $args );
 }
 
-function register_operator( $operator )
+function wdc_register_operator( $operator )
 {
-	get_instance()->operators->register_operator( $operator );
+	$operators = WDC_Operators::get_instance();
+
+	$operators->register_operator( $operator );
 }
 
-function unregister_operator( $operator_id )
+function wdc_unregister_operator( $operator_id )
 {
-	get_instance()->operators->unregister_operator( $operator_id );
+	$operators = WDC_Operators::get_instance();
+
+	$operators->unregister_operator( $operator_id );
 }
 
-function get_operators()
+function wdc_get_operators()
 {
-	return get_instance()->operators->get_operators();
+	$operators = WDC_Operators::get_instance();
+
+	return $operators->get_operators();
 }
 
-function get_operator( $operator_id )
+function wdc_get_operator( $operator_id )
 {
-	return get_instance()->operators->get_operator( $operator_id );
+	$operators = WDC_Operators::get_instance();
+
+	return $operators->get_operator( $operator_id );
 }
 
-function get_operator_objects( $operator_ids )
+function wdc_get_operator_objects( $operator_ids )
 {
-	return get_instance()->operators->get_operator_objects( $operator_ids );
+	$operators = WDC_Operators::get_instance();
+
+	return $operators->get_operator_objects( $operator_ids );
 }

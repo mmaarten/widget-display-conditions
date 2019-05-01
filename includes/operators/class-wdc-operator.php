@@ -1,11 +1,9 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
  * Operator
  */
 
-namespace wdc;
-
-class Operator
+class WDC_Operator
 {
 	public $id    = null;
 	public $title = null;
@@ -34,6 +32,15 @@ class Operator
 		do_action_ref_array( 'wdc/operator', array( &$this ) );
 	}
 
+	/**
+	 * Apply
+	 *
+	 * @param bool  $return
+	 * @param mixed $a
+	 * @param mixed $b
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $a, $b )
 	{
 		return $return;

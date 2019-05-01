@@ -1,18 +1,30 @@
-<?php
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
-
-class Archive_Post_Type_Condition extends Condition
+/**
+ * Archive post type condition
+ */
+class WDC_Archive_Post_Type_Condition extends WDC_Condition
 {
+	/**
+	 * Constructor
+	 */
 	public function __construct()
 	{
 		parent::__construct( 'archive_post_type', __( 'Archive Post Type', 'wdc' ), array
 		(
 			'operators' => array( '==', '!=' ),
-			'order'     => 140,
+			'category'  => 'archive',
+			'order'     => 10,
 		));
 	}
 
+	/**
+	 * Value field items
+	 *
+	 * @param array $items
+	 *
+	 * @return array
+	 */
 	public function value_field_items( $items )
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
@@ -26,20 +38,29 @@ class Archive_Post_Type_Condition extends Condition
 				continue;
 			}
 
-			$items[] = array
+			$items[ $post_type->name ] = array
 			(
 				'id'   => $post_type->name,
-				'text' => $post_type->labels->singular_name
+				'text' => $post_type->labels->singular_name,
 			);
 		}
 
 		return $items;
 	}
-
+	
+	/**
+	 * Apply
+	 *
+	 * @param bool   $return
+	 * @param string $operator
+	 * @param mixed  $value
+	 *
+	 * @return bool
+	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_post_type_archive( $value ), true );
+		return wdc_do_operator( $operator, is_post_type_archive( $value ), true );
 	}
 }
 
-register_condition( 'wdc\Archive_Post_Type_Condition' );
+wdc_register_condition( 'WDC_Archive_Post_Type_Condition' );

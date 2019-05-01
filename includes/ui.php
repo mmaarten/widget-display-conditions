@@ -1,55 +1,73 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
  * UI
  */
 
-namespace wdc;
-
-class UI
+class WDC_UI
 {
-	public function __construct()
+	/**
+	 * Init
+	 *
+	 * @return mixed
+	 */
+	public static function init()
 	{
-		
-	}
+		add_action( 'in_widget_form'       , array( __CLASS__, 'in_widget_form' ), 999 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'scripts' ) );
+		add_action( 'admin_footer'         , array( __CLASS__, 'template_scripts' ) );
 
-	public function init()
-	{
-		add_action( 'in_widget_form'       , array( &$this, 'widget_form' ), 999 );
-		add_action( 'admin_enqueue_scripts', array( &$this, 'scripts' ) );
-		add_action( 'admin_footer'         , array( &$this, 'template_scripts' ) );
-
-		add_action( 'wp_ajax_wdc_ui_get_condition_field_items', array( &$this, 'get_condition_field_items' ) );
-		add_action( 'wp_ajax_wdc_ui_preload' , array( &$this, 'preload' ) );
-		add_action( 'wp_ajax_wdc_ui_update'  , array( &$this, 'update' ) );
+		add_action( 'wp_ajax_wdc_ui_get_condition_field_items', array( __CLASS__, 'get_condition_field_items_ajax' ) );
+		add_action( 'wp_ajax_wdc_ui_preload', array( __CLASS__, 'preload' ) );
+		add_action( 'wp_ajax_wdc_ui_update' , array( __CLASS__, 'update' ) );
 	}
 
 	/**
-	 * Widget Form
+	 * Get condition field items
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
+	public static function get_condition_field_items( $condition_id )
+	{
+		$condition = wdc_get_condition( $condition_id );
+
+		if ( ! $condition ) return null;
+
+		$items = array
+		(
+			'operator' => wdc_get_condition_operator_field_items( $condition->id ),
+			'value'    => wdc_get_condition_value_field_items( $condition->id ),
+		);
+
+		$items['operator'] = wdc_prepare_field_items_json( $items['operator'] );
+		$items['value']    = wdc_prepare_field_items_json( $items['value'] );
+
+		return $items;
+	}
+
+	/**
+	 * In widget form
 	 *
 	 * @param WP_Widget $widget
 	 */
-	public function widget_form( $widget )
+	public static function in_widget_form( $widget )
 	{
 		// Output button to open UI
-		printf( '<p><button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button></p>',
+		$button = sprintf( '<button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button>',
 			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'wdc' ) );
+
+		printf( '<p class="wdc-open-ui-wrap">%s<span class="spinner"></span></p>', $button );
 	}
 
-	public function get_condition_field_items()
+	/**
+	 * Get condition field items ajax
+	 */
+	public static function get_condition_field_items_ajax()
 	{
-		// Check if ajax call
+		if ( ! self::doing_ajax() ) return;
 
-		if ( ! wp_doing_ajax() ) return;
-
-		// Check nonce and referer
-
-		check_admin_referer( 'ui', WDC_NONCE_NAME );
-
-		//
-
-		$items = get_condition_field_items( $_POST['param'] );
-
-		// Response
+		$items = self::get_condition_field_items( $_POST['param'] );
 
 		wp_send_json( $items );
 	}
@@ -57,69 +75,47 @@ class UI
 	/**
 	 * Preload
 	 */
-	public function preload()
+	public static function preload()
 	{
-		// Check if ajax call
+		if ( ! self::doing_ajax() ) return;
 
-		if ( ! wp_doing_ajax() ) return;
+		$conditions = wdc_get_widget_conditions( $_POST['widget'] );
 
-		// Check nonce and referer
+		$fields = array();
 
-		check_admin_referer( 'ui', WDC_NONCE_NAME );
-
-		// Get widget conditions
-
-		$conditions = get_widget_conditions( $_POST['widget'] );
-
-		// Get field items
-
-		$field_items = array();
-
-		if ( is_array( $conditions ) ) 
+		if ( isset( $conditions ) ) 
 		{
 			foreach ( $conditions as $group ) 
 			{
 				foreach ( $group as $condition ) 
 				{
-					$param = $condition['param'];
+					$condition_id = $condition['param'];
 
-					if ( ! isset( $field_items[ $param ] ) ) 
+					if ( ! isset( $fields[ $condition_id ] ) ) 
 					{
-						$field_items[ $param ] = get_condition_field_items( $param );
+						$fields[ $condition_id ] = self::get_condition_field_items( $condition_id );
 					}
 				}
 			}
 		}
 
-		// Response
-
 		wp_send_json( array
 		(
 			'conditions' => $conditions,
-			'fieldItems' => $field_items,
+			'fieldItems' => $fields,
 		));
 	}
 
 	/**
 	 * Update
 	 */
-	public function update()
+	public static function update()
 	{
-		// Check if ajax call
-
-		if ( ! wp_doing_ajax() ) return;
-
-		// Check nonce and referer
-
-		check_admin_referer( 'ui', WDC_NONCE_NAME );
-
-		// Update widget conditions
+		if ( ! self::doing_ajax() ) return;
 
 		$conditions = isset( $_POST['conditions'] ) ? $_POST['conditions'] : array();
 
-		$result = set_widget_conditions( $_POST['widget'], $conditions );
-
-		// Response
+		$result = wdc_set_widget_conditions( $_POST['widget'], $conditions );
 
 		wp_send_json( $result );
 	}
@@ -127,34 +123,36 @@ class UI
 	/**
 	 * Scripts
 	 */
-	public function scripts()
+	public static function scripts()
 	{
-		if ( 'widgets.php' != $GLOBALS['pagenow'] ) 
-		{
-			return;
-		}
+		if ( 'widgets.php' != $GLOBALS['pagenow'] ) return;
 
 		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		wp_enqueue_style( 'dashicons' );
 
 		// Featherlight
-		wp_enqueue_script( 'featherlight', plugins_url( "assets/js/featherlight$min.js", WDC_FILE ), array( 'jquery' ), '1.7.13', true );
+		wp_enqueue_script( 'featherlight', plugins_url( "assets/js/featherlight$min.js", WDC_PLUGIN_FILE ), array( 'jquery' ), '1.7.13', true );
 
 		// Core
-		wp_enqueue_style( 'wdc-ui', plugins_url( "assets/css/ui$min.css", WDC_FILE ), array(), WDC_VERSION );
-		wp_enqueue_script( 'wdc-ui', plugins_url( "assets/js/ui$min.js", WDC_FILE ), array( 'jquery', 'wp-util' ), WDC_VERSION, true );
+		wp_enqueue_style( 'wdc-ui', plugins_url( "assets/css/ui$min.css", WDC_PLUGIN_FILE ), array(), WDC_VERSION );
+		wp_enqueue_script( 'wdc-ui', plugins_url( "assets/js/ui$min.js", WDC_PLUGIN_FILE ), array( 'jquery', 'wp-util' ), WDC_VERSION, true );
+
+		wp_localize_script( 'wdc-ui', 'wdc', array
+		(
+			'messages' => array
+			(
+				'notSaved' => __( 'Confirm unsaved changes.', 'wdc' ),
+			),
+		));
 	}
 
 	/**
-	 * Template scripts
+	 * Template Scripts
 	 */
-	public function template_scripts()
+	public static function template_scripts()
 	{
-		if ( 'widgets.php' != $GLOBALS['pagenow'] ) 
-		{
-			return;
-		}
+		if ( 'widgets.php' != $GLOBALS['pagenow'] ) return;
 
 		?>
 
@@ -164,42 +162,33 @@ class UI
 
 				<h1><?php _e( 'Widget Display Conditions', 'wdc' ); ?></h1>
 
-				<div class="wdc-show-if-loading">
-					<?php admin_notice( __( 'Gathering data…', 'wdc' ) . '<span class="spinner is-active"></span>' ); ?>
-				</div>
-
-				<div class="wdc-hide-if-loading">
-
-					<form method="post">
-					
-						<?php wp_nonce_field( 'ui', WDC_NONCE_NAME ); ?>
-
-						<input type="hidden" name="action" value="wdc_ui_update">
-						<input type="hidden" name="widget" value="{{ data.widget }}">
-
-						<div class="wdc-hide-if-conditions">
-							<?php admin_notice( __( 'No conditions set.', 'wdc' ) ); ?>
-						</div>
-						
-						<h4 class="wdc-show-if-conditions"><?php _e( 'Show widget if', 'wdc' ); ?></h4>
-
-						<div class="wdc-condition-groups"></div>
-
-						<p>
-							<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add group', 'wdc' ); ?></button>
-						</p>
-
-						<p class="submit alignright">
-							<span class="spinner"></span>
-							<button class="button button-primary" type="submit" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>"><?php esc_html_e( 'Save', 'wdc' ); ?></button>
-						</p>
-
-					</form>
-
-				</div>
+				<form method="post">
 				
+					<?php wp_nonce_field( 'ui', WDC_NONCE_NAME ); ?>
 
-			</div>
+					<input type="hidden" name="action" value="wdc_ui_update">
+					<input type="hidden" name="widget" value="{{ data.widget }}">
+
+					<div class="notice notice-info wdc-hide-if-conditions">
+						<p><?php esc_html_e( __( 'No conditions set.', 'wdc' ) ); ?></p>
+					</div>
+					
+					<h4 class="wdc-show-if-conditions"><?php _e( 'Show widget if', 'wdc' ); ?></h4>
+
+					<div class="wdc-condition-groups"></div>
+
+					<p>
+						<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add group', 'wdc' ); ?></button>
+					</p>
+
+					<p class="submit alignright">
+						<span class="spinner"></span>
+						<button class="button button-primary" type="submit" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>"><?php esc_html_e( 'Save', 'wdc' ); ?></button>
+					</p>
+
+				</form>
+
+			</div><!-- .wdc-ui -->
 
 		</script>
 
@@ -221,7 +210,7 @@ class UI
 
 				<td>
 					<select class="wdc-param" name="conditions[{{ data.group }}][{{ data.id }}][param]">
-						<?php echo get_dropdown_options( get_param_field_items() ); ?>
+						<?php echo wdc_get_dropdown_options( wdc_get_condition_param_field_items() ); ?>
 					</select>
 				</td>
 
@@ -249,7 +238,16 @@ class UI
 
 		<?php
 	}
+
+	/**
+	 * Doing ajax
+	 *
+	 * @return bool
+	 */
+	public static function doing_ajax()
+	{
+		return wp_doing_ajax() && check_admin_referer( 'ui', WDC_NONCE_NAME );
+	}
 }
 
-get_instance()->ui = new UI();
-get_instance()->ui->init();
+WDC_UI::init();
