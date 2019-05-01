@@ -33,7 +33,7 @@ function wdc_do_conditions( $conditions )
  * Do condition
  *
  * @param string $condition
- * @param string $operator_id
+ * @param string $operator
  * @param mixed  $value
  *
  * @return mixed
