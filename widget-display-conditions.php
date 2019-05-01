@@ -3,7 +3,7 @@
 Plugin Name:  Widget Display Conditions
 Plugin URI:   https://wordpress.org/plugins/widget-display-conditions/
 Description:  Control on which page you want a particular widget to be displayed.
-Version:      0.2.1
+Version:      0.2.2
 Author:       Maarten Menten
 Author URI:   https://profiles.wordpress.org/maartenm/
 License:      GPL2
@@ -14,7 +14,7 @@ Domain Path:  /languages
 
 defined( 'WDC_PLUGIN_FILE' )     or define( 'WDC_PLUGIN_FILE', __FILE__ );
 defined( 'WDC_ABSPATH' )         or define( 'WDC_ABSPATH', dirname( WDC_PLUGIN_FILE ) . '/' );
-defined( 'WDC_VERSION' )         or define( 'WDC_VERSION', '0.2.1' );
+defined( 'WDC_VERSION' )         or define( 'WDC_VERSION', '0.2.2' );
 defined( 'WDC_NONCE_NAME' )      or define( 'WDC_NONCE_NAME', 'wdc_nonce' );
 defined( 'WDC_MAX_FIELD_ITEMS' ) or define( 'WDC_MAX_FIELD_ITEMS', 9999 );
 
