@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * User role condition
  */
-class User_Role_Condition extends Condition
+class WDC_User_Role_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -63,8 +61,8 @@ class User_Role_Condition extends Condition
 			return false;
 		}
 		
-		return do_operator( $operator, $value, $user->roles[0] );
+		return wdc_do_operator( $operator, $value, $user->roles[0] );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\User_Role_Condition' );
+wdc_register_condition( 'WDC_User_Role_Condition' );

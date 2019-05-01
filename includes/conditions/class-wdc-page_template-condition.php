@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Page template condition
  */
-class Page_Template_Condition extends Condition
+class WDC_Page_Template_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -62,8 +60,8 @@ class Page_Template_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, $value, get_page_template_slug() );
+		return wdc_do_operator( $operator, $value, get_page_template_slug() );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Page_Template_Condition' );
+wdc_register_condition( 'WDC_Page_Template_Condition' );

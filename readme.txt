@@ -51,10 +51,10 @@ You can use built-in conditions or create some of your own.
 == Changelog ==
 
 = 0.2.1 =
-Release date: Apr 30th, 2019
+Release date: May 1st, 2019
 
-* Fix - Update notification also shown when no previous version was installed.
-* Fix - Field items not sorted correctly.
+* Fix - Database update was available when no previous version was installed.
+* Fix - UI: Field items not sorted correctly.
 * Fix - UI: Submit button style.
 * Enhancement - UI: Confirmation dialog opens when unsaved changes.
 * Enhancement - UI: Preloading before modal opens.

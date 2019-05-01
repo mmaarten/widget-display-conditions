@@ -1,21 +1,19 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
- * Fields
+ * Field functions
  */
-
-namespace wdc;
 
 /**
  * Get condition param field items
  *
  * @return array
  */
-function get_condition_param_field_items()
+function wdc_get_condition_param_field_items()
 {
-	$conditions = get_conditions();
-	$categories = get_condition_categories();
+	$conditions = wdc_get_conditions();
+	$categories = wdc_get_condition_categories();
 
-	uasort( $categories, __NAMESPACE__ . '\sort_order' );
+	uasort( $categories, 'wdc_sort_order' );
 
 	$items = array();
 
@@ -25,7 +23,7 @@ function get_condition_param_field_items()
 
 		if ( ! $category_conditions ) continue;
 
-		uasort( $category_conditions, __NAMESPACE__ . '\sort_order' );
+		uasort( $category_conditions, 'wdc_sort_order' );
 
 		$group = array
 		(
@@ -46,7 +44,7 @@ function get_condition_param_field_items()
 		$items[ $group['id'] ] = $group;
 	}
 
-	$items = apply_filters( 'wdc/condition_param_field_items', $items );
+	$items = apply_filters( "wdc/condition_param_field_items", $items );
 
 	return $items;
 }
@@ -58,15 +56,15 @@ function get_condition_param_field_items()
  *
  * @return mixed
  */
-function get_condition_operator_field_items( $condition_id )
+function wdc_get_condition_operator_field_items( $condition_id )
 {
-	$condition = get_condition( $condition_id );
+	$condition = wdc_get_condition( $condition_id );
 
 	if ( ! $condition ) return null;
 
-	$operators = get_operator_objects( $condition->operators );
+	$operators = wdc_get_operator_objects( $condition->operators );
 
-	uasort( $operators, __NAMESPACE__ . '\sort_order' );
+	uasort( $operators, 'wdc_sort_order' );
 
 	$items = array();
 
@@ -88,13 +86,13 @@ function get_condition_operator_field_items( $condition_id )
 /**
  * Get condition value field items
  *
- * @param string $param
+ * @param string $condition_id
  *
  * @return mixed
  */
-function get_condition_value_field_items( $condition_id )
+function wdc_get_condition_value_field_items( $condition_id )
 {
-	$condition = get_condition( $condition_id );
+	$condition = wdc_get_condition( $condition_id );
 
 	if ( ! $condition ) return null;
 
@@ -106,43 +104,6 @@ function get_condition_value_field_items( $condition_id )
 }
 
 /**
- * Get condition field items
- *
- * @param string $param
- *
- * @return mixed
- */
-function get_condition_field_items( $condition_id, $prepare_json = false )
-{
-	$condition = get_condition( $condition_id );
-
-	if ( ! $condition ) return null;
-
-	$items = array
-	(
-		'operator' => get_condition_operator_field_items( $condition->id ),
-		'value'    => get_condition_value_field_items( $condition->id ),
-	);
-
-	$items = apply_filters( "wdc/condition_field_items/condition={$condition->id}", $items, $condition );
-	$items = apply_filters( "wdc/condition_field_items"                           , $items, $condition );
-
-	if ( $prepare_json ) 
-	{
-		$_items = array();
-
-		foreach ( $items as $key => $value ) 
-		{
-			$_items[ $key ] = prepare_field_items_json( $value );
-		}
-
-		$items = $_items;
-	}
-	
-	return $items;
-}
-
-/**
  * Get post field items
  *
  * @param mixed $post_type
@@ -150,7 +111,7 @@ function get_condition_field_items( $condition_id, $prepare_json = false )
  *
  * @return array
  */
-function get_post_field_items( $post_type, $labels = false )
+function wdc_get_post_field_items( $post_type, $labels = false )
 {
 	$post_types = (array) $post_type;
 
@@ -158,23 +119,20 @@ function get_post_field_items( $post_type, $labels = false )
 
 	foreach ( $post_types as $post_type ) 
 	{
-		// Get post type object
-
 		$post_type = get_post_type_object( $post_type );
 
 		if ( ! $post_type ) continue;
-
-		// Get posts
 
 		if ( $post_type->hierarchical ) 
 		{
 			$posts = get_pages( array
 			(
-				'post_type'   => $post_type->name,
-				'post_status' => 'publish',
-				'sort_column' => 'post_title',
-				'sort_order'  => 'asc',
-				'number'      => WDC_MAX_FIELD_ITEMS,
+				'post_type'    => $post_type->name,
+				'post_status'  => 'publish',
+				'hierarchical' => true,
+				'sort_column'  => 'post_title',
+				'sort_order'   => 'asc',
+				'number'       => WDC_MAX_FIELD_ITEMS,
 			));
 		}
 
@@ -185,7 +143,7 @@ function get_post_field_items( $post_type, $labels = false )
 				'post_type'   => $post_type->name,
 				'post_status' => 'attachment' == $post_type->name ? 'inherit' : 'publish',
 				'orderby'     => 'post_title',
-				'order'       => 'asc',
+				'order'       => 'ASC',
 				'numberposts' => WDC_MAX_FIELD_ITEMS,
 			));
 		}
@@ -198,8 +156,6 @@ function get_post_field_items( $post_type, $labels = false )
 			'text'     => $post_type->labels->singular_name,
 			'children' => array(),
 		);
-
-		// Get items
 
 		foreach ( $posts as $post ) 
 		{
@@ -218,7 +174,7 @@ function get_post_field_items( $post_type, $labels = false )
 		$items[ $group['id'] ] = $group;
 	}
 
-	if ( ! $labels ) 
+	if ( false == $labels ) 
 	{
 		$_items = array();
 
@@ -241,7 +197,7 @@ function get_post_field_items( $post_type, $labels = false )
  *
  * @return array
  */
-function get_term_field_items( $taxonomy, $labels = false )
+function wdc_get_term_field_items( $taxonomy, $labels = false )
 {
 	$taxonomies = (array) $taxonomy;
 
@@ -249,37 +205,18 @@ function get_term_field_items( $taxonomy, $labels = false )
 
 	foreach ( $taxonomies as $taxonomy ) 
 	{
-		// Get post type object
-
-		$taxonomy = get_post_type_object( $taxonomy );
+		$taxonomy = get_taxonomy( $taxonomy );
 
 		if ( ! $taxonomy ) continue;
 
-		// Get terms
-
-		if ( $taxonomy->hierarchical ) 
-		{
-			$terms = get_categories( array
-			(
-				'taxonomy'     => $taxonomy->name,
-				'orderby'      => 'parent name',
-				'order'        => 'ASC',
-				'hierarchical' => true,
-				'number'       => WDC_MAX_FIELD_ITEMS,
-			));
-		}
-
-		else
-		{
-			$terms = get_terms( array
-			(
-				'taxonomy'     => $taxonomy->name,
-				'orderby'      => 'name',
-				'order'        => 'ASC',
-				'hierarchical' => false,
-				'number'       => WDC_MAX_FIELD_ITEMS,
-			));
-		}
+		$terms = get_terms( array
+		(
+			'taxonomy'     => $taxonomy->name,
+			'hierarchical' => $taxonomy->hierarchical,
+			'orderby'      => 'parent name',
+			'order'        => 'ASC',
+			'number'       => WDC_MAX_FIELD_ITEMS,
+		));
 
 		if ( ! $terms ) continue;
 
@@ -289,8 +226,6 @@ function get_term_field_items( $taxonomy, $labels = false )
 			'text'     => $taxonomy->labels->singular_name,
 			'children' => array(),
 		);
-
-		// Get items
 
 		foreach ( $terms as $term ) 
 		{
@@ -309,7 +244,7 @@ function get_term_field_items( $taxonomy, $labels = false )
 		$items[ $group['id'] ] = $group;
 	}
 
-	if ( ! $labels ) 
+	if ( false == $labels ) 
 	{
 		$_items = array();
 
@@ -325,41 +260,13 @@ function get_term_field_items( $taxonomy, $labels = false )
 }
 
 /**
- * Prepare field items json
- *
- * Make sure array keys are index based.
- *
- * @param array $items
- *
- * @return array
- */
-function prepare_field_items_json( $items )
-{
-	$return = array();
-
-	foreach ( $items as $item ) 
-	{
-		$i = count( $return );
-
-		$return[] = $item;
-
-		if ( isset( $item['children'] ) ) 
-		{
-			$return[ $i ]['children'] = prepare_field_items_json( $item['children'] );
-		}
-	}
-
-	return $return;
-}
-
-/**
  * Get dropdown options
  *
  * @param array $items
  *
  * @return string
  */
-function get_dropdown_options( $items )
+function wdc_get_dropdown_options( $items )
 {
 	$return = '';
 
@@ -375,7 +282,7 @@ function get_dropdown_options( $items )
 		if ( isset( $item['children'] ) ) 
 		{
 			$return .= sprintf( '<optgroup label="%s">', esc_attr( $item['text'] ) );
-			$return .= get_dropdown_options( $item['children'] );
+			$return .= wdc_get_dropdown_options( $item['children'] );
 			$return .= '</optgroup>'; 
 		}
 
@@ -384,10 +291,37 @@ function get_dropdown_options( $items )
 			$text = isset( $item['html'] ) ? $item['html'] : esc_html( $item['text'] );
 
 			$return .= sprintf( '<option value="%s"%s>%s</option>', 
-				esc_attr( $item['id'] ), selected( $item['selected'], true, false ), $text );
+				esc_attr( $item['id'] ), selected( $item['selected'], false, true ), $text );
 		}
 	}
 
 	return $return;
 }
 
+/**
+ * Prepare field items json
+ *
+ * Make sure array keys are nummeric indexes.
+ *
+ * @param array $items
+ *
+ * @return array
+ */
+function wdc_prepare_field_items_json( $items )
+{
+	$return = array();
+
+	foreach ( $items as $item ) 
+	{
+		$i = count( $return );
+
+		$return[] = $item;
+
+		if ( isset( $item['children'] ) ) 
+		{
+			$return[ $i ]['children'] = wdc_prepare_field_items_json( $item['children'] );
+		}
+	}
+
+	return $return;
+}

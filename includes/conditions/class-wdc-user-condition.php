@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * User condition
  */
-class User_Condition extends Condition
+class WDC_User_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -60,8 +58,8 @@ class User_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, $value, get_current_user_id() );
+		return wdc_do_operator( $operator, $value, get_current_user_id() );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\User_Condition' );
+wdc_register_condition( 'WDC_User_Condition' );

@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Page parent condition
  */
-class Page_Parent_Condition extends Condition
+class WDC_Page_Parent_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -29,7 +27,7 @@ class Page_Parent_Condition extends Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return get_post_field_items( 'page' );
+		return wdc_get_post_field_items( 'page' );
 	}
 	
 	/**
@@ -47,8 +45,8 @@ class Page_Parent_Condition extends Condition
 
 		$ancestors = get_post_ancestors( get_post() );
 
-		return do_operator( $operator, in_array( $value, $ancestors ), true );
+		return wdc_do_operator( $operator, in_array( $value, $ancestors ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Page_Parent_Condition' );
+wdc_register_condition( 'WDC_Page_Parent_Condition' );

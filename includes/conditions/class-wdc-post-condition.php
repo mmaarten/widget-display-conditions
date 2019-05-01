@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Post condition
  */
-class Post_Condition extends Condition
+class WDC_Post_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -33,7 +31,7 @@ class Post_Condition extends Condition
 
 		array_unshift( $post_types, 'post' );
 
-		return get_post_field_items( $post_types, true );
+		return wdc_get_post_field_items( $post_types, true );
 	}
 	
 	/**
@@ -47,8 +45,8 @@ class Post_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_single( $value ), true );
+		return wdc_do_operator( $operator, is_single( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Post_Condition' );
+wdc_register_condition( 'WDC_Post_Condition' );

@@ -1,9 +1,7 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
- * Conditions API
+ * Condition functions
  */
-
-namespace wdc;
 
 /**
  * Do conditions
@@ -12,7 +10,7 @@ namespace wdc;
  *
  * @return mixed
  */
-function do_conditions( $conditions )
+function wdc_do_conditions( $conditions )
 {
 	$return = null;
 
@@ -20,7 +18,7 @@ function do_conditions( $conditions )
 	{
 		foreach ( $group as $condition ) 
 		{
-			$return = do_condition( $condition['param'], $condition['operator'], $condition['value'] );
+			$return = wdc_do_condition( $condition['param'], $condition['operator'], $condition['value'] );
 
 			if ( isset( $return ) && ! $return ) break;
 		}
@@ -34,15 +32,19 @@ function do_conditions( $conditions )
 /**
  * Do condition
  *
- * @param string $param
- * @param string $operator
+ * @param string $condition
+ * @param string $operator_id
  * @param mixed  $value
  *
  * @return mixed
  */
-function do_condition( $param, $operator, $value )
+function wdc_do_condition( $condition, $operator, $value )
 {
-	return apply_filters( "wdc/do_condition/param=$param", null, $operator, $value, $param );
+	$return = null;
+	$return = apply_filters( "wdc/do_condition/condition=$condition", $return, $operator, $value, $condition );
+	$return = apply_filters( "wdc/do_condition"                     , $return, $operator, $value, $condition );
+
+	return $return;
 }
 
 /**
@@ -54,7 +56,11 @@ function do_condition( $param, $operator, $value )
  *
  * @return mixed
  */
-function do_operator( $operator, $a, $b )
+function wdc_do_operator( $operator, $a, $b )
 {
-	return apply_filters( "wdc/do_operator/operator=$operator", null, $a, $b, $operator );
+	$return = null;
+	$return = apply_filters( "wdc/do_operator/operator=$operator", $return, $a, $b, $operator );
+	$return = apply_filters( "wdc/do_operator"                   , $return, $a, $b, $operator );
+
+	return $return;
 }

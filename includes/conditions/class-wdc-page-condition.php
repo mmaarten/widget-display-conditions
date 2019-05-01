@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Page condition
  */
-class Page_Condition extends Condition
+class WDC_Page_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -29,7 +27,7 @@ class Page_Condition extends Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return get_post_field_items( 'page' );
+		return wdc_get_post_field_items( 'page' );
 	}
 	
 	/**
@@ -43,8 +41,8 @@ class Page_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_page( $value ), true );
+		return wdc_do_operator( $operator, is_page( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Page_Condition' );
+wdc_register_condition( 'WDC_Page_Condition' );

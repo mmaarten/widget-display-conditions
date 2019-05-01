@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Archive taxonomy condition
  */
-class Archive_Taxonomy_Condition extends Condition
+class WDC_Archive_Taxonomy_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -61,8 +59,8 @@ class Archive_Taxonomy_Condition extends Condition
 			return false;
 		}
 
-		return do_operator( $operator, is_archive( $value ), true );
+		return wdc_do_operator( $operator, is_archive( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Archive_Taxonomy_Condition' );
+wdc_register_condition( 'WDC_Archive_Taxonomy_Condition' );

@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Post type condition
  */
-class Post_Type_Condition extends Condition
+class WDC_Post_Type_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -56,8 +54,8 @@ class Post_Type_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_singular( $value ), true );
+		return wdc_do_operator( $operator, is_singular( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Post_Type_Condition' );
+wdc_register_condition( 'WDC_Post_Type_Condition' );

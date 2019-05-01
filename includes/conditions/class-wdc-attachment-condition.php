@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Attachment condition
  */
-class Attachment_Condition extends Condition
+class WDC_Attachment_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -29,7 +27,7 @@ class Attachment_Condition extends Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return get_post_field_items( 'attachment' );
+		return wdc_get_post_field_items( 'attachment' );
 	}
 	
 	/**
@@ -43,8 +41,8 @@ class Attachment_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_attachment( $value ), true );
+		return wdc_do_operator( $operator, is_attachment( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Attachment_Condition' );
+wdc_register_condition( 'WDC_Attachment_Condition' );

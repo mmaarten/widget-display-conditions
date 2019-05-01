@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Post taxonomy condition
  */
-class Post_Taxonomy_Condition extends Condition
+class WDC_Post_Taxonomy_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -31,7 +29,7 @@ class Post_Taxonomy_Condition extends Condition
 	{
 		$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ), 'names' );
 
-		return get_term_field_items( $taxonomies, true );
+		return wdc_get_term_field_items( $taxonomies, true );
 	}
 	
 	/**
@@ -45,8 +43,8 @@ class Post_Taxonomy_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_tax( $value ), true );
+		return wdc_do_operator( $operator, is_tax( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Post_Taxonomy_Condition' );
+wdc_register_condition( 'WDC_Post_Taxonomy_Condition' );

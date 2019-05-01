@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Archive author condition
  */
-class Archive_Author_Condition extends Condition
+class WDC_Archive_Author_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -61,8 +59,8 @@ class Archive_Author_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_author( $value ), true );
+		return wdc_do_operator( $operator, is_author( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Archive_Author_Condition' );
+wdc_register_condition( 'WDC_Archive_Author_Condition' );

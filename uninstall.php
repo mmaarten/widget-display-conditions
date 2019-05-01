@@ -1,14 +1,10 @@
-<?php 
+<?php defined( 'WP_UNINSTALL_PLUGIN' ) or exit; // Exit when accessed directly.
 
-namespace wdc;
+require_once dirname( __FILE__ ) . '/includes/wdc-widget-functions.php';
 
-defined( 'WP_UNINSTALL_PLUGIN' ) or exit;
-
-require_once dirname( __FILE__ ) . '/includes/widgets.php';
-
-// Remove options
+// Delete options
 delete_option( 'wdc_version' );
 delete_option( 'wdc_update' );
 
-// Remove widget conditions
-delete_widgets_conditions();
+// Delete widget conditions
+wdc_delete_widgets_conditions();

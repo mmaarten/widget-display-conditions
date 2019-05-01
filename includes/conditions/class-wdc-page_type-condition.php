@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Page Type condition
  */
-class Page_Type_Condition extends Condition
+class WDC_Page_Type_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -60,27 +58,27 @@ class Page_Type_Condition extends Condition
 		{
 			case 'front_page' :
 				
-				return do_operator( $operator, is_front_page(), true );
+				return wdc_do_operator( $operator, is_front_page(), true );
 
 			case 'posts_page' :
 				
-				return do_operator( $operator, is_home(), true );
+				return wdc_do_operator( $operator, is_home(), true );
 
 			case 'search_page' :
 				
-				return do_operator( $operator, is_search(), true );
+				return wdc_do_operator( $operator, is_search(), true );
 
 			case '404_page' :
 				
-				return do_operator( $operator, is_404(), true );
+				return wdc_do_operator( $operator, is_404(), true );
 
 			case 'date_page' :
 				
-				return do_operator( $operator, is_date(), true );
+				return wdc_do_operator( $operator, is_date(), true );
 
 			case 'author_page' :
 				
-				return do_operator( $operator, is_author(), true );
+				return wdc_do_operator( $operator, is_author(), true );
 
 			case 'top_level' :
 				
@@ -91,7 +89,7 @@ class Page_Type_Condition extends Condition
 
 				$ancestors = get_post_ancestors( $queried_object->ID );
 
-				return do_operator( $operator, count( $ancestors ) == 0, true );
+				return wdc_do_operator( $operator, count( $ancestors ) == 0, true );
 
 			case 'parent' :
 				
@@ -108,7 +106,7 @@ class Page_Type_Condition extends Condition
 					'post_status' => 'any'
 				));
 
-				return do_operator( $operator, count( $children ) > 0, true );
+				return wdc_do_operator( $operator, count( $children ) > 0, true );
 
 			case 'child' :
 
@@ -119,11 +117,11 @@ class Page_Type_Condition extends Condition
 
 				$ancestors = get_post_ancestors( $queried_object->ID );
 
-				return do_operator( $operator, count( $ancestors ) > 0, true );
+				return wdc_do_operator( $operator, count( $ancestors ) > 0, true );
 		}
 
 		return false;
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Page_Type_Condition' );
+wdc_register_condition( 'WDC_Page_Type_Condition' );

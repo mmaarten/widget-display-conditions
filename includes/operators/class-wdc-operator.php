@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
-
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
  * Operator
  */
-class Operator
+
+class WDC_Operator
 {
 	public $id    = null;
 	public $title = null;

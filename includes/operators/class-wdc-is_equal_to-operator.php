@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Is equal to operator
  */
-class Is_Equal_To_Operator extends Operator
+class WDC_Is_Equal_To_Operator extends WDC_Operator
 {
 	/**
 	 * Constructor
@@ -33,4 +31,4 @@ class Is_Equal_To_Operator extends Operator
 	}
 }
 
-register_operator( __NAMESPACE__ . '\Is_Equal_To_Operator' );
+wdc_register_operator( 'WDC_Is_Equal_To_Operator' );

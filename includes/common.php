@@ -1,9 +1,7 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
- * Common
+ * Common functions
  */
-
-namespace wdc;
 
 /**
  * Sort order
@@ -13,7 +11,7 @@ namespace wdc;
  *
  * @return int
  */
-function sort_order( $a, $b )
+function wdc_sort_order( $a, $b )
 {
 	if ( is_object( $a ) ) $a = get_object_vars( $a );
 	if ( is_object( $b ) ) $b = get_object_vars( $b );

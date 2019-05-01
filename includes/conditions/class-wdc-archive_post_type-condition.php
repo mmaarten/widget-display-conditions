@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Archive post type condition
  */
-class Archive_Post_Type_Condition extends Condition
+class WDC_Archive_Post_Type_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -61,8 +59,8 @@ class Archive_Post_Type_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_post_type_archive( $value ), true );
+		return wdc_do_operator( $operator, is_post_type_archive( $value ), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Archive_Post_Type_Condition' );
+wdc_register_condition( 'WDC_Archive_Post_Type_Condition' );

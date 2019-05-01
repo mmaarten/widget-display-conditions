@@ -1,18 +1,16 @@
-<?php 
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
- * Widgets
+ * Widget functions
  */
-
-namespace wdc;
 
 /**
  * Get widget regex
  *
  * @return string
  */
-function get_widget_regex()
+function wdc_get_widget_regex()
 {
-	return apply_filters( 'wdc/widget_regex', '^([\w-]+)-(\d+)$' );
+	return apply_filters( 'wdc/widget_regexp', '^([\w-]+)-(\d+)$' );
 }
 
 /**
@@ -22,9 +20,9 @@ function get_widget_regex()
  *
  * @return mixed
  */
-function get_widget_instance( $widget_id )
+function wdc_get_widget_instance( $widget_id )
 {
-	if ( ! preg_match( '/' . get_widget_regex() . '/', $widget_id, $matches ) ) 
+	if ( ! preg_match( '/' . wdc_get_widget_regex() . '/', $widget_id, $matches ) ) 
 	{
 		return null;
 	}
@@ -45,13 +43,13 @@ function get_widget_instance( $widget_id )
  * Set widget instance
  *
  * @param string $widget_id
- * @param array $instance
+ * @param array  $instance
  *
  * @return bool
  */
-function set_widget_instance( $widget_id, $instance )
+function wdc_set_widget_instance( $widget_id, $instance )
 {
-	if ( ! preg_match( '/' . get_widget_regex() . '/', $widget_id, $matches ) ) 
+	if ( ! preg_match( '/' . wdc_get_widget_regex() . '/', $widget_id, $matches ) )
 	{
 		return false;
 	}
@@ -77,11 +75,11 @@ function set_widget_instance( $widget_id, $instance )
  *
  * @return mixed
  */
-function get_widget_conditions( $widget_id )
+function wdc_get_widget_conditions( $widget_id )
 {
-	$instance = get_widget_instance( $widget_id );
+	$instance = wdc_get_widget_instance( $widget_id );
 
-	if ( isset( $instance, $instance['wdc_conditions'] ) )
+	if ( isset( $instance ) && isset( $instance['wdc_conditions'] ) ) 
 	{
 		return $instance['wdc_conditions'];
 	}
@@ -93,19 +91,19 @@ function get_widget_conditions( $widget_id )
  * Set widget conditions
  *
  * @param string $widget_id
- * @param array $conditions
+ * @param array  $conditions
  *
  * @return bool
  */
-function set_widget_conditions( $widget_id, $conditions )
+function wdc_set_widget_conditions( $widget_id, $conditions )
 {
-	$instance = get_widget_instance( $widget_id );
+	$instance = wdc_get_widget_instance( $widget_id );
 
 	if ( isset( $instance ) ) 
 	{
 		$instance['wdc_conditions'] = (array) $conditions;
 
-		return set_widget_instance( $widget_id, $instance );
+		return wdc_set_widget_instance( $widget_id, $instance );
 	}
 
 	return false;
@@ -118,15 +116,15 @@ function set_widget_conditions( $widget_id, $conditions )
  *
  * @return bool
  */
-function delete_widget_conditions( $widget_id )
+function wdc_delete_widget_conditions( $widget_id )
 {
-	$instance = get_widget_instance( $widget_id );
+	$instance = wdc_get_widget_instance( $widget_id );
 
-	if ( isset( $instance, $instance['wdc_conditions'] ) ) 
+	if ( isset( $instance ) && isset( $instance['wdc_conditions'] ) ) 
 	{
 		unset( $instance['wdc_conditions'] );
 
-		return set_widget_instance( $widget_id, $instance );
+		return wdc_set_widget_instance( $widget_id, $instance );
 	}
 
 	return false;
@@ -137,7 +135,7 @@ function delete_widget_conditions( $widget_id )
  *
  * @return bool
  */
-function has_widgets_conditions()
+function wdc_has_widgets_conditions()
 {
 	$sidebars_widgets = get_option( 'sidebars_widgets' );
 
@@ -149,7 +147,7 @@ function has_widgets_conditions()
 
 		foreach ( $widgets as $widget_id ) 
 		{
-			if ( get_widget_conditions( $widget_id ) ) 
+			if ( wdc_get_widget_conditions( $widget_id ) ) 
 			{
 				return true;
 			}
@@ -160,32 +158,52 @@ function has_widgets_conditions()
 }
 
 /**
+ * Delete widgets conditions
+ */
+function wdc_delete_widgets_conditions()
+{
+	$sidebars_widgets = get_option( 'sidebars_widgets' );
+
+	if ( ! is_array( $sidebars_widgets ) ) return;
+
+	foreach ( $sidebars_widgets as $sidebar_index => $widgets ) 
+	{
+		if ( ! is_array( $widgets ) ) continue;
+
+		foreach ( $widgets as $widget_id ) 
+		{
+			wdc_delete_widget_conditions( $widget_id );
+		}
+	}
+}
+
+/**
  * Do widget conditions
  *
  * @param string $widget_id
  *
  * @return mixed
  */
-function do_widget_conditions( $widget_id )
+function wdc_do_widget_conditions( $widget_id )
 {
-	$conditions = get_widget_conditions( $widget_id );
+	$conditions = wdc_get_widget_conditions( $widget_id );
 
 	if ( isset( $conditions ) ) 
 	{
-		return do_conditions( $conditions );
+		return wdc_do_conditions( $conditions );
 	}
 
 	return null;
 }
 
 /**
- * Sidebars widgets
+ * Sidebar widgets
  *
  * @param array $sidebars_widgets
  *
  * @return array
  */
-function sidebars_widgets( $sidebars_widgets )
+function wdc_sidebars_widgets( $sidebars_widgets )
 {
 	if ( is_admin() ) return $sidebars_widgets;
 
@@ -197,11 +215,11 @@ function sidebars_widgets( $sidebars_widgets )
 
 		foreach ( $widgets as $widget_id ) 
 		{
-			$result = do_widget_conditions( $widget_id );
+			$result = wdc_do_widget_conditions( $widget_id );
 
-			if ( isset( $result ) && $result ) 
+			if ( ! isset( $result ) || $result ) 
 			{
-				$return[ $sidebar_index ][] = $widget_id; 
+				$return[ $sidebar_index ][] = $widget_id;
 			}
 		}
 	}
@@ -209,4 +227,4 @@ function sidebars_widgets( $sidebars_widgets )
 	return $return;
 }
 
-add_filter( 'sidebars_widgets', __NAMESPACE__ . '\sidebars_widgets' );
+add_filter( 'sidebars_widgets', 'wdc_sidebars_widgets', 999 );

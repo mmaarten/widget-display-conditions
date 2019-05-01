@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * User logged in condition
  */
-class User_Logged_In_Condition extends Condition
+class WDC_User_Logged_In_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -46,8 +44,8 @@ class User_Logged_In_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, is_user_logged_in(), true );
+		return wdc_do_operator( $operator, is_user_logged_in(), true );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\User_Logged_In_Condition' );
+wdc_register_condition( 'WDC_User_Logged_In_Condition' );

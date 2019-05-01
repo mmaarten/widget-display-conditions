@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Post format condition
  */
-class Post_Format_Condition extends Condition
+class WDC_Post_Format_Condition extends WDC_Condition
 {
 	/**
 	 * Constructor
@@ -29,7 +27,7 @@ class Post_Format_Condition extends Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return get_term_field_items( 'post_format' );
+		return wdc_get_term_field_items( 'post_format' );
 	}
 	
 	/**
@@ -43,8 +41,8 @@ class Post_Format_Condition extends Condition
 	 */
 	public function apply( $return, $operator, $value )
 	{
-		return do_operator( $operator, $value, get_post_format() );
+		return wdc_do_operator( $operator, $value, get_post_format() );
 	}
 }
 
-register_condition( __NAMESPACE__ . '\Post_Format_Condition' );
+wdc_register_condition( 'WDC_Post_Format_Condition' );

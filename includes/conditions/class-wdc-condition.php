@@ -1,11 +1,9 @@
-<?php 
-
-namespace wdc;
+<?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 
 /**
  * Condition
  */
-class Condition
+class WDC_Condition
 {
 	public $id        = null;
 	public $title     = null;
@@ -36,7 +34,7 @@ class Condition
 		$this->order     = (int) $args['order'];
 
 		add_filter( "wdc/condition_value_field_items/condition={$this->id}", array( &$this, 'value_field_items' ) );
-		add_filter( "wdc/do_condition/param={$this->id}" , array( &$this, 'apply' ), 10, 3 );
+		add_filter( "wdc/do_condition/condition={$this->id}" , array( &$this, 'apply' ), 10, 3 );
 
 		do_action_ref_array( 'wdc/condition', array( &$this ) );
 	}
