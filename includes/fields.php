@@ -291,7 +291,7 @@ function wdc_get_dropdown_options( $items )
 			$text = isset( $item['html'] ) ? $item['html'] : esc_html( $item['text'] );
 
 			$return .= sprintf( '<option value="%s"%s>%s</option>', 
-				esc_attr( $item['id'] ), selected( $item['selected'], false, true ), $text );
+				esc_attr( $item['id'] ), selected( $item['selected'], true, false ), $text );
 		}
 	}
 
