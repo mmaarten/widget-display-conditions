@@ -50,6 +50,10 @@ You can use built-in conditions or create some of your own.
 
 == Changelog ==
 
+= 0.2.3 =
+Release date: May 2nd, 2019
+* Enhancement - UI: Removed 'Display conditions' button from Customizer.
+
 = 0.2.2 =
 Release date: May 1st, 2019
 

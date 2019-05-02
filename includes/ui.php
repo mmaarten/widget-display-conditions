@@ -51,6 +51,8 @@ class WDC_UI
 	 */
 	public static function in_widget_form( $widget )
 	{
+		if ( 'widgets.php' != $GLOBALS['pagenow'] ) return;
+		
 		// Output button to open UI
 		$button = sprintf( '<button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button>',
 			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'wdc' ) );
