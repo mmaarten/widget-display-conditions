@@ -83,7 +83,7 @@ class WDC_UI
 
 		$conditions = wdc_get_widget_conditions( $_POST['widget'] );
 
-		// Get conditions field items
+		// Get conditions fields items
 
 		$fields = array();
 
@@ -120,9 +120,13 @@ class WDC_UI
 	{
 		if ( ! self::doing_ajax() ) return;
 
+		// Update widget conditions
+
 		$conditions = isset( $_POST['conditions'] ) ? $_POST['conditions'] : array();
 
 		$result = wdc_set_widget_conditions( $_POST['widget'], $conditions );
+
+		// Reponse
 
 		wp_send_json( $result );
 	}

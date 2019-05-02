@@ -6,6 +6,9 @@
 /**
  * Do conditions
  *
+ * Returns true/false if conditions are met/unmet.
+ * Returns null when no conditions are applied.
+ *
  * @param array $conditions
  *
  * @return mixed

@@ -6,6 +6,8 @@
 /**
  * Get widget regex
  *
+ * Regular Expression to get widget base id and number from widget id.
+ *
  * @return string
  */
 function wdc_get_widget_regex()
@@ -133,6 +135,8 @@ function wdc_delete_widget_conditions( $widget_id )
 /**
  * Has widgets conditions
  *
+ * Check if there are widgets with conditions.
+ *
  * @return bool
  */
 function wdc_has_widgets_conditions()
@@ -159,6 +163,8 @@ function wdc_has_widgets_conditions()
 
 /**
  * Delete widgets conditions
+ *
+ * Delete all conditions from all widgets.
  */
 function wdc_delete_widgets_conditions()
 {
@@ -198,6 +204,8 @@ function wdc_do_widget_conditions( $widget_id )
 
 /**
  * Sidebar widgets
+ *
+ * Exclude widgets which display conditions are not met.
  *
  * @param array $sidebars_widgets
  *
