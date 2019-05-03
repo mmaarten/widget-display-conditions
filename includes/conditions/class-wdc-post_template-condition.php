@@ -42,17 +42,8 @@ class WDC_Post_Template_Condition extends WDC_Condition
 			(
 				'id'       => $post_type->name,
 				'text'     => $post_type->labels->singular_name,
-				'children' => array(),
+				'children' => wdc_create_field_items( $templates ),
 			);
-
-			foreach ( $templates as $filename => $name ) 
-			{
-				$group['children'][ $filename ] = array
-				(
-					'id'   => $filename,
-					'text' => $name,
-				);
-			}
 
 			$items[ $group['id'] ] = $group;
 		}

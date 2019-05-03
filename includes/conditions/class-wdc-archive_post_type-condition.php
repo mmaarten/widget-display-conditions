@@ -29,23 +29,17 @@ class WDC_Archive_Post_Type_Condition extends WDC_Condition
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
 
-		$items = array();
+		$values = array();
 
 		foreach ( $post_types as $post_type ) 
 		{
-			if ( ! $post_type->has_archive ) 
+			if ( $post_type->has_archive ) 
 			{
-				continue;
+				$values[ $post_type->name ] = $post_type->labels->singular_name;
 			}
-
-			$items[ $post_type->name ] = array
-			(
-				'id'   => $post_type->name,
-				'text' => $post_type->labels->singular_name,
-			);
 		}
 
-		return $items;
+		return wdc_create_field_items( $values );
 	}
 	
 	/**

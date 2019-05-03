@@ -34,18 +34,14 @@ class WDC_Archive_Author_Condition extends WDC_Condition
 			'order'   => 'ASC'
 		));
 
-		$items = array();
+		$values = array();
 
 		foreach ( $users as $user ) 
 		{
-			$items[ $user->ID ] = array
-			(
-				'id'   => $user->ID,
-				'text' => $user->display_name,
-			);
+			$values[ $user->ID ] = $user->display_name;
 		}
 		
-		return $items;
+		return wdc_create_field_items( $values );
 	}
 	
 	/**

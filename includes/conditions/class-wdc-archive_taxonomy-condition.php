@@ -29,18 +29,14 @@ class WDC_Archive_Taxonomy_Condition extends WDC_Condition
 	{
 		$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
 
-		$items = array();
+		$values = array();
 
 		foreach ( $taxonomies as $taxonomy ) 
 		{
-			$items[] = array
-			(
-				'id'   => $taxonomy->name,
-				'text' => $taxonomy->labels->singular_name
-			);
+			$values[ $taxonomy->name ] = $taxonomy->labels->singular_name;
 		}
 
-		return $items;
+		return wdc_create_field_items( $values );
 	}
 	
 	/**

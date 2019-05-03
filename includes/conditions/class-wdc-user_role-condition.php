@@ -29,18 +29,14 @@ class WDC_User_Role_Condition extends WDC_Condition
 	{
 		$roles = get_editable_roles();
 
-		$items = array();
+		$values = array();
 
 		foreach ( $roles as $role_name => $role_info ) 
 		{
-			$items[ $role_name ] = array
-			(
-				'id'   => $role_name,
-				'text' => $role_info['name']
-			);
+			$values[ $role_name ] = $role_info['name'];
 		}
 
-		return $items;
+		return wdc_create_field_items( $values );
 	}
 	
 	/**

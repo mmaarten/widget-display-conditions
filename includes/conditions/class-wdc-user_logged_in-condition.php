@@ -27,10 +27,12 @@ class WDC_User_Logged_In_Condition extends WDC_Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return array
+		$values = array
 		(
-			array( 'id' => '1', 'text' => __( 'Yes', 'wdc' ) )
+			'1' => __( 'Yes', 'wdc' ),
 		);
+
+		return wdc_create_field_items( $values );
 	}
 	
 	/**

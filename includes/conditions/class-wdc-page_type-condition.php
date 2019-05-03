@@ -27,18 +27,18 @@ class WDC_Page_Type_Condition extends WDC_Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return array
+		return wdc_create_field_items( array
 		(
-			'front_page'  => array( 'id' => 'front_page', 	'text' => __( 'Front Page', 'wdc' ) ),
-			'posts_page'  => array( 'id' => 'posts_page', 	'text' => __( 'Posts Page', 'wdc' ) ),
-			'search_page' => array( 'id' => 'search_page', 	'text' => __( 'Search Page', 'wdc' ) ),
-			'404_page'    => array( 'id' => '404_page', 	'text' => __( '404 Page (not found)', 'wdc' ) ),
-			'date_page'   => array( 'id' => 'date_page', 	'text' => __( 'Date Page', 'wdc' ) ),
-			'author_page' => array( 'id' => 'author_page', 	'text' => __( 'Author Page', 'wdc' ) ),
-			'top_level'   => array( 'id' => 'top_level', 	'text' => __( 'Top Level Page (no parent)', 'wdc' ) ),
-			'parent'      => array( 'id' => 'parent', 		'text' => __( 'Parent Page (has children)', 'wdc' ) ),
-			'child'       => array( 'id' => 'child', 		'text' => __( 'Child Page (has parent)', 'wdc' ) ),
-		);
+			'front_page'  => __( 'Front Page', 'wdc' ),
+			'posts_page'  => __( 'Posts Page', 'wdc' ),
+			'search_page' => __( 'Search Page', 'wdc' ),
+			'404_page'    => __( '404 Page (not found)', 'wdc' ),
+			'date_page'   => __( 'Date Page', 'wdc' ),
+			'author_page' => __( 'Author Page', 'wdc' ),
+			'top_level'   => __( 'Top Level Page (no parent)', 'wdc' ),
+			'parent'      => __( 'Parent Page (has children)', 'wdc' ),
+			'child'       => __( 'Child Page (has parent)', 'wdc' ),
+		));
 	}
 	
 	/**

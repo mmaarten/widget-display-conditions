@@ -29,18 +29,14 @@ class WDC_Post_Type_Condition extends WDC_Condition
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
 
-		$items = array();
+		$values = array();
 
 		foreach ( $post_types as $post_type ) 
 		{
-			$items[ $post_type->name ] = array
-			(
-				'id'   => $post_type->name,
-				'text' => $post_type->labels->singular_name,
-			);
+			$values[ $post_type->name ] = $post_type->labels->singular_name;
 		}
 
-		return $items;
+		return wdc_create_field_items( $values );
 	}
 	
 	/**

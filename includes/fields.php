@@ -32,14 +32,14 @@ function wdc_get_condition_param_field_items()
 			'children' => array(),
 		);
 
+		$values = array();
+
 		foreach ( $category_conditions as $condition ) 
 		{
-			$group['children'][ $condition->id ] = array
-			(
-				'id'   => $condition->id,
-				'text' => $condition->title,
-			);
+			$values[ $condition->id ] = $condition->title;
 		}
+
+		$group['children'] = wdc_create_field_items( $values );
 
 		$items[ $group['id'] ] = $group;
 	}
@@ -72,16 +72,14 @@ function wdc_get_condition_operator_field_items( $condition_id )
 
 	// Get items
 
-	$items = array();
+	$values = array();
 
 	foreach ( $operators as $operator ) 
 	{
-		$items[ $operator->id ] = array
-		(
-			'id'   => $operator->id,
-			'text' => $operator->title,
-		);
+		$values[ $operator->id ] = $operator->title;
 	}
+
+	$items = wdc_create_field_items( $values );
 
 	$items = apply_filters( "wdc/condition_operator_field_items/condition={$condition->id}", $items, $condition );
 	$items = apply_filters( "wdc/condition_operator_field_items"                           , $items, $condition );
@@ -177,19 +175,19 @@ function wdc_get_post_field_items( $post_type, $labels = false )
 			'children' => array(),
 		);
 
+		$values = array();
+
 		foreach ( $posts as $post ) 
 		{
 			$ancestors = get_post_ancestors( $post );
 
 			$text = trim( $post->post_title ) ? $post->post_title : $post->ID;
-			$pad  = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
+			$pad  = str_repeat( '-', count( $ancestors ) * 3 );
 
-			$group['children'][ $post->ID ] = array
-			(
-				'id'   => $post->ID,
-				'html' => $pad . esc_html( $text ),
-			);
+			$values[ $post->ID ] = "$pad$text";
 		}
+
+		$group['children'] = wdc_create_field_items( $values );
 
 		$items[ $group['id'] ] = $group;
 	}
@@ -204,6 +202,29 @@ function wdc_get_post_field_items( $post_type, $labels = false )
 		}
 
 		$items = $_items;
+	}
+
+	return $items;
+}
+
+/**
+ * Create field items
+ *
+ * @param array $values
+ *
+ * @return array
+ */
+function wdc_create_field_items( $values )
+{
+	$items = array();
+
+	foreach ( $values as $id => $text ) 
+	{
+		$items[ $id ] = array
+		(
+			'id'   => $id,
+			'text' => $text,
+		);
 	}
 
 	return $items;
@@ -253,19 +274,19 @@ function wdc_get_term_field_items( $taxonomy, $labels = false )
 			'children' => array(),
 		);
 
+		$values = array();
+
 		foreach ( $terms as $term ) 
 		{
 			$ancestors = get_ancestors( $term->term_id, $taxonomy->name, 'taxonomy' );
 
 			$text = trim( $term->name ) ? $term->name : $term->term_id;
-			$pad  = str_repeat( '&nbsp;', count( $ancestors ) * 3 );
+			$pad  = str_repeat( '-', count( $ancestors ) * 3 );
 
-			$group['children'][ $term->term_id ] = array
-			(
-				'id'   => $term->term_id,
-				'html' => $pad . esc_html( $text ),
-			);
+			$values[ $term->term_id ] = "$pad$text";
 		}
+
+		$group['children'] = wdc_create_field_items( $values );
 
 		$items[ $group['id'] ] = $group;
 	}

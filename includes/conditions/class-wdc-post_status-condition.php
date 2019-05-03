@@ -27,20 +27,9 @@ class WDC_Post_Status_Condition extends WDC_Condition
 	 */
 	public function value_field_items( $items )
 	{
-		$post_statuses = get_post_statuses();
+		$values = get_post_statuses();
 
-		$items = array();
-
-		foreach ( $post_statuses as $post_status => $text ) 
-		{
-			$items[ $post_status ] = array
-			(
-				'id'   => $post_status,
-				'text' => $text,
-			);
-		}
-
-		return $items;
+		return wdc_create_field_items( $values );
 	}
 	
 	/**
