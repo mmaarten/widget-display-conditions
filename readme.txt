@@ -53,7 +53,8 @@ You can use built-in conditions or create some of your own.
 = 0.2.4 =
 Release date: May 4th, 2019
 * Fix: - UI: Post formats not listed.
-* Enhancement: - UI: list post templates per post type
+* Enhancement: - UI: List post templates per post type.
+* Enhancement: - UI: Simplified field data structure.
 
 = 0.2.3 =
 Release date: May 3th, 2019
