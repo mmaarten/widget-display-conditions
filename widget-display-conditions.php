@@ -30,7 +30,6 @@ if ( is_admin() )
 {
 	include_once WDC_ABSPATH . 'includes/updater.php';
 	include_once WDC_ABSPATH . 'includes/update-tasks.php';
-	include_once WDC_ABSPATH . 'includes/fields.php';
 	include_once WDC_ABSPATH . 'includes/ui.php';
 }
 

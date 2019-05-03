@@ -154,11 +154,6 @@
 					.text( item.text )
 					.prop( 'selected', item.selected ? true : false );
 
-				if ( typeof item.html !== 'undefined' ) 
-				{
-					$option.html( item.html );
-				}
-
 				$select.append( $option );
 			}
 

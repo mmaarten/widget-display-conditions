@@ -19,15 +19,15 @@ class WDC_Page_Type_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		return wdc_create_field_items( array
+		return array
 		(
 			'front_page'  => __( 'Front Page', 'wdc' ),
 			'posts_page'  => __( 'Posts Page', 'wdc' ),
@@ -38,7 +38,7 @@ class WDC_Page_Type_Condition extends WDC_Condition
 			'top_level'   => __( 'Top Level Page (no parent)', 'wdc' ),
 			'parent'      => __( 'Parent Page (has children)', 'wdc' ),
 			'child'       => __( 'Child Page (has parent)', 'wdc' ),
-		));
+		);
 	}
 	
 	/**

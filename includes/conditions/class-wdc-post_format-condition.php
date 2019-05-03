@@ -19,17 +19,15 @@ class WDC_Post_Format_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		$values = get_post_format_strings();
-
-		return wdc_create_field_items( $values );
+		return get_post_format_strings();
 	}
 	
 	/**

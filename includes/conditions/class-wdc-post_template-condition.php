@@ -19,36 +19,29 @@ class WDC_Post_Template_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
 		$post_templates = wdc_get_post_templates();
 
-		$items = array
+		$values = array
 		(
-			array( 'id' => '', 'text' => __( 'Default', 'wdc' ) ),
+			'' => __( 'Default', 'wdc' ),
 		);
 
 		foreach ( $post_templates as $post_type => $templates ) 
 		{
 			$post_type = get_post_type_object( $post_type );
 
-			$group = array
-			(
-				'id'       => $post_type->name,
-				'text'     => $post_type->labels->singular_name,
-				'children' => wdc_create_field_items( $templates ),
-			);
-
-			$items[ $group['id'] ] = $group;
+			$values[ $post_type->labels->singular_name ] = $templates;
 		}
 
-		return $items;
+		return $values;
 	}
 	
 	/**

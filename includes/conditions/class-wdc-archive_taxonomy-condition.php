@@ -19,13 +19,13 @@ class WDC_Archive_Taxonomy_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
 		$taxonomies = get_taxonomies( array( 'public' => true ), 'objects' );
 
@@ -36,7 +36,7 @@ class WDC_Archive_Taxonomy_Condition extends WDC_Condition
 			$values[ $taxonomy->name ] = $taxonomy->labels->singular_name;
 		}
 
-		return wdc_create_field_items( $values );
+		return $values;
 	}
 	
 	/**

@@ -19,15 +19,15 @@ class WDC_Page_Parent_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		return wdc_get_post_field_items( 'page' );
+		return wdc_get_post_values( 'page' );
 	}
 	
 	/**

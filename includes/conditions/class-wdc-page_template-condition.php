@@ -19,20 +19,20 @@ class WDC_Page_Template_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
 		$post_templates = wdc_get_post_templates();
 
 		$values = array( '' => __( 'Default', 'wdc' ) );
 		$values += $post_templates['page'];
 
-		return wdc_create_field_items( $values );
+		return $values;
 	}
 	
 	/**

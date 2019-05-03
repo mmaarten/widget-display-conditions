@@ -19,17 +19,29 @@ class WDC_Post_Taxonomy_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ), 'names' );
+		$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ), 'objects' );
 
-		return wdc_get_term_field_items( $taxonomies, true );
+		$values = array();
+
+		foreach ( $taxonomies as $taxonomy ) 
+		{
+			$term_values = wdc_get_term_values( $taxonomy->name );
+
+			if ( $term_values ) 
+			{
+				$values[ $taxonomy->labels->singular_name ] = $term_values;
+			}
+		}
+
+		return $values;
 	}
 	
 	/**

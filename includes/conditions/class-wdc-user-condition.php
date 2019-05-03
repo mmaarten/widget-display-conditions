@@ -19,13 +19,13 @@ class WDC_User_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
 		$users = get_users( array
 		(
@@ -40,7 +40,7 @@ class WDC_User_Condition extends WDC_Condition
 			$values[ $user->ID ] = $user->display_name;
 		}
 		
-		return wdc_create_field_items( $values );
+		return $values;
 	}
 	
 	/**

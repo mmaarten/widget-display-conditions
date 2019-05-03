@@ -19,19 +19,31 @@ class WDC_Post_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		$post_types = get_post_types( array( 'public' => true, '_builtin' => false ), 'names' );
+		$post_types = get_post_types( array( 'public' => true ), 'objects' );
 
-		array_unshift( $post_types, 'post' );
+		unset( $post_types['page'], $post_types['attachment'] );
 
-		return wdc_get_post_field_items( $post_types, true );
+		$values = array();
+
+		foreach ( $post_types as $post_type ) 
+		{
+			$post_values = wdc_get_post_values( $post_type->name );
+
+			if ( $post_values ) 
+			{
+				$values[ $post_type->labels->singular_name ] = $post_values;
+			}
+		}
+
+		return $values;
 	}
 	
 	/**

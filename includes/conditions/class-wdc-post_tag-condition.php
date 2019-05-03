@@ -19,15 +19,15 @@ class WDC_Post_Tag_Condition extends WDC_Condition
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		return wdc_get_term_field_items( 'post_tag' );
+		return wdc_get_term_values( 'post_tag' );
 	}
 	
 	/**

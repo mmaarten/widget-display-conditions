@@ -33,22 +33,22 @@ class WDC_Condition
 		$this->category  = $args['category'];
 		$this->order     = (int) $args['order'];
 
-		add_filter( "wdc/condition_value_field_items/condition={$this->id}", array( &$this, 'value_field_items' ) );
-		add_filter( "wdc/do_condition/condition={$this->id}" , array( &$this, 'apply' ), 10, 3 );
+		add_filter( "wdc/condition_values/condition={$this->id}", array( &$this, 'values' ) );
+		add_filter( "wdc/do_condition/condition={$this->id}"    , array( &$this, 'apply' ), 10, 3 );
 
 		do_action_ref_array( 'wdc/condition', array( &$this ) );
 	}
 
 	/**
-	 * Value field items
+	 * Values
 	 *
-	 * @param array $items
+	 * @param array $choices
 	 *
 	 * @return array
 	 */
-	public function value_field_items( $items )
+	public function values( $choices )
 	{
-		return $items;
+		return $choices;
 	}
 	
 	/**

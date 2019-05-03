@@ -3,7 +3,7 @@
  * UI
  */
 
-class WDC_UI
+final class WDC_UI
 {
 	/**
 	 * Init
@@ -23,6 +23,102 @@ class WDC_UI
 	}
 
 	/**
+	 * Get condition params
+	 *
+	 * @return array
+	 */
+	public static function get_condition_params()
+	{
+		$conditions = wdc_get_conditions();
+		$categories = wdc_get_condition_categories();
+
+		uasort( $categories, 'wdc_sort_order' );
+
+		// Get choices
+
+		$choices = array();
+
+		foreach ( $categories as $category ) 
+		{
+			// Get category conditions
+
+			$category_conditions = wp_filter_object_list( $conditions, array( 'category' => $category['id'] ) );
+
+			if ( ! $category_conditions ) continue;
+
+			// Sort conditions
+
+			uasort( $category_conditions, 'wdc_sort_order' );
+
+			//
+
+			$choices[ $category['title'] ] = wp_list_pluck( $category_conditions, 'title', 'id' );
+		}
+
+		// Return
+
+		return $choices;
+	}
+
+	/**
+	 * Get condition operators
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
+	public static function get_condition_operators( $condition_id )
+	{
+		// Get condition
+
+		$condition = wdc_get_condition( $condition_id );
+
+		if ( ! $condition ) return null;
+
+		// Get condition operators
+
+		$operators = wdc_get_operator_objects( $condition->operators );
+
+		// Sort operators
+
+		uasort( $operators, 'wdc_sort_order' );
+
+		//
+
+		$choices = wp_list_pluck( $operators, 'title', 'id' );
+
+		// Return
+
+		return $choices;
+	}
+
+	/**
+	 * Get condition values
+	 *
+	 * @param string $condition_id
+	 *
+	 * @return mixed
+	 */
+	public static function get_condition_values( $condition_id )
+	{
+		// Get condition
+
+		$condition = wdc_get_condition( $condition_id );
+
+		if ( ! $condition ) return null;
+
+		// Get choices
+
+		$choices = array();
+		$choices = apply_filters( "wdc/condition_values/condition={$condition->id}", $choices, $condition );
+		$choices = apply_filters( "wdc/condition_values"                           , $choices, $condition );
+
+		// Return
+
+		return $choices;
+	}
+
+	/**
 	 * Get condition field items
 	 *
 	 * @param string $condition_id
@@ -39,19 +135,101 @@ class WDC_UI
 
 		// Get items
 
-		$items = array
+		$choices = array
 		(
-			'operator' => wdc_get_condition_operator_field_items( $condition->id ),
-			'value'    => wdc_get_condition_value_field_items( $condition->id ),
+			'operator' => self::get_condition_operators( $condition->id ),
+			'value'    => self::get_condition_values( $condition->id ),
 		);
 
-		// Sanitize for JSON
-		$items['operator'] = wdc_prepare_field_items_json( $items['operator'] );
-		$items['value']    = wdc_prepare_field_items_json( $items['value'] );
+		$items = array_map( array( __CLASS__, 'get_field_items' ), $choices );
 
 		// Return
 
 		return $items;
+	}
+
+	/**
+	 * Get condition field items ajax
+	 */
+	public static function get_condition_field_items_ajax()
+	{
+		if ( ! self::doing_ajax() ) return;
+
+		$items = self::get_condition_field_items( $_POST['param'] );
+
+		wp_send_json( $items );
+	}
+
+	/**
+	 * Get field items
+	 *
+	 * @param array $choices
+	 *
+	 * @return array
+	 */
+	public static function get_field_items( $choices )
+	{
+		$items = array();
+
+		foreach ( $choices as $id => $text ) 
+		{
+			if ( is_array( $text ) ) 
+			{
+				$items[] = array
+				(
+					'text'     => $id,
+					'children' => self::get_field_items( $text ),
+				);
+			}
+
+			else
+			{
+				$items[] = array
+				(
+					'id'   => $id,
+					'text' => $text,
+				);
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Get dropdown options
+	 *
+	 * @param array $choices
+	 *
+	 * @return string
+	 */
+	public static function get_dropdown_options( $items )
+	{
+		$return = '';
+
+		foreach ( $items as $item ) 
+		{
+			$item = wp_parse_args( $item, array
+			(
+				'id'       => '',
+				'text'     => '',
+				'selected' => false,
+			));
+
+			if ( isset( $item['children'] ) ) 
+			{
+				$return .= sprintf( '<optgroup label="%s">', esc_attr( $item['text'] ) );
+				$return .= self::get_dropdown_options( $item['children'] );
+				$return .= '</optgroup>'; 
+			}
+
+			else
+			{
+				$return .= sprintf( '<option value="%s"%s>%s</option>', 
+					esc_attr( $item['id'] ), selected( $item['selected'], true, false ), esc_html( $item['text'] ) );
+			}
+		}
+
+		return $return;
 	}
 
 	/**
@@ -68,18 +246,6 @@ class WDC_UI
 			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'wdc' ) );
 
 		printf( '<p class="wdc-open-ui-wrap">%s<span class="spinner"></span></p>', $button );
-	}
-
-	/**
-	 * Get condition field items ajax
-	 */
-	public static function get_condition_field_items_ajax()
-	{
-		if ( ! self::doing_ajax() ) return;
-
-		$items = self::get_condition_field_items( $_POST['param'] );
-
-		wp_send_json( $items );
 	}
 
 	/**
@@ -231,7 +397,7 @@ class WDC_UI
 
 				<td>
 					<select class="wdc-param" name="conditions[{{ data.group }}][{{ data.id }}][param]">
-						<?php echo wdc_get_dropdown_options( wdc_get_condition_param_field_items() ); ?>
+						<?php echo self::get_dropdown_options( self::get_field_items( self::get_condition_params() ) ); ?>
 					</select>
 				</td>
 
