@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Widget Display Conditions 0.2.3\n"
 "Report-Msgid-Bugs-To: mentenmaarten@gmail.com\n"
-"POT-Creation-Date: 2019-05-03 17:53:34+00:00\n"
+"POT-Creation-Date: 2019-05-03 18:54:15+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -155,11 +155,11 @@ msgstr ""
 msgid "Is not equal to"
 msgstr ""
 
-#: includes/ui.php:61
+#: includes/ui.php:68
 msgid "Display conditions"
 msgstr ""
 
-#: includes/ui.php:159
+#: includes/ui.php:166
 msgid "Confirm unsaved changes."
 msgstr ""
 
@@ -167,31 +167,31 @@ msgstr ""
 msgid "Widget Display Conditions"
 msgstr ""
 
-#: includes/ui.php:190
+#: includes/ui.php:197
 msgid "Show widget if"
 msgstr ""
 
-#: includes/ui.php:195
+#: includes/ui.php:202
 msgid "Add group"
 msgstr ""
 
-#: includes/ui.php:200
+#: includes/ui.php:207
 msgid "Saved"
 msgstr ""
 
-#: includes/ui.php:200
+#: includes/ui.php:207
 msgid "Save"
 msgstr ""
 
-#: includes/ui.php:215
+#: includes/ui.php:222
 msgid "or"
 msgstr ""
 
-#: includes/ui.php:240
+#: includes/ui.php:247
 msgid "and"
 msgstr ""
 
-#: includes/ui.php:245
+#: includes/ui.php:252
 msgid "remove"
 msgstr ""
 
