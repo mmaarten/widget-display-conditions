@@ -27,17 +27,14 @@ class WDC_Page_Template_Condition extends WDC_Condition
 	 */
 	public function value_field_items( $items )
 	{
-		$templates = get_page_templates();
+		$post_templates = wdc_get_post_templates();
 
-		$items = array();
-
-		$items['default'] = array
+		$items = array
 		(
-			'id'   => '',
-			'text' => __( 'Default', 'wdc' ),
+			array( 'id' => '', 'text' => __( 'Default', 'wdc' ) ),
 		);
-   
-		foreach ( $templates as $name => $filename ) 
+		
+		foreach ( $post_templates['page'] as $filename => $name ) 
 		{
 			$items[ $filename ] = array
 			(
