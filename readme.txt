@@ -3,7 +3,7 @@ Contributors: MaartenM
 Tags: widget, display, conditions, rules, sidebar, custom, admin, interface, visibility
 Requires at least: 4.0.0
 Tested up to: 5.1
-Stable tag: 0.2.3
+Stable tag: 0.2.4
 Requires PHP: 5.6.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,6 +49,11 @@ You can use built-in conditions or create some of your own.
 2. Widget Settings with available options
 
 == Changelog ==
+
+= 0.2.4 =
+Release date: May 4th, 2019
+* Fix: - UI: Post formats not listed.
+* Enhancement: - UI: list post templates per post type
 
 = 0.2.3 =
 Release date: May 3th, 2019
