@@ -24,15 +24,18 @@ function wdc_sort_order( $a, $b )
     return ( $a['order'] < $b['order'] ) ? -1 : 1;
 }
 
+/**
+ * Get post templates
+ *
+ * @return array
+ */
 function wdc_get_post_templates() 
 {
-	// Defaults.
 	$post_templates = array
 	(
-		'page'	=> array()
+		'page' => array(),
 	);
 	
-	// Loop over post types and append their templates.
 	if( method_exists( 'WP_Theme', 'get_page_templates' ) ) 
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'names' );
@@ -48,6 +51,5 @@ function wdc_get_post_templates()
 		}
 	}
 	
-	// Return.
 	return $post_templates;
 }
