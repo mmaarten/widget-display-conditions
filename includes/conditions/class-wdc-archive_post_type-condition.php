@@ -28,15 +28,13 @@ class WDC_Archive_Post_Type_Condition extends WDC_Condition
 	public function values( $choices )
 	{
 		$post_types = get_post_types( array( 'public' => true ), 'objects' );
+		$post_types = wp_filter_object_list( $post_types, array( 'has_archive' => true ) );
 
 		$values = array();
 
 		foreach ( $post_types as $post_type ) 
 		{
-			if ( $post_type->has_archive ) 
-			{
-				$values[ $post_type->name ] = $post_type->labels->singular_name;
-			}
+			$values[ $post_type->name ] = $post_type->labels->singular_name;
 		}
 
 		return $values;

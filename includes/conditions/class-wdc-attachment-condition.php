@@ -27,7 +27,7 @@ class WDC_Attachment_Condition extends WDC_Condition
 	 */
 	public function values( $choices )
 	{
-		return wdc_get_term_values( 'attachment' );
+		return wdc_get_post_values( 'attachment' );
 	}
 	
 	/**

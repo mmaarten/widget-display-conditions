@@ -33,14 +33,7 @@ class WDC_User_Condition extends WDC_Condition
 			'order'   => 'ASC'
 		));
 
-		$values = array();
-
-		foreach ( $users as $user ) 
-		{
-			$values[ $user->ID ] = $user->display_name;
-		}
-		
-		return $values;
+		return wp_list_pluck( $users, 'display_name', 'ID' );
 	}
 	
 	/**

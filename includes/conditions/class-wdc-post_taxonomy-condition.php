@@ -37,7 +37,7 @@ class WDC_Post_Taxonomy_Condition extends WDC_Condition
 
 			if ( $term_values ) 
 			{
-				$values[ $taxonomy->labels->singular_name ] = $term_values;
+				$values[ "{$taxonomy->labels->singular_name} ({$taxonomy->name})" ] = $term_values;
 			}
 		}
 
