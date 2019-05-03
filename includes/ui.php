@@ -18,7 +18,7 @@ class WDC_UI
 		add_action( 'wp_ajax_wdc_ui_update' , array( __CLASS__, 'update' ) );
 
 		// Customizer
-		add_action( 'customize_preview_init', array( __CLASS__, 'scripts' ) );
+		add_action( 'customize_preview_init'          , array( __CLASS__, 'scripts' ) );
 		add_action( 'customize_controls_print_scripts', array( __CLASS__, 'template_scripts' ) );
 	}
 
@@ -31,9 +31,13 @@ class WDC_UI
 	 */
 	public static function get_condition_field_items( $condition_id )
 	{
+		// Get condition
+
 		$condition = wdc_get_condition( $condition_id );
 
 		if ( ! $condition ) return null;
+
+		// Get items
 
 		$items = array
 		(
@@ -41,8 +45,11 @@ class WDC_UI
 			'value'    => wdc_get_condition_value_field_items( $condition->id ),
 		);
 
+		// Sanitize for JSON
 		$items['operator'] = wdc_prepare_field_items_json( $items['operator'] );
 		$items['value']    = wdc_prepare_field_items_json( $items['value'] );
+
+		// Return
 
 		return $items;
 	}
