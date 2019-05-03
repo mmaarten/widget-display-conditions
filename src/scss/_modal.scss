@@ -13,7 +13,7 @@ $modal-heading-border     : 1px solid #ddd;
 
 $modal-close-size: 48px;
 
-$modal-z-index  : 160000 - 100;
+$modal-z-index  : 500000 + 100; // customizer = 500000, media modal = 160000
 $modal-bg-color : rgba( #000, .7 );
 
 html.with-featherlight 

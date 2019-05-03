@@ -51,13 +51,13 @@ You can use built-in conditions or create some of your own.
 == Changelog ==
 
 = 0.2.3 =
-Release date: May 2nd, 2019
-* Enhancement - UI: Removed 'Display conditions' button from Customizer.
+Release date: May 3th, 2019
+* Fix - UI: Not showing on 'customize' screen.
 
 = 0.2.2 =
 Release date: May 1st, 2019
 
-* Fix - UI: field selected value was not set correctly. 
+* Fix - UI: Field selected value was not set correctly. 
 
 = 0.2.1 =
 Release date: May 1st, 2019

@@ -13,10 +13,13 @@ class WDC_UI
 		add_action( 'in_widget_form'       , array( __CLASS__, 'in_widget_form' ), 999 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'scripts' ) );
 		add_action( 'admin_footer'         , array( __CLASS__, 'template_scripts' ) );
-
 		add_action( 'wp_ajax_wdc_ui_get_condition_field_items', array( __CLASS__, 'get_condition_field_items_ajax' ) );
 		add_action( 'wp_ajax_wdc_ui_preload', array( __CLASS__, 'preload' ) );
 		add_action( 'wp_ajax_wdc_ui_update' , array( __CLASS__, 'update' ) );
+
+		// Customizer
+		add_action( 'customize_preview_init', array( __CLASS__, 'scripts' ) );
+		add_action( 'customize_controls_print_scripts', array( __CLASS__, 'template_scripts' ) );
 	}
 
 	/**
@@ -51,7 +54,7 @@ class WDC_UI
 	 */
 	public static function in_widget_form( $widget )
 	{
-		if ( 'widgets.php' != $GLOBALS['pagenow'] ) return;
+		if ( ! self::is_ui_page() ) return;
 		
 		// Output button to open UI
 		$button = sprintf( '<button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button>',
@@ -136,7 +139,7 @@ class WDC_UI
 	 */
 	public static function scripts()
 	{
-		if ( 'widgets.php' != $GLOBALS['pagenow'] ) return;
+		if ( ! self::is_ui_page() ) return;
 
 		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
@@ -163,7 +166,7 @@ class WDC_UI
 	 */
 	public static function template_scripts()
 	{
-		if ( 'widgets.php' != $GLOBALS['pagenow'] ) return;
+		if ( ! self::is_ui_page() ) return;
 
 		?>
 
@@ -248,6 +251,16 @@ class WDC_UI
 		</script>
 
 		<?php
+	}
+
+	/**
+	 * Is UI page
+	 *
+	 * @return bool
+	 */
+	public static function is_ui_page()
+	{
+		return in_array( $GLOBALS['pagenow'], array( 'widgets.php', 'customize.php' ) );
 	}
 
 	/**
