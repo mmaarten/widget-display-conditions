@@ -27,7 +27,20 @@ class WDC_Post_Format_Condition extends WDC_Condition
 	 */
 	public function value_field_items( $items )
 	{
-		return wdc_get_term_field_items( 'post_format' );
+		$post_formats = get_post_format_strings();
+
+		$items = array();
+
+		foreach ( $post_formats as $key => $text ) 
+		{
+			$items[ $key ] = array
+			(
+				'id'   => $key,
+				'text' => $text,
+			);
+		}
+
+		return $items;
 	}
 	
 	/**
