@@ -27,12 +27,12 @@ class WDC_User_Logged_In_Condition extends WDC_Condition
 	 */
 	public function values( $choices )
 	{
-		$values = array
+		$choices = array
 		(
 			'1' => __( 'Yes', 'wdc' ),
 		);
 
-		return $values;
+		return $choices;
 	}
 	
 	/**
