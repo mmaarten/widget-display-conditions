@@ -1,4 +1,7 @@
 <?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
+/**
+ * Fields
+ */
 
 /**
  * Get condition type choices

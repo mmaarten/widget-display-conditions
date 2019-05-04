@@ -24,6 +24,8 @@ function wdc_get_widget_regex()
  */
 function wdc_get_widget_instance( $widget_id )
 {
+	// Get widget type (base id) and number
+
 	if ( ! preg_match( '/' . wdc_get_widget_regex() . '/', $widget_id, $matches ) ) 
 	{
 		return null;
@@ -31,7 +33,11 @@ function wdc_get_widget_instance( $widget_id )
 
 	list(, $id_base, $num ) = $matches;
 
+	// Get all instances of same type
+
 	$instances = get_option( "widget_$id_base" );
+
+	// Get widget instance
 
 	if ( is_array( $instances ) && isset( $instances[ $num ] ) ) 
 	{
@@ -51,6 +57,8 @@ function wdc_get_widget_instance( $widget_id )
  */
 function wdc_set_widget_instance( $widget_id, $instance )
 {
+	// Get widget type (base id) and number
+
 	if ( ! preg_match( '/' . wdc_get_widget_regex() . '/', $widget_id, $matches ) )
 	{
 		return false;
@@ -58,10 +66,16 @@ function wdc_set_widget_instance( $widget_id, $instance )
 
 	list(, $id_base, $num ) = $matches;
 
+	// Get all instances of same type
+
 	$instances = get_option( "widget_$id_base" );
+
+	// Check widget instance
 
 	if ( is_array( $instances ) && isset( $instances[ $num ] ) ) 
 	{
+		// Update instance
+
 		$instances[ $num ] = (array) $instance;
 
 		return update_option( "widget_$id_base", $instances );
@@ -81,7 +95,7 @@ function wdc_get_widget_conditions( $widget_id )
 {
 	$instance = wdc_get_widget_instance( $widget_id );
 
-	if ( isset( $instance ) && isset( $instance['wdc_conditions'] ) ) 
+	if ( isset( $instance, $instance['wdc_conditions'] ) ) 
 	{
 		return $instance['wdc_conditions'];
 	}
@@ -122,7 +136,7 @@ function wdc_delete_widget_conditions( $widget_id )
 {
 	$instance = wdc_get_widget_instance( $widget_id );
 
-	if ( isset( $instance ) && isset( $instance['wdc_conditions'] ) ) 
+	if ( isset( $instance, $instance['wdc_conditions'] ) ) 
 	{
 		unset( $instance['wdc_conditions'] );
 
@@ -145,7 +159,7 @@ function wdc_has_widgets_conditions()
 
 	if ( ! is_array( $sidebars_widgets ) ) return false;
 
-	foreach ( $sidebars_widgets as $sidebar_index => $widgets ) 
+	foreach ( $sidebars_widgets as $widgets ) 
 	{
 		if ( ! is_array( $widgets ) ) continue;
 

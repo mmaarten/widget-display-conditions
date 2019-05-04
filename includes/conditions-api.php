@@ -1,6 +1,6 @@
 <?php defined( 'ABSPATH' ) or exit; // Exit when accessed directly.
 /**
- * Condition functions
+ * Condition related functions
  */
 
 /**
@@ -26,7 +26,7 @@ function wdc_do_conditions( $conditions )
 			if ( isset( $return ) && ! $return ) break;
 		}
 
-		if ( isset( $return ) && $return ) break;
+		if ( $return ) break;
 	}
 
 	return $return;
