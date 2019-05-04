@@ -51,7 +51,7 @@ You can use built-in conditions or create some of your own.
 == Changelog ==
 
 = 0.2.4 =
-Release date: May 4th, 2019
+Release date: May 5th, 2019
 * Fix: - UI: 'Post Format' values not listed.
 * Enhancement: - UI: List post templates per post type.
 * Enhancement: - UI: Simplified field data structure.
