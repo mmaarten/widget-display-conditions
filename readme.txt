@@ -52,9 +52,10 @@ You can use built-in conditions or create some of your own.
 
 = 0.2.4 =
 Release date: May 4th, 2019
-* Fix: - UI: Post formats not listed.
+* Fix: - UI: 'Post Format' values not listed.
 * Enhancement: - UI: List post templates per post type.
 * Enhancement: - UI: Simplified field data structure.
+* Enhancement: - UI: Renamed condition 'param' to 'type'.
 
 = 0.2.3 =
 Release date: May 3th, 2019

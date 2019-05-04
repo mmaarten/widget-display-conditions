@@ -21,7 +21,7 @@ function wdc_do_conditions( $conditions )
 	{
 		foreach ( $group as $condition ) 
 		{
-			$return = wdc_do_condition( $condition['param'], $condition['operator'], $condition['value'] );
+			$return = wdc_do_condition( $condition['type'], $condition['operator'], $condition['value'] );
 
 			if ( isset( $return ) && ! $return ) break;
 		}

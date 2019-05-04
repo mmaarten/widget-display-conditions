@@ -8,6 +8,7 @@ class WDC_Update_Tasks
 	public static function init()
 	{
 		wdc_add_update_task( '0_2_0', '0.2.0', array( __CLASS__, 'task_0_2_0' ) );
+		wdc_add_update_task( '0_2_4', '0.2.4', array( __CLASS__, 'task_0_2_4' ) );
 
 		add_filter( 'wdc/db_version', array( __CLASS__, 'db_version' ) );
 	}
@@ -91,6 +92,46 @@ class WDC_Update_Tasks
 
 						$condition['param']    = $param_map[ $condition['param'] ];
 						$condition['operator'] = $operator_map[ $condition['operator'] ];
+
+						$updated[ $group_id ][ $condition_id ] = $condition;
+					}
+				}
+
+				wdc_set_widget_conditions( $widget_id, $updated );
+			}
+		}
+	}
+
+	/**
+	 * Version 0.2.4
+	 *
+	 * Rename condition 'param' to 'type'
+	 */
+	public static function task_0_2_4()
+	{
+		$sidebars_widgets = get_option( 'sidebars_widgets' );
+
+		if ( ! is_array( $sidebars_widgets ) ) return;
+
+		foreach ( $sidebars_widgets as $widgets ) 
+		{
+			if ( ! is_array( $widgets ) ) continue;
+
+			foreach ( $widgets as $widget_id ) 
+			{
+				$conditions = wdc_get_widget_conditions( $widget_id );
+
+				if ( ! isset( $conditions ) ) continue;
+
+				$updated = array();
+
+				foreach ( $conditions as $group_id => $group ) 
+				{
+					foreach ( $group as $condition_id => $condition ) 
+					{
+						$condition['type'] = $condition['param'];
+						
+						unset( $condition['param'] );
 
 						$updated[ $group_id ][ $condition_id ] = $condition;
 					}

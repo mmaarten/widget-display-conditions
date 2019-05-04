@@ -27,7 +27,7 @@ class WDC_Post_Category_Condition extends WDC_Condition
 	 */
 	public function values( $choices )
 	{
-		return wdc_get_term_values( 'category' );
+		return wdc_get_term_choices( 'category' );
 	}
 	
 	/**

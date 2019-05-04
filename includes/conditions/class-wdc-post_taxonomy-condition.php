@@ -33,7 +33,7 @@ class WDC_Post_Taxonomy_Condition extends WDC_Condition
 
 		foreach ( $taxonomies as $taxonomy ) 
 		{
-			$term_values = wdc_get_term_values( $taxonomy->name );
+			$term_values = wdc_get_term_choices( $taxonomy->name );
 
 			if ( $term_values ) 
 			{

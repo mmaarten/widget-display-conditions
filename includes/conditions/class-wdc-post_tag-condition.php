@@ -27,7 +27,7 @@ class WDC_Post_Tag_Condition extends WDC_Condition
 	 */
 	public function values( $choices )
 	{
-		return wdc_get_term_values( 'post_tag' );
+		return wdc_get_term_choices( 'post_tag' );
 	}
 	
 	/**

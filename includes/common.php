@@ -54,7 +54,7 @@ function wdc_get_post_templates()
 	return $post_templates;
 }
 
-function wdc_get_post_values( $post_type )
+function wdc_get_post_choices( $post_type )
 {
 	$post_type = get_post_type_object( $post_type );
 
@@ -108,7 +108,7 @@ function wdc_get_post_values( $post_type )
 	return $values;
 }
 
-function wdc_get_term_values( $taxonomy )
+function wdc_get_term_choices( $taxonomy )
 {
 	// Get taxonomy object
 

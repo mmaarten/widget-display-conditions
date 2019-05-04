@@ -35,7 +35,7 @@ class WDC_Post_Condition extends WDC_Condition
 
 		foreach ( $post_types as $post_type ) 
 		{
-			$post_values = wdc_get_post_values( $post_type->name );
+			$post_values = wdc_get_post_choices( $post_type->name );
 
 			if ( $post_values ) 
 			{

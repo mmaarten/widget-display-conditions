@@ -27,7 +27,7 @@ class WDC_Page_Condition extends WDC_Condition
 	 */
 	public function values( $choices )
 	{
-		return wdc_get_post_values( 'page' );
+		return wdc_get_post_choices( 'page' );
 	}
 	
 	/**

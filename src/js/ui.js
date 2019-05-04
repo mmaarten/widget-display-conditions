@@ -55,14 +55,14 @@
 			}
 		});
 
-		this.$elem.on( 'change', '.wdc-param', function( event )
+		this.$elem.on( 'change', '.wdc-type', function( event )
 		{
 			var $condition = $( this ).closest( '.wdc-condition' );
 
 			_this.updateConditionFields( $condition );
 		});
 
-		this.$elem.on( 'change', '.wdc-param, .wdc-operator, .wdc-value', function( event )
+		this.$elem.on( 'change', '.wdc-type, .wdc-operator, .wdc-value', function( event )
 		{
 			_this.setSaved( 'save' );
 		});
@@ -203,7 +203,7 @@
 		data = $.extend(
 		{
 			id       : UI.generateId(),
-			param    : '',
+			type    : '',
 			operator : '',
 			value    : '',
 			group    : '',
@@ -215,7 +215,7 @@
 			group : data.group,
 		}));
 
-		UI.setSelected( $elem.find( '.wdc-param' ), data.param );
+		UI.setSelected( $elem.find( '.wdc-type' ), data.type );
 
 		this.updateConditionFields( $elem,
 		{
@@ -230,7 +230,7 @@
 	{
 		selected = $.extend( {}, selected );
 
-		var $param    = $condition.find( '.wdc-param' );
+		var $type    = $condition.find( '.wdc-type' );
 		var $operator = $condition.find( '.wdc-operator' );
 		var $value    = $condition.find( '.wdc-value' );
 
@@ -259,14 +259,14 @@
 
 	UI.prototype.getConditionFieldItems = function( $condition, callback ) 
 	{
-		var param = $condition.find( '.wdc-param' ).val();
+		var type = $condition.find( '.wdc-type' ).val();
 
 		// Check if already loaded
 
-		if ( typeof this.fieldItems[ param ] !== 'undefined' ) 
+		if ( typeof this.fieldItems[ type ] !== 'undefined' ) 
 		{
 			// Callback
-			callback( this.fieldItems[ param ] );
+			callback( this.fieldItems[ type ] );
 
 			return;
 		}
@@ -278,7 +278,7 @@
 		var data = this.prepareAjax( 
 		{
 			action : 'wdc_ui_get_condition_field_items',
-			param  : param,
+			type  : type,
 		});
 
 		$.post( ajaxurl, data, function( items )
@@ -286,10 +286,10 @@
 			console.log( items );
 
 			// Save items
-			_this.fieldItems[ param ] = $.extend( {}, items );
+			_this.fieldItems[ type ] = $.extend( {}, items );
 
 			// Callback
-			callback( _this.fieldItems[ param ] );
+			callback( _this.fieldItems[ type ] );
 		});
 	};
 
@@ -320,7 +320,7 @@
 					var $condition = _this.createCondition( 
 					{ 
 						id       : conditionId,
-						param    : condition.param,
+						type    : condition.type,
 						operator : condition.operator,
 						value    : condition.value,
 						group    : groupId,
