@@ -2,9 +2,9 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Widget Display Conditions 0.2.4\n"
+"Project-Id-Version: Widget Display Conditions 0.2.5\n"
 "Report-Msgid-Bugs-To: mentenmaarten@gmail.com\n"
-"POT-Creation-Date: 2019-05-04 14:36:59+00:00\n"
+"POT-Creation-Date: 2019-05-30 13:00:00+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -40,7 +40,7 @@ msgid "Attachment"
 msgstr ""
 
 #: includes/conditions/class-wdc-page-condition.php:13
-#: widget-display-conditions.php:47
+#: widget-display-conditions.php:48
 msgid "Page"
 msgstr ""
 
@@ -98,7 +98,7 @@ msgid "Child Page (has parent)"
 msgstr ""
 
 #: includes/conditions/class-wdc-post-condition.php:13
-#: widget-display-conditions.php:46
+#: widget-display-conditions.php:47
 msgid "Post"
 msgstr ""
 
@@ -131,7 +131,7 @@ msgid "Post Type"
 msgstr ""
 
 #: includes/conditions/class-wdc-user-condition.php:13
-#: widget-display-conditions.php:50
+#: widget-display-conditions.php:51
 msgid "User"
 msgstr ""
 
@@ -223,11 +223,11 @@ msgstr ""
 msgid "Go to update page"
 msgstr ""
 
-#: widget-display-conditions.php:48
+#: widget-display-conditions.php:49
 msgid "Media"
 msgstr ""
 
-#: widget-display-conditions.php:49
+#: widget-display-conditions.php:50
 msgid "Archive"
 msgstr ""
 

@@ -3,7 +3,7 @@ Contributors: MaartenM
 Tags: widget, display, conditions, rules, sidebar, custom, admin, interface, visibility
 Requires at least: 4.0.0
 Tested up to: 5.2
-Stable tag: 0.2.5
+Stable tag: 0.2.6
 Requires PHP: 5.6.27
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -49,6 +49,10 @@ You can use built-in conditions or create some of your own.
 2. Widget Settings with available options
 
 == Changelog ==
+
+= 0.2.6 =
+Release date: May 30th, 2019
+* Fix: - UI: Button 'Display conditions' disappears on widget save.
 
 = 0.2.5 =
 Release date: May 13th, 2019
