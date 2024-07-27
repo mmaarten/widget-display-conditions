@@ -10,7 +10,7 @@ class WDC_Page_Template_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'page_template', __( 'Page Template', 'wdc' ), array
+		parent::__construct( 'page_template', __( 'Page Template', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'page',
@@ -29,7 +29,7 @@ class WDC_Page_Template_Condition extends WDC_Condition
 	{
 		$post_templates = wdc_get_post_templates();
 
-		$values = array( '' => __( 'Default', 'wdc' ) );
+		$values = array( '' => __( 'Default', 'widget-display-conditions' ) );
 		$values += $post_templates['page'];
 
 		return $values;

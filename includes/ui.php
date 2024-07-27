@@ -44,7 +44,7 @@ final class WDC_UI
 	{		
 		// Output button to open UI
 		$button = sprintf( '<button class="button wdc-open-ui" type="button" data-widget="%s" data-noncename="%s" data-nonce="%s">%s</button>',
-			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'wdc' ) );
+			esc_attr( $widget->id ), esc_attr( WDC_NONCE_NAME ), esc_attr( wp_create_nonce( 'ui' ) ), esc_html__( 'Display conditions', 'widget-display-conditions' ) );
 
 		printf( '<p class="wdc-open-ui-wrap">%s<span class="spinner"></span></p>', $button );
 	}
@@ -130,7 +130,7 @@ final class WDC_UI
 		(
 			'messages' => array
 			(
-				'notSaved' => __( 'Confirm unsaved changes.', 'wdc' ),
+				'notSaved' => __( 'Confirm unsaved changes.', 'widget-display-conditions' ),
 			),
 		));
 	}
@@ -148,7 +148,7 @@ final class WDC_UI
 			
 			<div class="wdc-ui">
 
-				<h1><?php _e( 'Widget Display Conditions', 'wdc' ); ?></h1>
+				<h1><?php echo esc_html_x( 'Widget Display Conditions', 'Window Title', 'widget-display-conditions' ); ?></h1>
 
 				<form method="post">
 				
@@ -158,20 +158,20 @@ final class WDC_UI
 					<input type="hidden" name="widget" value="{{ data.widget }}">
 
 					<div class="notice notice-info wdc-hide-if-conditions">
-						<p><?php esc_html_e( __( 'No conditions set.', 'wdc' ) ); ?></p>
+						<p><?php esc_html_e( 'No conditions set.', 'widget-display-conditions' ); ?></p>
 					</div>
 					
-					<h4 class="wdc-show-if-conditions"><?php _e( 'Show widget if', 'wdc' ); ?></h4>
+					<h4 class="wdc-show-if-conditions"><?php esc_html_e( 'Show widget if', 'widget-display-conditions' ); ?></h4>
 
 					<div class="wdc-condition-groups"></div>
 
 					<p>
-						<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add group', 'wdc' ); ?></button>
+						<button class="button wdc-add-condition-group" type="button"><?php esc_html_e( 'Add group', 'widget-display-conditions' ); ?></button>
 					</p>
 
 					<p class="submit alignright">
 						<span class="spinner"></span>
-						<button class="button button-primary" type="submit" data-saved="<?php esc_attr_e( 'Saved', 'wdc' ); ?>"><?php esc_html_e( 'Save', 'wdc' ); ?></button>
+						<button class="button button-primary" type="submit" data-saved="<?php esc_attr_e( 'Saved', 'widget-display-conditions' ); ?>"><?php esc_html_e( 'Save', 'widget-display-conditions' ); ?></button>
 					</p>
 
 				</form>
@@ -186,7 +186,7 @@ final class WDC_UI
 
 				<table class="wdc-conditions"></table>
 
-				<h4><?php _e( 'or', 'wdc' ); ?></h4>
+				<h4><?php esc_html_e( 'or', 'widget-display-conditions' ); ?></h4>
 
 			</div>
 			
@@ -211,12 +211,12 @@ final class WDC_UI
 				</td>
 
 				<td>
-					<button class="button wdc-add-condition" type="button"><?php esc_html_e( 'and', 'wdc' ); ?></button>
+					<button class="button wdc-add-condition" type="button"><?php esc_html_e( 'and', 'widget-display-conditions' ); ?></button>
 				</td>
 
 				<td>
 					<button class="button-link dashicons-before dashicons-trash wdc-remove-condition" type="button">
-						<span class="screen-reader-text"><?php esc_html_e( 'remove', 'wdc' ); ?></span> 
+						<span class="screen-reader-text"><?php esc_html_e( 'remove', 'widget-display-conditions' ); ?></span> 
 					</button>
 				</td>
 

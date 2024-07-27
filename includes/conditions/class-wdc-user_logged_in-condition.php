@@ -10,7 +10,7 @@ class WDC_User_Logged_In_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'user_logged_in', __( 'User Logged In', 'wdc' ), array
+		parent::__construct( 'user_logged_in', __( 'User Logged In', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'user',
@@ -29,7 +29,7 @@ class WDC_User_Logged_In_Condition extends WDC_Condition
 	{
 		$choices = array
 		(
-			'1' => __( 'Yes', 'wdc' ),
+			'1' => __( 'Yes', 'widget-display-conditions' ),
 		);
 
 		return $choices;

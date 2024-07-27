@@ -3,18 +3,18 @@
 Plugin Name:  Widget Display Conditions
 Plugin URI:   https://wordpress.org/plugins/widget-display-conditions/
 Description:  Control on which page you want a particular widget to be displayed.
-Version:      0.2.6
+Version:      0.2.8
 Author:       Maarten Menten
 Author URI:   https://profiles.wordpress.org/maartenm/
 License:      GPL2
 License URI:  https://www.gnu.org/licenses/gpl-2.0.html
-Text Domain:  wdc
+Text Domain:  widget-display-conditions
 Domain Path:  /languages
 */
 
 defined( 'WDC_PLUGIN_FILE' )     or define( 'WDC_PLUGIN_FILE', __FILE__ );
 defined( 'WDC_ABSPATH' )         or define( 'WDC_ABSPATH', dirname( WDC_PLUGIN_FILE ) . '/' );
-defined( 'WDC_VERSION' )         or define( 'WDC_VERSION', '0.2.6' );
+defined( 'WDC_VERSION' )         or define( 'WDC_VERSION', '0.2.8' );
 defined( 'WDC_NONCE_NAME' )      or define( 'WDC_NONCE_NAME', 'wdc_nonce' );
 defined( 'WDC_MAX_FIELD_ITEMS' ) or define( 'WDC_MAX_FIELD_ITEMS', 9999 );
 
@@ -44,11 +44,11 @@ function wdc_init()
 	include_once WDC_ABSPATH . 'includes/operators/class-wdc-is_not_equal_to-operator.php';
 
 	// Add condition categories
-	wdc_add_condition_category( 'post'      , __( 'Post', 'wdc' )   , 'order=100' );
-	wdc_add_condition_category( 'page'      , __( 'Page', 'wdc' )   , 'order=200' );
-	wdc_add_condition_category( 'attachment', __( 'Media', 'wdc' )  , 'order=300' );
-	wdc_add_condition_category( 'archive'   , __( 'Archive', 'wdc' ), 'order=400' );
-	wdc_add_condition_category( 'user'      , __( 'User', 'wdc' )   , 'order=500' );
+	wdc_add_condition_category( 'post'      , __( 'Post', 'widget-display-conditions' )   , 'order=100' );
+	wdc_add_condition_category( 'page'      , __( 'Page', 'widget-display-conditions' )   , 'order=200' );
+	wdc_add_condition_category( 'attachment', __( 'Media', 'widget-display-conditions' )  , 'order=300' );
+	wdc_add_condition_category( 'archive'   , __( 'Archive', 'widget-display-conditions' ), 'order=400' );
+	wdc_add_condition_category( 'user'      , __( 'User', 'widget-display-conditions' )   , 'order=500' );
 
 	// Add conditions
 	include_once WDC_ABSPATH . 'includes/conditions/class-wdc-post-condition.php';

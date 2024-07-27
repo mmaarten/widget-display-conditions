@@ -10,7 +10,7 @@ class WDC_Archive_Taxonomy_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'archive_taxonomy', __( 'Archive Taxonomy', 'wdc' ), array
+		parent::__construct( 'archive_taxonomy', __( 'Archive Taxonomy', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'archive',

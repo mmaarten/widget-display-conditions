@@ -10,7 +10,7 @@ class WDC_Post_Format_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'post_format', __( 'Post Format', 'wdc' ), array
+		parent::__construct( 'post_format', __( 'Post Format', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'post',

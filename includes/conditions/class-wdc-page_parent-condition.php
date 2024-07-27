@@ -10,7 +10,7 @@ class WDC_Page_Parent_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'page_parent', __( 'Page Parent', 'wdc' ), array
+		parent::__construct( 'page_parent', __( 'Page Parent', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'page',

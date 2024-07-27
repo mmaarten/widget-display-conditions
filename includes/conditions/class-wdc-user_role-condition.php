@@ -10,7 +10,7 @@ class WDC_User_Role_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'user_role', __( 'User Role', 'wdc' ), array
+		parent::__construct( 'user_role', __( 'User Role', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'user',

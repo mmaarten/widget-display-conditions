@@ -119,7 +119,7 @@ final class WDC_Updater
 
 	public function add_page()
 	{
-		$this->page = add_submenu_page( null, __( 'Widget Display Conditions Updater', 'wdc' ), __( 'Updater', 'wdc' ), 'update_plugins', 'wdc-updater', array( &$this, 'render_page' ) );
+		$this->page = add_submenu_page( null, __( 'Widget Display Conditions Updater', 'widget-display-conditions' ), __( 'Updater', 'widget-display-conditions' ), 'update_plugins', 'wdc-updater', array( &$this, 'render_page' ) );
 	}
 
 	public function render_page()
@@ -130,7 +130,7 @@ final class WDC_Updater
 
 		<div class="wrap">
 
-			<h1><?php esc_html_e( 'Widget Display Conditions Updater', 'wdc' ); ?></h1>
+			<h1><?php esc_html_e( 'Widget Display Conditions Updater', 'widget-display-conditions' ); ?></h1>
 
 			<?php if ( $tasks ) : ?>
 			
@@ -138,15 +138,15 @@ final class WDC_Updater
 					
 				<?php wp_nonce_field( 'update', WDC_NONCE_NAME ); ?>
 
-				<p><strong><?php esc_html_e( 'Database update is required.', 'wdc' ); ?></strong></p>
-				<p><?php esc_html_e( 'Make sure to create a backup before updating.', 'wdc' ); ?></p>
+				<p><strong><?php esc_html_e( 'Database update is required.', 'widget-display-conditions' ); ?></strong></p>
+				<p><?php esc_html_e( 'Make sure to create a backup before updating.', 'widget-display-conditions' ); ?></p>
 
-				<?php submit_button( __( 'Update', 'wdc' ) ); ?>
+				<?php submit_button( __( 'Update', 'widget-display-conditions' ) ); ?>
 
 			</form>
 
 			<?php else : ?>
-			<p><?php esc_html_e( 'Nothing to update.', 'wdc' ); ?></p>
+			<p><?php esc_html_e( 'Nothing to update.', 'widget-display-conditions' ); ?></p>
 			<?php endif; ?>
 
 		</div>
@@ -174,9 +174,9 @@ final class WDC_Updater
 
 		$message = sprintf( '<strong>%s</strong> %s <a href="%s">%s</a>', 
 			esc_html__( $plugin['Name'] ), 
-			esc_html__( 'Database update is required.', 'wdc' ),
+			esc_html__( 'Database update is required.', 'widget-display-conditions' ),
 			admin_url( '?page=wdc-updater' ),
-			esc_html__( 'Go to update page', 'wdc' ) );
+			esc_html__( 'Go to update page', 'widget-display-conditions' ) );
 
 		printf( '<div class="notice notice-warning"><p>%s</p></div>', $message );
 	}

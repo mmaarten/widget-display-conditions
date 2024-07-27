@@ -10,7 +10,7 @@ class WDC_Is_Not_Equal_To_Operator extends WDC_Operator
 	 */
 	public function __construct()
 	{
-		parent::__construct( '!=', __( 'Is not equal to', 'wdc' ), array
+		parent::__construct( '!=', __( 'Is not equal to', 'widget-display-conditions' ), array
 		(
 			'order' => 20,
 		));

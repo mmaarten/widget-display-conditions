@@ -10,7 +10,7 @@ class WDC_Post_Status_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'post_status', __( 'Post Status', 'wdc' ), array
+		parent::__construct( 'post_status', __( 'Post Status', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'post',

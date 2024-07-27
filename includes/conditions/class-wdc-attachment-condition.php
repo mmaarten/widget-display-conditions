@@ -10,7 +10,7 @@ class WDC_Attachment_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'attachment', __( 'Attachment', 'wdc' ), array
+		parent::__construct( 'attachment', __( 'Attachment', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'attachment',

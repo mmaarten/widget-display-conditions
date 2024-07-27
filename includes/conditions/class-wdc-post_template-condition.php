@@ -10,7 +10,7 @@ class WDC_Post_Template_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'post_template', __( 'Post Template', 'wdc' ), array
+		parent::__construct( 'post_template', __( 'Post Template', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'post',
@@ -31,7 +31,7 @@ class WDC_Post_Template_Condition extends WDC_Condition
 
 		$values = array
 		(
-			'' => __( 'Default', 'wdc' ),
+			'' => __( 'Default', 'widget-display-conditions' ),
 		);
 
 		foreach ( $post_templates as $post_type => $templates ) 

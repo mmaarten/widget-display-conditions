@@ -10,7 +10,7 @@ class WDC_User_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'user', __( 'User', 'wdc' ), array
+		parent::__construct( 'user', __( 'User', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'user',

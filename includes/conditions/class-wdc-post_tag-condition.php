@@ -10,7 +10,7 @@ class WDC_Post_Tag_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'post_tag', __( 'Post Tag', 'wdc' ), array
+		parent::__construct( 'post_tag', __( 'Post Tag', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'post',

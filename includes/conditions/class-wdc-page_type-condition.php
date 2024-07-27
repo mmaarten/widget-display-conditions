@@ -10,7 +10,7 @@ class WDC_Page_Type_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'page_type', __( 'Page Type', 'wdc' ), array
+		parent::__construct( 'page_type', __( 'Page Type', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'page',
@@ -29,15 +29,15 @@ class WDC_Page_Type_Condition extends WDC_Condition
 	{
 		return array
 		(
-			'front_page'  => __( 'Front Page', 'wdc' ),
-			'posts_page'  => __( 'Posts Page', 'wdc' ),
-			'search_page' => __( 'Search Page', 'wdc' ),
-			'404_page'    => __( '404 Page (not found)', 'wdc' ),
-			'date_page'   => __( 'Date Page', 'wdc' ),
-			'author_page' => __( 'Author Page', 'wdc' ),
-			'top_level'   => __( 'Top Level Page (no parent)', 'wdc' ),
-			'parent'      => __( 'Parent Page (has children)', 'wdc' ),
-			'child'       => __( 'Child Page (has parent)', 'wdc' ),
+			'front_page'  => __( 'Front Page', 'widget-display-conditions' ),
+			'posts_page'  => __( 'Posts Page', 'widget-display-conditions' ),
+			'search_page' => __( 'Search Page', 'widget-display-conditions' ),
+			'404_page'    => __( '404 Page (not found)', 'widget-display-conditions' ),
+			'date_page'   => __( 'Date Page', 'widget-display-conditions' ),
+			'author_page' => __( 'Author Page', 'widget-display-conditions' ),
+			'top_level'   => __( 'Top Level Page (no parent)', 'widget-display-conditions' ),
+			'parent'      => __( 'Parent Page (has children)', 'widget-display-conditions' ),
+			'child'       => __( 'Child Page (has parent)', 'widget-display-conditions' ),
 		);
 	}
 	

@@ -10,7 +10,7 @@ class WDC_Archive_Author_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'archive_author', __( 'Archive Author', 'wdc' ), array
+		parent::__construct( 'archive_author', __( 'Archive Author', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'archive',

@@ -10,7 +10,7 @@ class WDC_Archive_Post_Type_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'archive_post_type', __( 'Archive Post Type', 'wdc' ), array
+		parent::__construct( 'archive_post_type', __( 'Archive Post Type', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'archive',

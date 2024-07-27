@@ -10,7 +10,7 @@ class WDC_Post_Taxonomy_Condition extends WDC_Condition
 	 */
 	public function __construct()
 	{
-		parent::__construct( 'post_taxonomy', __( 'Post Taxonomy', 'wdc' ), array
+		parent::__construct( 'post_taxonomy', __( 'Post Taxonomy', 'widget-display-conditions' ), array
 		(
 			'operators' => array( '==', '!=' ),
 			'category'  => 'post',
